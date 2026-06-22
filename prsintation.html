@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>BanqOK - عرض MVP للمستثمرين</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --accent: #3b82f6;
+      --accent-dark: #2563eb;
+      --green-light: #d1fae5;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --bg: #f9fafb;
+      --white: #ffffff;
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+      --shadow-lg: 0 15px 35px rgba(0,0,0,0.1);
+      --shadow-xl: 0 25px 50px rgba(0,0,0,0.15);
+      --radius-sm: 12px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #0f172a;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* شريط التنقل العلوي */
+    .presentation-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pres-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pres-nav-logo img { height: 40px; }
+    .pres-nav-logo span {
+      color: white;
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+    .pres-nav-counter {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+    }
+    .pres-nav-counter span {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* الحاوية الرئيسية للشرائح */
+    .slides-container {
+      padding-top: 70px;
+    }
+
+    /* الشريحة الواحدة */
+    .slide {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 5%;
+      position: relative;
+      overflow: hidden;
+    }
+    .slide-content {
+      max-width: 1200px;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+    .slide:nth-child(odd) { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+    .slide:nth-child(even) { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+    .slide.hero-slide {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+    }
+    .slide.cta-slide {
+      background: linear-gradient(135deg, #059669 0%, #10b981 50%, #3b82f6 100%);
+    }
+
+    /* نمط الشريحة البطل */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .hero-text { color: white; }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .hero-title span { color: #fbbf24; }
+    .hero-desc {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+    .hero-image { text-align: center; }
+    .hero-image img {
+      max-width: 100%;
+      height: auto;
+      max-height: 450px;
+      animation: float 6s ease-in-out infinite;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.3));
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* عنوان القسم */
+    .section-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .section-header.light { color: white; }
+    .section-header.light .section-desc { color: rgba(255,255,255,0.8); }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+    .section-desc {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* الجداول */
+    .table-wrapper {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      margin-bottom: 30px;
+    }
+    .table-title {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 15px 25px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 14px 18px;
+      text-align: center;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.95rem;
+    }
+    th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: var(--text);
+    }
+    tr:last-child td { border-bottom: none; }
+    .highlight-row { background: #f0fdf4; }
+    .highlight-cell {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-gold { background: #fef3c7; color: #92400e; }
+
+    /* البطاقات */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    .info-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 30px 25px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s;
+      border: 2px solid transparent;
+    }
+    .info-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-xl);
+    }
+    .info-card .card-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--green-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    .info-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .info-card p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+    .info-card .big-number {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+
+    /* مقارنة قبل وبعد */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    .comparison-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: var(--shadow-lg);
+    }
+    .comparison-card.before { border-top: 5px solid #ef4444; }
+    .comparison-card.after { border-top: 5px solid var(--primary); }
+    .comparison-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .comparison-card .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .comparison-card .stat-row:last-child { border-bottom: none; }
+    .comparison-card .stat-value {
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+    .comparison-card.before .stat-value { color: #ef4444; }
+    .comparison-card.after .stat-value { color: var(--primary); }
+
+    /* خريطة الطريق */
+    .roadmap {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      position: relative;
+    }
+    .roadmap::before {
+      content: '';
+      position: absolute;
+      top: 35px;
+      left: 10%;
+      right: 10%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent), #f59e0b, #8b5cf6);
+      border-radius: 2px;
+      z-index: 0;
+    }
+    .roadmap-step {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .roadmap-dot {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-weight: 900;
+      font-size: 1.5rem;
+      box-shadow: var(--shadow-md);
+      border: 4px solid;
+    }
+    .roadmap-step:nth-child(1) .roadmap-dot { border-color: var(--primary); color: var(--primary); }
+    .roadmap-step:nth-child(2) .roadmap-dot { border-color: var(--accent); color: var(--accent); }
+    .roadmap-step:nth-child(3) .roadmap-dot { border-color: #f59e0b; color: #f59e0b; }
+    .roadmap-step:nth-child(4) .roadmap-dot { border-color: #8b5cf6; color: #8b5cf6; }
+    .roadmap-step h4 {
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    .roadmap-step p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    /* شريحة CTA */
+    .cta-content {
+      text-align: center;
+      color: white;
+    }
+    .cta-content h2 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+    .cta-content p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+    .cta-numbers {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .cta-number {
+      text-align: center;
+    }
+    .cta-number .num {
+      font-size: 3rem;
+      font-weight: 900;
+      display: block;
+    }
+    .cta-number .lbl {
+      font-size: 0.95rem;
+      opacity: 0.8;
+    }
+
+    /* أزرار */
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+      font-family: 'Cairo', sans-serif;
+    }
+    .btn-primary {
+      background: white;
+      color: var(--primary-dark);
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: white;
+    }
+
+    /* التنقل بين الشرائح */
+    .slide-nav {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+      background: rgba(15,23,42,0.9);
+      backdrop-filter: blur(10px);
+      padding: 10px 20px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .slide-nav-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .slide-nav-dot.active { background: var(--primary); transform: scale(1.3); }
+    .slide-nav-arrow {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .slide-nav-arrow:hover { background: rgba(255,255,255,0.2); }
+
+    /* استجابة */
+    @media (max-width: 992px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-image img { max-height: 300px; }
+      .comparison-grid { grid-template-columns: 1fr; }
+      .roadmap { grid-template-columns: repeat(2, 1fr); }
+      .roadmap::before { display: none; }
+    }
+    @media (max-width: 768px) {
+      .cta-numbers { gap: 30px; }
+      .roadmap { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- شريط التنقل العلوي -->
+<div class="presentation-nav">
+  <div class="pres-nav-logo">
+    <img src="./ASSETS/BanqOk.png" alt="BanqOK" style="filter: brightness(0) invert(1);">
+    <span>BanqOK</span>
+  </div>
+  <div class="pres-nav-counter">
+    شريحة <span id="current-slide-num">1</span> من <span id="total-slides">10</span>
+  </div>
+</div>
+
+<!-- حاوية الشرائح -->
+<div class="slides-container" id="slides-container">
+
+  <!-- الشريحة 1: العنوان -->
+  <section class="slide hero-slide" id="slide-1">
+    <div class="slide-content">
+      <div class="hero-grid">
+        <div class="hero-text">
+          <div class="hero-badge">🏆 مشروع تخرج - جامعة [اسم الجامعة]</div>
+          <h1 class="hero-title">BanqOK<br><span>أول منصة ذكية</span><br>لمقارنة البنوك في مصر</h1>
+          <p class="hero-desc">
+            منصة ويب تفاعلية لمقارنة عروض القروض والودائع بين 31 بنكاً مصرياً.
+            نوفر 96% من وقت المستخدم، ونضمن شفافية 100% في عرض التكاليف.
+          </p>
+          <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <span class="badge badge-gold" style="font-size: 1rem; padding: 10px 20px;">🎓 مشروع تخرج 2026</span>
+            <span class="badge badge-green" style="font-size: 1rem; padding: 10px 20px; background: rgba(255,255,255,0.2); color: white;">📦 MVP جاهز للإطلاق</span>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="./ASSETS/EQO/TRUST.png" alt="BanqOK">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 2: المشكلة -->
+  <section class="slide" id="slide-2">
+    <div class="slide-content">
+      <div class="section-header light">
+        <h2 class="section-title" style="color: white;">🔴 المشكلة: سوق معتم والمستهلك ضائع</h2>
+        <p class="section-desc">المستهلك المصري يواجه تحديات يومية في البحث عن أفضل المنتجات المصرفية</p>
+      </div>
+      <div class="cards-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="info-card" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white;">
+          <div class="card-icon" style="background: rgba(239,68,68,0.2); color: #ef4444;">🏦</div>
+          <div class="big-number" style="color: #ef4444;">38</div>
+          <h3 style="color: white;">بنكاً في مصر</h3>
+          <p style="color: rgba(255,255,255,0.7);">يقدمون 500+ عرض مختلف للقروض والودائع، بدون أداة موحدة للمقارنة بينهم.</p>
+        </div>
+        <div class="info-card" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white;">
+          <div class="card-icon" style="background: rgba(251,191,36,0.2); color: #fbbf24;">⏱️</div>
+          <div class="big-number" style="color: #fbbf24;">22 دقيقة</div>
+          <h3 style="color: white;">للبحث اليدوي</h3>
+          <p style="color: rgba(255,255,255,0.7);">يقضي المستخدم عشرات الدقائق في زيارة مواقع البنوك واحداً تلو الآخر.</p>
+        </div>
+        <div class="info-card" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white;">
+          <div class="card-icon" style="background: rgba(59,130,246,0.2); color: #3b82f6;">💰</div>
+          <div class="big-number" style="color: #3b82f6;">خسائر</div>
+          <h3 style="color: white;">قرارات غير مثلى</h3>
+          <p style="color: rgba(255,255,255,0.7);">عدم تناسق المعلومات يؤدي إلى اختيار عروض مكلفة ورسوم خفية.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 3: الحل -->
+  <section class="slide" id="slide-3">
+    <div class="slide-content">
+      <div class="section-header light">
+        <h2 class="section-title" style="color: white;">🟢 الحل: BanqOK - محرك بحث مالي ذكي</h2>
+        <p class="section-desc">منصة واحدة تجمع كل عروض البنوك وتقارنها بموضوعية وشفافية</p>
+      </div>
+      <div class="comparison-grid">
+        <div class="comparison-card before">
+          <h3>❌ الطريقة التقليدية</h3>
+          <div class="stat-row"><span>الزمن المستغرق</span><span class="stat-value">22 دقيقة</span></div>
+          <div class="stat-row"><span>عدد النقرات</span><span class="stat-value">51 نقرة</span></div>
+          <div class="stat-row"><span>البنوك التي تمت مقارنتها</span><span class="stat-value">3-4 بنوك</span></div>
+          <div class="stat-row"><span>معدل الخطأ</span><span class="stat-value">2-3 أخطاء</span></div>
+          <div class="stat-row"><span>حساب APR</span><span class="stat-value">❌ غير متاح</span></div>
+        </div>
+        <div class="comparison-card after">
+          <h3>✅ مع BanqOK</h3>
+          <div class="stat-row"><span>الزمن المستغرق</span><span class="stat-value">48 ثانية</span></div>
+          <div class="stat-row"><span>عدد النقرات</span><span class="stat-value">10 نقرات</span></div>
+          <div class="stat-row"><span>البنوك التي تمت مقارنتها</span><span class="stat-value">30+ بنكاً</span></div>
+          <div class="stat-row"><span>معدل الخطأ</span><span class="stat-value">0 أخطاء</span></div>
+          <div class="stat-row"><span>حساب APR</span><span class="stat-value">✅ شامل</span></div>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <span class="badge badge-green" style="font-size: 1.3rem; padding: 12px 25px;">⚡ توفير 96.4% من الوقت</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 4: المنتج MVP -->
+  <section class="slide" id="slide-4">
+    <div class="slide-content">
+      <div class="section-header light">
+        <h2 class="section-title" style="color: white;">📦 المنتج: MVP كامل الوظائف</h2>
+        <p class="section-desc">ما تم بناؤه بالفعل - جاهز للاختبار والإطلاق التجريبي</p>
+      </div>
+      <div class="cards-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="info-card">
+          <div class="card-icon">📊</div>
+          <h3>وحدة تحليل القروض</h3>
+          <p>نموذج يجمع 12 متغيراً. خوارزمية تحسب EMI و APR والتكلفة الكلية. رسوم بيانية شريطية ودائرية وزمنية.</p>
+          <div class="big-number" style="font-size: 1.5rem;">400+</div>
+          <p style="color: var(--text-light);">عرض قرض تحت المقارنة</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon">💰</div>
+          <h3>وحدة تحليل الودائع</h3>
+          <p>حساب عوائد الفائدة المركبة. دعم 7 متغيرات تشمل دورية الصرف والسحب المبكر.</p>
+          <div class="big-number" style="font-size: 1.5rem;">150+</div>
+          <p style="color: var(--text-light);">عرض وديعة تحت المقارنة</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon">🛡️</div>
+          <h3>لوحة تحكم المسؤول</h3>
+          <p>نظام CMS متكامل. إدارة البنوك وعروض القروض والودائع. استيراد وتصدير JSON.</p>
+          <div class="big-number" style="font-size: 1.5rem;">30</div>
+          <p style="color: var(--text-light);">بنكاً مدرجاً</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon">🤖</div>
+          <h3>المساعد الذكي "إيكو"</h3>
+          <p>شخصية تفاعلية في كل الصفحات. تقدم 9 نصائح سياقية. تشرح المصطلحات المالية.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon">🎨</div>
+          <h3>نظام السمات والألوان</h3>
+          <p>دعم Light/Dark. تخصيص كامل للألوان. واجهة RTL كاملة بالعربية.</p>
+        </div>
+        <div class="info-card">
+          <div class="card-icon">💳</div>
+          <h3>نظام النقاط والمحفظة</h3>
+          <p>محفظة رقمية. باقات نقاط متعددة. تحديث لحظي للرصيد عبر جميع الصفحات.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 5: جدول تحليل خطوات BanqOK -->
+  <section class="slide" id="slide-5">
+    <div class="slide-content">
+      <div class="section-header light">
+        <h2 class="section-title" style="color: white;">📋 تحليل كفاءة BanqOK: خطوات إنجاز مهمة مقارنة قرض</h2>
+        <p class="section-desc">كيف تختصر المنصة 10 خطوات يدوية إلى 6 خطوات مؤتمتة فقط</p>
+      </div>
+      <div class="table-wrapper">
+        <div class="table-title">📊 جدول (6-4): تحليل خطوات الطريقة الرقمية باستخدام BanqOK</div>
+        <table>
+          <thead>
+            <tr><th>الخطوة</th><th>وصف الإجراء</th><th>الزمن (ثانية)</th><th>عدد النقرات</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>تسجيل الدخول إلى المنصة (مرة واحدة)</td><td>10</td><td>3</td></tr>
+            <tr><td>2</td><td>النقر على "تحليل القروض" من لوحة التحكم</td><td>2</td><td>1</td></tr>
+            <tr><td>3</td><td>إدخال بيانات القرض في النموذج الموحد</td><td>15</td><td>4</td></tr>
+            <tr><td>4</td><td>الضغط على زر "تحليل القروض"</td><td>1</td><td>1</td></tr>
+            <tr><td>5</td><td>انتظار شاشة التحليل (معالجة النظام)</td><td>15</td><td>0</td></tr>
+            <tr><td>6</td><td>استعراض النتائج (أفضل عرض + بدائل + رسوم بيانية)</td><td>15</td><td>1</td></tr>
+            <tr class="highlight-row"><td colspan="2"><strong>المجموع الكلي</strong></td><td class="highlight-cell">48 ثانية</td><td class="highlight-cell">10 نقرات</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 6: مؤشرات تقييم الكفاءة -->
+  <section class="slide" id="slide-6">
+    <div class="slide-content">
+      <div class="section-header light">
+        <h2 class="section-title" style="color: white;">📈 مؤشرات تقييم كفاءة المستخدم</h2>
+        <p class="section-desc">مقارنة شاملة بين الطريقتين وفق معايير ISO 9241-11</p>
+      </div>
+      <div class="table-wrapper">
+        <div class="table-title">📊 جدول (6-5): مقارنة شاملة بين الطريقتين التقليدية والرقمية</div>
+        <table>
+          <thead>
+            <tr><th>المؤشر</th><th>الطريقة التقليدية</th><th>BanqOK الرقمية</th><th>نسبة التحسن</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>الزمن المستغرق</td><td><span class="badge badge-red">22 دقيقة</span></td><td><span class="badge badge-green">48 ثانية</span></td><td class="highlight-cell">96.4%</td></tr>
+            <tr><td>عدد النقرات</td><td><span class="badge badge-red">51 نقرة</span></td><td><span class="badge badge-green">10 نقرات</span></td><td class="highlight-cell">80.4%</td></tr>
+            <tr><td>معدل الخطأ</td><td><span class="badge badge-red">2-3 أخطاء</span></td><td><span class="badge badge-green">0 خطأ</span></td><td class="highlight-cell">100%</td></tr>
+            <tr><td>دقة الاختيار</td><td><span class="badge badge-red">منخفضة</span></td><td><span class="badge badge-green">عالية جداً</span></td><td class="highlight-cell">تحول جوهري</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-wrapper">
+        <div class="table-title">📊 جدول (6-6): ملخص نتائج اختبار فرضيات الدراسة</div>
+        <table>
+          <thead>
+            <tr><th>الفرضية</th><th>نص الفرضية</th><th>النتيجة</th></tr>
+          </thead>
+          <tbody>
+            <tr class="highlight-row"><td>الأولى</td><td>استخدام BanqOK يقلل الوقت اللازم لمقارنة المنتجات المصرفية</td><td><span class="badge badge-green">✅ مقبولة</span></td></tr>
+            <tr class="highlight-row"><td>الثانية</td><td>يحسن الموقع دقة اختيار المستخدم للعرض الأنسب</td><td><span class="badge badge-green">✅ مقبولة</span></td></tr>
+            <tr class="highlight-row"><td>الثالثة</td><td>جودة تصميم UI/UX تؤثر إيجاباً على سهولة التعلم</td><td><span class="badge badge-green">✅ مقبولة</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 7: نموذج العمل -->
+  <section class="slide" id="slide-7">
+    <div class="slide-content">
+      <div class="section-header light">
+        <h2 class="section-title" style="color: white;">💼 نموذج العمل: 5 مصادر للإيرادات</h2>
+        <p class="section-desc">استراتيجية Freemium متعددة الطبقات تضمن استدامة مالية</p>
+      </div>
+      <div class="table-wrapper">
+        <div class="table-title">💰 توقعات الإيرادات والمصروفات للسنوات الثلاث الأولى</div>
+        <table>
+          <thead>
+            <tr><th>البيان</th><th>السنة 1</th><th>السنة 2</th><th>السنة 3</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>المستخدمون المسجلون</td><td>50,000</td><td>150,000</td><td class="highlight-cell">300,000</td></tr>
+            <tr><td>المستخدمون النشطون شهرياً</td><td>15,000</td><td>50,000</td><td class="highlight-cell">100,000</td></tr>
+            <tr><td>إيرادات الاشتراكات والنقاط</td><td>0.5 م.ج</td><td>2 م.ج</td><td>5 م.ج</td></tr>
+            <tr><td>إيرادات الإعلانات والرعاية</td><td>1 م.ج</td><td>4 م.ج</td><td>10 م.ج</td></tr>
+            <tr><td>إيرادات الإحالة والعمولات</td><td>0.5 م.ج</td><td>3 م.ج</td><td>8 م.ج</td></tr>
+            <tr><td>إيرادات تقارير السوق</td><td>0</td><td>1 م.ج</td><td>2 م.ج</td></tr>
+            <tr class="highlight-row"><td><strong>إجمالي الإيرادات</strong></td><td><strong>2 م.ج</strong></td><td><strong>10 م.ج</strong></td><td class="highlight-cell"><strong>25 م.ج</strong></td></tr>
+            <tr><td>صافي الربح</td><td>0.5 م.ج</td><td>5 م.ج</td><td class="highlight-cell">13 م.ج</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 8: خريطة الطريق -->
+  <section class="slide" id="slide-8">
+    <div class="slide-content">
+      <div class="section-header light">
+        <h2 class="section-title" style="color: white;">🗺️ خريطة الطريق التقنية</h2>
+        <p class="section-desc">من MVP إلى منصة إقليمية رائدة في 24 شهراً</p>
+      </div>
+      <div class="roadmap">
+        <div class="roadmap-step">
+          <div class="roadmap-dot">1</div>
+          <h4>الآن - الإطلاق التجريبي</h4>
+          <p>اختبار MVP مع 1,000 مستخدم أولي. جمع الملاحظات وتحسين UX.</p>
+        </div>
+        <div class="roadmap-step">
+          <div class="roadmap-dot">2</div>
+          <h4>6-12 شهراً</h4>
+          <p>بناء البنية الخلفية. الانتقال إلى خادم سحابي + PostgreSQL. تطوير RESTful API.</p>
+        </div>
+        <div class="roadmap-step">
+          <div class="roadmap-dot">3</div>
+          <h4>12-18 شهراً</h4>
+          <p>إطلاق نظام الاشتراكات. عقود إعلانات مع البنوك. تطبيق PWA للجوال.</p>
+        </div>
+        <div class="roadmap-step">
+          <div class="roadmap-dot">4</div>
+          <h4>18-24 شهراً</h4>
+          <p>الربط مع Open Banking APIs. التوسع لأسواق عربية. نقطة التعادل.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 9: الفريق -->
+  <section class="slide" id="slide-9">
+    <div class="slide-content">
+      <div class="section-header light">
+        <h2 class="section-title" style="color: white;">👥 فريق العمل</h2>
+        <p class="section-desc">فريق متكامل يجمع بين الخبرة التقنية والمالية والتسويقية</p>
+      </div>
+      <div class="cards-grid" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="info-card" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white;">
+          <div class="card-icon" style="background: rgba(16,185,129,0.2); color: var(--primary);">👨‍💼</div>
+          <h3 style="color: white;">الرئيس التنفيذي</h3>
+          <p style="color: rgba(255,255,255,0.7);">مطور Full-Stack. قائد المشروع والرؤية الشاملة.</p>
+        </div>
+        <div class="info-card" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white;">
+          <div class="card-icon" style="background: rgba(59,130,246,0.2); color: var(--accent);">👨‍💻</div>
+          <h3 style="color: white;">المدير التقني</h3>
+          <p style="color: rgba(255,255,255,0.7);">مطور Front-End. متخصص JavaScript و React.</p>
+        </div>
+        <div class="info-card" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white;">
+          <div class="card-icon" style="background: rgba(251,191,36,0.2); color: #fbbf24;">📊</div>
+          <h3 style="color: white;">المحلل المالي</h3>
+          <p style="color: rgba(255,255,255,0.7);">خبير في التحليل المصرفي. دقة البيانات المالية.</p>
+        </div>
+        <div class="info-card" style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); color: white;">
+          <div class="card-icon" style="background: rgba(139,92,246,0.2); color: #8b5cf6;">📱</div>
+          <h3 style="color: white;">مدير التسويق</h3>
+          <p style="color: rgba(255,255,255,0.7);">متخصص SEO. بناء المجتمعات واكتساب المستخدمين.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- الشريحة 10: الخاتمة وطلب التمويل -->
+  <section class="slide cta-slide" id="slide-10">
+    <div class="slide-content">
+      <div class="cta-content">
+        <h2>🚀 فرصة استثمارية واعدة</h2>
+        <p style="font-size: 1.3rem;">
+          نبحث عن تمويل بقيمة <strong style="color: #fbbf24;">2 مليون جنيه مصري</strong><br>
+          مقابل حصة 15-18% من أسهم الشركة
+        </p>
+        <div class="cta-numbers">
+          <div class="cta-number">
+            <span class="num">30M</span>
+            <span class="lbl">قيمة الحصة بعد 3 سنوات</span>
+          </div>
+          <div class="cta-number">
+            <span class="num">15x</span>
+            <span class="lbl">مضاعف العائد المتوقع</span>
+          </div>
+          <div class="cta-number">
+            <span class="num">45M</span>
+            <span class="lbl">عميل مصرفي محتمل</span>
+          </div>
+        </div>
+        <div style="background: rgba(0,0,0,0.2); backdrop-filter: blur(10px); padding: 20px 30px; border-radius: 20px; display: inline-block; margin-bottom: 30px;">
+          <p style="font-size: 1.1rem; margin: 0;">
+            📧 [بريدك الإلكتروني] &nbsp;|&nbsp; 📱 [رقم هاتفك] &nbsp;|&nbsp; 📍 القاهرة، مصر
+          </p>
+        </div>
+        <br>
+        <span class="badge badge-gold" style="font-size: 1.5rem; padding: 15px 30px;">BanqOK - قارن. اختر. وفر.</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- شريط التنقل السفلي -->
+<div class="slide-nav" id="slide-nav">
+  <button class="slide-nav-arrow" id="prev-slide" title="السابق">◀</button>
+  <div class="slide-nav-dot active" data-slide="1"></div>
+  <div class="slide-nav-dot" data-slide="2"></div>
+  <div class="slide-nav-dot" data-slide="3"></div>
+  <div class="slide-nav-dot" data-slide="4"></div>
+  <div class="slide-nav-dot" data-slide="5"></div>
+  <div class="slide-nav-dot" data-slide="6"></div>
+  <div class="slide-nav-dot" data-slide="7"></div>
+  <div class="slide-nav-dot" data-slide="8"></div>
+  <div class="slide-nav-dot" data-slide="9"></div>
+  <div class="slide-nav-dot" data-slide="10"></div>
+  <button class="slide-nav-arrow" id="next-slide" title="التالي">▶</button>
+</div>
+
+<script>
+  let currentSlide = 1;
+  const totalSlides = 10;
+
+  function goToSlide(slideNum) {
+    if (slideNum < 1 || slideNum > totalSlides) return;
+    currentSlide = slideNum;
+    document.getElementById(`slide-${currentSlide}`).scrollIntoView({ behavior: 'smooth' });
+    updateUI();
+  }
+
+  function updateUI() {
+    document.getElementById('current-slide-num').textContent = currentSlide;
+    document.querySelectorAll('.slide-nav-dot').forEach(dot => {
+      dot.classList.toggle('active', parseInt(dot.dataset.slide) === currentSlide);
+    });
+  }
+
+  // أزرار التنقل
+  document.getElementById('prev-slide').addEventListener('click', () => goToSlide(currentSlide - 1));
+  document.getElementById('next-slide').addEventListener('click', () => goToSlide(currentSlide + 1));
+
+  // النقاط
+  document.querySelectorAll('.slide-nav-dot').forEach(dot => {
+    dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.slide)));
+  });
+
+  // لوحة المفاتيح
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goToSlide(currentSlide + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goToSlide(currentSlide - 1);
+    if (e.key === 'Home') goToSlide(1);
+    if (e.key === 'End') goToSlide(totalSlides);
+  });
+
+  // اللمس
+  let touchStartY = 0;
+  document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(diff) > 50) {
+      goToSlide(diff > 0 ? currentSlide + 1 : currentSlide - 1);
+    }
+  });
+
+  // تحديث الشريحة الحالية عند التمرير
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        currentSlide = parseInt(entry.target.id.replace('slide-', ''));
+        updateUI();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.slide').forEach(slide => observer.observe(slide));
+
+  // التهيئة
+  document.getElementById('total-slides').textContent = totalSlides;
+</script>
+
+</body>
+</html>

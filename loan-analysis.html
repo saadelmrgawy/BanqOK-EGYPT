@@ -1,0 +1,5291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BanqOk - تحليل القروض الذكي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="loan-data.js"></script>
+  <style>
+    :root {
+      --primary-color: #10b981;
+      --primary-hover: #059669;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --light-green: #d1fae5;
+      --text-color: #1f2937;
+      --light-text: #6b7280;
+      --bg-color: #f9fafb;
+      --card-bg: #ffffff;
+      --border-radius-sm: 12px;
+      --border-radius-md: 16px;
+      --border-radius-lg: 24px;
+      --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 20px 40px rgba(16, 185, 129, 0.15);
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --transition-slow: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      --danger-color: #ef4444;
+      --warning-color: #fbbf24;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes slideInDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    @keyframes floatParticle {
+      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.1; }
+      20% { opacity: 0.3; transform: translate(20px, -40px) rotate(120deg) scale(1.1); }
+      40% { opacity: 0.5; transform: translate(-30px, -80px) rotate(240deg) scale(1.2); }
+      60% { opacity: 0.7; transform: translate(40px, -120px) rotate(360deg) scale(1.3); }
+      80% { opacity: 0.4; transform: translate(-20px, -160px) rotate(480deg) scale(1.1); }
+    }
+    @keyframes floatParticleHorizontal {
+      0%, 100% { transform: translateX(0) rotate(0deg) scale(1); opacity: 0.1; }
+      25% { opacity: 0.3; transform: translateX(80px) rotate(180deg) scale(1.2); }
+      50% { opacity: 0.5; transform: translateX(-60px) rotate(360deg) scale(1.3); }
+      75% { opacity: 0.2; transform: translateX(40px) rotate(540deg) scale(1.1); }
+    }
+    @keyframes particleSparkle {
+      0%, 100% { opacity: 0.1; transform: scale(0.8); }
+      50% { opacity: 0.7; transform: scale(1.3); }
+    }
+    @keyframes particleOrbit {
+      0% { transform: rotate(0deg) translateX(20px) rotate(0deg); opacity: 0.2; }
+      100% { transform: rotate(360deg) translateX(20px) rotate(-360deg); opacity: 0.2; }
+    }
+    @keyframes loading-progress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    @keyframes countdown-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes toast-slide {
+      0% { transform: translateX(100%); opacity: 0; }
+      10% { transform: translateX(0); opacity: 1; }
+      90% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+
+    .point-card::after,
+    .service-card::after,
+    .bank-card::after,
+    .payment-method::after,
+    .store-btn::after,
+    .primary-btn::after,
+    .secondary-btn::after,
+    .refresh-btn::after,
+    .export-btn::after,
+    .delete-all-btn::after,
+    .purchase-btn::after,
+    .notifications-nav-btn::after,
+    .user-avatar-btn::after,
+    .history-nav-btn::after,
+    .delete-notification-btn::after,
+    .delete-all-notifications-btn::after,
+    .footer-social-icon::after,
+    .app-badge::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      transition: left 0.6s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .point-card:hover::after,
+    .service-card:hover::after,
+    .bank-card:hover::after,
+    .payment-method:hover::after,
+    .store-btn:hover::after,
+    .primary-btn:hover::after,
+    .secondary-btn:hover::after,
+    .refresh-btn:hover::after,
+    .export-btn:hover::after,
+    .delete-all-btn:hover::after,
+    .purchase-btn:hover::after,
+    .notifications-nav-btn:hover::after,
+    .user-avatar-btn:hover::after,
+    .history-nav-btn:hover::after,
+    .delete-notification-btn:hover::after,
+    .delete-all-notifications-btn:hover::after,
+    .footer-social-icon:hover::after,
+    .app-badge:hover::after {
+      left: 150%;
+    }
+
+    .point-card,
+    .service-card,
+    .bank-card,
+    .payment-method,
+    .stat-card,
+    .feature-card {
+      transition: transform var(--transition-slow), box-shadow var(--transition-slow), border-color var(--transition-slow);
+    }
+
+    .point-card:hover,
+    .service-card:hover,
+    .bank-card:hover,
+    .payment-method:hover,
+    .stat-card:hover,
+    .feature-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .welcome-section {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      transition: background 0.3s ease;
+    }
+
+    .electronic-wallet {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #0d8b63 100%);
+      transition: background 0.3s ease;
+    }
+
+    .primary-btn, .secondary-btn, .refresh-btn, .export-btn, .delete-all-btn, .purchase-btn, .notifications-nav-btn, .user-avatar-btn, .history-nav-btn, .delete-notification-btn, .delete-all-notifications-btn,
+    .footer-social-icon, .app-badge {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-eko {
+      width: clamp(90px, 20vw, 140px);
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .loading-text {
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 15px;
+      font-family: 'Cairo', sans-serif;
+    }
+    .loading-bar {
+      width: 250px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .loading-progress {
+      height: 100%;
+      width: 0%;
+      background: white;
+      border-radius: 10px;
+      animation: loading 2s ease-in-out forwards;
+    }
+    @keyframes loading {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    .analysis-loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      transition: opacity 0.5s ease;
+    }
+    .analysis-loading-screen.active {
+      display: flex;
+    }
+    .analysis-loading-eko {
+      width: 180px;
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.4));
+      animation: float 3s ease-in-out infinite;
+    }
+    .analysis-loading-text {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .analysis-loading-progress-container {
+      width: 350px;
+      text-align: center;
+      background: rgba(0,0,0,0.1);
+      padding: 20px;
+      border-radius: 60px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .analysis-loading-progress-bar {
+      width: 100%;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 30px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .analysis-loading-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #fff, #f0f0f0);
+      border-radius: 30px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 20px #fff;
+    }
+    .analysis-loading-time {
+      color: white;
+      font-size: 1.2rem;
+      opacity: 0.9;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .analysis-loading-countdown-circle {
+      width: 80px;
+      height: 80px;
+      margin: 20px auto 0;
+      border: 6px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-right-color: white;
+      border-radius: 50%;
+      animation: countdown-spin 2s linear infinite;
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+    }
+    .analysis-message {
+      color: white;
+      font-size: 1rem;
+      margin-top: 15px;
+      opacity: 0.8;
+      font-weight: 400;
+    }
+
+    .toast-points {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: var(--primary-color);
+      color: white;
+      padding: 12px 25px;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 9999;
+      animation: toast-slide 4s ease forwards;
+      border: 1px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(5px);
+    }
+    .toast-points i {
+      font-size: 1.3rem;
+    }
+
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 5%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    .logo-section {
+      display: flex;
+      align-items: center;
+    }
+    .logo-section img {
+      height: 55px;
+      width: auto;
+      transition: transform 0.3s;
+    }
+    .logo-section img:hover {
+      transform: scale(1.05);
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .history-nav-btn {
+      padding: 10px 20px;
+      border-radius: var(--border-radius-md);
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 600;
+      font-family: 'Cairo', sans-serif;
+      text-decoration: none;
+      position: relative;
+      overflow: visible;
+    }
+    .history-nav-btn:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+    }
+    .refresh-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      font-size: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .refresh-btn:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: rotate(90deg);
+    }
+    .refresh-btn.spinning {
+      animation: spin 0.5s linear infinite;
+    }
+    .user-avatar-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+      background: white;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      padding: 0;
+      position: relative;
+    }
+    .user-avatar-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+      background: var(--light-green);
+    }
+    .user-avatar-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .user-avatar-btn i {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    .user-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      animation: fadeIn 0.3s ease;
+    }
+    .user-modal.active {
+      display: flex;
+    }
+    .user-modal-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      text-align: right;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 0.4s ease;
+    }
+    .user-modal-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--light-text);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+    .user-modal-close:hover {
+      background: #f3f4f6;
+      color: var(--text-color);
+    }
+    .user-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+    }
+    .user-modal-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-color);
+      flex-shrink: 0;
+    }
+    .user-modal-info h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: var(--text-color);
+    }
+    .user-modal-info p {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+      color: var(--light-text);
+    }
+    .user-modal-divider {
+      height: 1px;
+      background: #eee;
+      margin: 15px 0;
+    }
+    .user-modal-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      color: var(--text-color);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.3s;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .user-modal-item:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: translateX(-5px);
+    }
+    .user-modal-item i {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    .logout-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1005;
+      animation: fadeIn 0.3s ease;
+    }
+    .logout-modal.active {
+      display: flex;
+    }
+    .logout-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: fadeInUp 0.4s ease;
+    }
+    .logout-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: var(--danger-color, #ef4444);
+    }
+    .logout-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--text-color);
+    }
+    .logout-message {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      color: var(--light-text);
+    }
+    .logout-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .main-container {
+      flex: 1;
+      padding: 20px 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .header-section {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      color: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+      animation: fadeInUp 0.5s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .header-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      transform: skewX(-15deg) translateX(-100%);
+      transition: transform 0.6s ease;
+      z-index: -1;
+    }
+    .header-section:hover::before {
+      transform: skewX(-15deg) translateX(100%);
+    }
+    .header-section .header-text,
+    .header-section .header-eko {
+      position: relative;
+      z-index: 2;
+    }
+    .header-text h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .header-text p {
+      margin: 10px 0 0;
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+    .header-eko {
+      width: 200px;
+      animation: float 4s ease-in-out infinite;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+    }
+
+    .wallet-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 20px 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      animation: slideInRight 0.6s ease;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title i {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+    .electronic-wallet {
+      background: linear-gradient(135deg, #10b981 0%, #0d8b63 100%);
+      color: white;
+      border-radius: var(--border-radius-md);
+      padding: 15px 20px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .electronic-wallet::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 150%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      z-index: -1;
+    }
+    .wallet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      position: relative;
+      z-index: 2;
+    }
+    .wallet-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .wallet-logo i {
+      font-size: 1.2rem;
+    }
+    .wallet-balance {
+      text-align: center;
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 2;
+    }
+    .wallet-balance .balance-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 5px;
+    }
+    .wallet-balance .balance-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .wallet-balance .currency {
+      font-size: 1.2rem;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+    .last-update {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+    }
+
+    .data-form-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      animation: slideInLeft 0.6s ease;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius-md);
+      font-size: 1rem;
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.3s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    
+    .form-group input[type="range"] {
+      padding: 0;
+      height: 8px;
+    }
+    
+    .range-value {
+      display: inline-block;
+      margin-right: 10px;
+      font-weight: 700;
+      color: var(--primary-color);
+      min-width: 60px;
+    }
+    
+    .range-container {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+    }
+    
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    
+    .radio-option input {
+      width: auto;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+      padding-top: 30px;
+      border-top: 1px solid #eee;
+    }
+    
+    .analyze-btn {
+      padding: 15px 40px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius-md);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .analyze-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+    
+    .analyze-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    .analyze-btn.spinning i {
+      animation: spin 1s linear infinite;
+    }
+
+    .results-section {
+      display: none;
+      animation: fadeIn 0.8s ease;
+    }
+    
+    .results-section.active {
+      display: block;
+    }
+    
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .results-filter {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-select {
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius-md);
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      background: white;
+      flex: 1 1 200px;
+      min-width: 200px;
+    }
+    
+    .best-bank-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      border: 3px solid var(--primary-color);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .best-bank-badge {
+      position: absolute;
+      top: 20px;
+      left: -35px;
+      background: var(--primary-color);
+      color: white;
+      padding: 8px 40px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transform: rotate(-45deg);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+    
+    .best-bank-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .best-bank-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .best-bank-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: white;
+      padding: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border: 2px solid var(--primary-color);
+    }
+    
+    .best-bank-details h3 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .best-bank-details p {
+      margin: 5px 0 0;
+      color: var(--light-text);
+    }
+    
+    .best-bank-score {
+      background: var(--bg-color);
+      padding: 15px 25px;
+      border-radius: var(--border-radius-md);
+      text-align: center;
+      border: 2px solid var(--primary-color);
+    }
+    
+    .score-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      line-height: 1;
+    }
+    
+    .score-label {
+      font-size: 0.9rem;
+      color: var(--light-text);
+      margin-top: 5px;
+    }
+    
+    .best-bank-reason {
+      background: var(--light-green);
+      padding: 20px;
+      border-radius: var(--border-radius-md);
+      margin-bottom: 25px;
+      border-right: 5px solid var(--primary-color);
+    }
+    
+    .reason-title {
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-color);
+    }
+    
+    .best-bank-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    
+    .best-bank-card {
+      background: var(--bg-color);
+      border-radius: var(--border-radius-md);
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .best-bank-card .value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+    
+    .best-bank-card .label {
+      font-size: 0.9rem;
+      color: var(--light-text);
+    }
+    
+    .best-bank-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    
+    .bank-action-btn {
+      padding: 12px 25px;
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .details-btn {
+      background: var(--accent-color);
+      color: white;
+    }
+    
+    .details-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-3px);
+    }
+    
+    .apply-btn {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .apply-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-3px);
+    }
+    
+    .save-result-btn {
+      background: var(--bg-color);
+      color: var(--text-color);
+      border: 1px solid #ddd;
+    }
+    
+    .save-result-btn:hover {
+      background: var(--light-green);
+      border-color: var(--primary-color);
+      transform: translateY(-3px);
+    }
+
+    .alternative-banks-section {
+      margin-bottom: 40px;
+    }
+    
+    .alternative-banks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+    }
+    
+    .alternative-bank-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 25px;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s;
+      border-top: 5px solid var(--accent-color);
+    }
+    
+    .alternative-bank-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .alternative-bank-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .alternative-bank-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .alternative-bank-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: white;
+      padding: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    
+    .alternative-bank-name h4 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    
+    .alternative-bank-name p {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+      color: var(--light-text);
+    }
+    
+    .alternative-bank-score {
+      background: var(--bg-color);
+      padding: 8px 15px;
+      border-radius: var(--border-radius-md);
+      font-weight: 700;
+      color: var(--accent-color);
+    }
+    
+    .alternative-bank-details {
+      margin-bottom: 20px;
+    }
+    
+    .alternative-bank-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .alternative-bank-detail:last-child {
+      border-bottom: none;
+    }
+    
+    .alternative-bank-detail .label {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .alternative-bank-detail .value {
+      color: var(--light-text);
+    }
+    
+    .alternative-bank-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .comparison-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .charts-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 30px;
+      margin-top: 25px;
+    }
+    
+    .chart-container {
+      background: var(--bg-color);
+      border-radius: var(--border-radius-md);
+      padding: 20px;
+      height: 300px;
+      position: relative;
+    }
+    .chart-container canvas {
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    }
+    
+    .pie-charts-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin: 30px 0;
+    }
+    .pie-chart-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 25px;
+      box-shadow: var(--shadow-md);
+      text-align: center;
+      transition: all 0.3s ease;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    .pie-chart-card:hover {
+      transform: translateY(-8px) scale(1.02) rotateX(2deg);
+      box-shadow: var(--shadow-hover);
+    }
+    .pie-chart-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .pie-chart-title i {
+      color: var(--primary-color);
+    }
+    .mini-chart-container {
+      height: 250px;
+      position: relative;
+    }
+    
+    .time-chart-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+    }
+    .time-chart-container {
+      height: 300px;
+      margin-top: 20px;
+    }
+    
+    .eko-advice-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      border-right: 5px solid var(--primary-color);
+    }
+    
+    .eko-advice-image {
+      flex-shrink: 0;
+    }
+    
+    .eko-advice-image img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      animation: float 4s ease-in-out infinite;
+    }
+    
+    .eko-advice-content {
+      flex: 1;
+    }
+    
+    .eko-advice-content h3 {
+      margin: 0 0 10px;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .eko-advice-content p {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--text-color);
+    }
+
+    .confirm-modal,
+    .insufficient-points-modal,
+    .success-modal,
+    .bank-details-modal,
+    .history-modal,
+    .history-detail-modal,
+    .eko-no-results-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .confirm-modal.active,
+    .insufficient-points-modal.active,
+    .success-modal.active,
+    .bank-details-modal.active,
+    .history-modal.active,
+    .history-detail-modal.active,
+    .eko-no-results-modal.active {
+      display: flex;
+    }
+    
+    .confirm-content,
+    .insufficient-content,
+    .success-content,
+    .bank-details-content,
+    .history-content,
+    .history-detail-content,
+    .eko-no-results-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 0.4s ease;
+    }
+    
+    .bank-details-content,
+    .history-content,
+    .history-detail-content {
+      max-width: 800px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      text-align: right;
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--light-text);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+    
+    .modal-close:hover {
+      background: #f3f4f6;
+      color: var(--text-color);
+    }
+    
+    .modal-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--light-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 3rem;
+      color: var(--primary-color);
+    }
+    
+    .modal-icon.warning {
+      background: #fee2e2;
+      color: var(--danger-color);
+    }
+    
+    .modal-icon.success {
+      background: var(--light-green);
+      color: var(--primary-color);
+    }
+    
+    .confirm-content h3,
+    .insufficient-content h3,
+    .success-content h3,
+    .bank-details-content h3,
+    .history-content h3,
+    .history-detail-content h3,
+    .eko-no-results-content h3 {
+      margin: 0 0 15px;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .confirm-details {
+      background: var(--bg-color);
+      border-radius: var(--border-radius-md);
+      padding: 20px;
+      margin: 20px 0;
+      text-align: right;
+    }
+    
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    
+    .detail-row .label {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .detail-row .value {
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    .confirm-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .modal-btn {
+      flex: 1 1 auto;
+      padding: 12px 20px;
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      border: none;
+      min-width: 120px;
+    }
+    
+    .modal-btn.confirm {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .modal-btn.confirm:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+    
+    .modal-btn.cancel {
+      background: #f3f4f6;
+      color: var(--text-color);
+    }
+    
+    .modal-btn.cancel:hover {
+      background: #e5e7eb;
+      transform: translateY(-2px);
+    }
+    
+    .modal-btn.buy {
+      background: var(--accent-color);
+      color: white;
+    }
+    
+    .modal-btn.buy:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+    
+    .modal-btn.primary-outline {
+      background: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+    
+    .modal-btn.primary-outline:hover {
+      background: var(--light-green);
+      transform: translateY(-2px);
+    }
+    
+    .modal-btn.danger {
+      background: var(--danger-color);
+      color: white;
+    }
+    .modal-btn.danger:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+    }
+
+    .history-list {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+      transition: all 0.3s;
+    }
+    
+    .history-item:hover {
+      background: var(--light-green);
+    }
+    
+    .history-item-info {
+      flex: 1;
+    }
+    
+    .history-item-title {
+      font-weight: 700;
+      margin-bottom: 5px;
+      color: var(--text-color);
+    }
+    
+    .history-item-date {
+      font-size: 0.85rem;
+      color: var(--light-text);
+    }
+    
+    .history-item-details {
+      font-size: 0.9rem;
+      color: var(--text-color);
+      margin-top: 5px;
+    }
+    
+    .history-item-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .history-view-btn, .history-delete-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    .history-view-btn {
+      background: var(--primary-color);
+    }
+    .history-view-btn:hover {
+      transform: scale(1.1);
+      background: var(--primary-hover);
+    }
+    .history-delete-btn {
+      background: var(--danger-color);
+    }
+    .history-delete-btn:hover {
+      transform: scale(1.1);
+      background: #dc2626;
+    }
+    
+    .bank-details-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 25px;
+    }
+    
+    .bank-details-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: white;
+      padding: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border: 2px solid var(--primary-color);
+    }
+    
+    .bank-details-info h3 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    
+    .bank-details-info p {
+      margin: 5px 0 0;
+      color: var(--light-text);
+    }
+    
+    .bank-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+    
+    .bank-details-card {
+      background: var(--bg-color);
+      border-radius: var(--border-radius-md);
+      padding: 20px;
+    }
+    
+    .bank-details-card h4 {
+      margin: 0 0 15px;
+      font-size: 1.2rem;
+      color: var(--text-color);
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-color);
+    }
+    
+    .bank-details-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .bank-details-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .bank-details-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .bank-details-list .label {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .bank-details-list .value {
+      color: var(--light-text);
+      text-align: left;
+    }
+    
+    .history-detail-content .detail-section {
+      margin-bottom: 25px;
+    }
+    
+    .history-detail-content h4 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: var(--text-color);
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 8px;
+    }
+
+    /* مودال عدم وجود نتائج المحسّن */
+    .eko-no-results-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .eko-no-results-modal.active {
+      display: flex;
+    }
+    
+    .eko-no-results-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 25px;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      animation: fadeInUp 0.4s ease;
+      border-top: 5px solid #ff9800;
+    }
+    
+    .eko-no-results-content .modal-close {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--light-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    
+    .eko-no-results-content .modal-close:hover {
+      background: #f3f4f6;
+      color: var(--text-color);
+    }
+    
+    .eko-no-results-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: #fff3e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto 20px;
+      font-size: 2.5rem;
+      color: #ff9800;
+      border: 2px solid #ffe0b2;
+    }
+    
+    .eko-no-results-content h3 {
+      margin: 0 0 10px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #333;
+    }
+    
+    .eko-no-results-eko {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 50px;
+    }
+    
+    .eko-no-results-eko img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    .eko-no-results-eko span {
+      font-size: 1rem;
+      color: #555;
+      font-weight: 600;
+    }
+    
+    .eko-no-results-message {
+      background: #f0fdf4;
+      padding: 15px;
+      border-radius: var(--border-radius-md);
+      margin: 15px 0;
+      text-align: right;
+      border-right: 4px solid var(--primary-color);
+    }
+    
+    .eko-no-results-message p {
+      margin: 5px 0;
+      font-size: 0.95rem;
+    }
+    
+    .eko-no-results-message .highlight {
+      color: var(--primary-color);
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    
+    .eko-no-results-message i {
+      color: var(--primary-color);
+      margin-left: 5px;
+    }
+    
+    .eko-no-results-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    .eko-no-results-actions .modal-btn {
+      flex: 1;
+      padding: 10px;
+      font-size: 0.95rem;
+    }
+    
+    .eko-no-results-actions .modal-btn.confirm {
+      background: var(--primary-color);
+    }
+    
+    .eko-no-results-actions .modal-btn.confirm:hover {
+      background: var(--primary-hover);
+    }
+    
+    .eko-no-results-actions .modal-btn.cancel {
+      background: #f3f4f6;
+      color: var(--text-color);
+    }
+    
+    .eko-no-results-actions .modal-btn.cancel:hover {
+      background: #e5e7eb;
+    }
+
+    .eko-assistant {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 99;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .eko-assistant img {
+      width: 80px;
+      cursor: pointer;
+      transition: all 0.3s;
+      filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+    }
+
+    .eko-assistant:hover img {
+      transform: scale(1.1);
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    .eko-tooltip {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      background: white;
+      color: var(--text-color);
+      padding: 15px;
+      border-radius: 12px;
+      width: 300px;
+      max-width: 90vw;
+      text-align: right;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border: 1px solid #e5e7eb;
+      z-index: 1000;
+      white-space: normal;
+      word-wrap: break-word;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      margin-bottom: 10px;
+    }
+
+    .eko-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 20px;
+      border-width: 8px;
+      border-style: solid;
+      border-color: white transparent transparent transparent;
+    }
+
+    .eko-assistant.active .eko-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .alert {
+      padding: 15px 20px;
+      border-radius: var(--border-radius-md);
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.5s ease;
+      display: none;
+    }
+    
+    .alert-success {
+      background: var(--light-green);
+      color: var(--primary-color);
+      border-right: 5px solid var(--primary-color);
+    }
+    
+    .alert-error {
+      background: #fee2e2;
+      color: var(--danger-color);
+      border-right: 5px solid var(--danger-color);
+    }
+    
+    .alert-info {
+      background: #dbeafe;
+      color: var(--accent-color);
+      border-right: 5px solid var(--accent-color);
+    }
+    
+    .alert i {
+      font-size: 1.3rem;
+    }
+
+    .footer {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 30px 5% 15px;
+      position: relative;
+      overflow: hidden;
+      direction: rtl;
+      font-family: 'Cairo', sans-serif;
+      border-top: 5px solid linear-gradient(90deg, #10b981, #3b82f6);
+      box-shadow: 0 -20px 40px rgba(0,0,0,0.1);
+      margin-top: 30px;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+      z-index: 10;
+    }
+    #footer-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 5;
+    }
+    .footer-col-main {
+      text-align: right;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+    }
+    .footer-logo img {
+      height: 50px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      transition: transform 0.3s ease;
+    }
+    .footer-logo img:hover {
+      transform: scale(1.05);
+    }
+    .footer-about {
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+      color: #cbd5e1;
+      font-weight: 400;
+      max-width: 400px;
+    }
+    .footer-social {
+      margin-bottom: 15px;
+    }
+    .social-title {
+      font-size: 0.9rem;
+      color: white;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .social-icons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .footer-social-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      color: #e2e8f0;
+      font-size: 1rem;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    .footer-social-icon::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      transition: left 0.4s ease;
+      pointer-events: none;
+    }
+    .footer-social-icon:hover::after {
+      left: 150%;
+    }
+    .footer-social-icon:hover {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-6px) scale(1.1);
+      box-shadow: 0 10px 25px rgba(16,185,129,0.4);
+      border-color: transparent;
+    }
+    .footer-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(16,185,129,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-title i {
+      color: #10b981;
+      font-size: 1.1rem;
+    }
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .footer-links li {
+      margin-bottom: 8px;
+    }
+    .footer-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      padding-right: 5px;
+    }
+    .footer-links a i {
+      font-size: 0.75rem;
+      color: #10b981;
+      transition: all 0.3s ease;
+    }
+    .footer-links a:hover {
+      color: white;
+      padding-right: 12px;
+    }
+    .footer-links a:hover i {
+      transform: translateX(-5px);
+    }
+    .footer-app-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .app-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-badge::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      transition: left 0.6s ease;
+      pointer-events: none;
+    }
+    .app-badge:hover::after {
+      left: 150%;
+    }
+    .app-badge:hover {
+      background: rgba(16,185,129,0.2);
+      border-color: #10b981;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(16,185,129,0.2);
+    }
+    .app-badge i {
+      font-size: 1.5rem;
+      color: #10b981;
+    }
+    .app-badge-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .app-badge-label {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      color: #cbd5e1;
+    }
+    .app-badge-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: white;
+    }
+    .footer-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), rgba(16,185,129,0.5), rgba(255,255,255,0.2), transparent);
+      margin: 15px 0 15px;
+      grid-column: 1 / -1;
+    }
+    .footer-bottom {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-copyright {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+    .copyright-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .separator {
+      color: #475569;
+      margin: 0 3px;
+    }
+    .legal-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .legal-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-size: 0.8rem;
+    }
+    .legal-links a:hover {
+      color: #10b981;
+      text-decoration: underline;
+    }
+    .dot {
+      color: #475569;
+      margin: 0 4px;
+    }
+    .footer-credits {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #64748b;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      opacity: 0;
+      font-size: 1.5rem;
+      will-change: transform, opacity;
+      text-shadow: 0 0 10px currentColor;
+    }
+    .welcome-particle {
+      animation: floatParticle 18s linear infinite, particleSparkle 3s ease-in-out infinite;
+      opacity: 0.2;
+    }
+    .footer-particle {
+      animation: floatParticleHorizontal 25s linear infinite, particleSparkle 4s ease-in-out infinite;
+      opacity: 0.15;
+    }
+    .wallet-particle {
+      animation: floatParticle 15s linear infinite, particleSparkle 2.5s ease-in-out infinite;
+      opacity: 0.25;
+    }
+    .header-particle {
+      animation: floatParticle 20s linear infinite, particleSparkle 3.5s ease-in-out infinite;
+      opacity: 0.2;
+    }
+
+    @media (max-width: 1200px) {
+      .main-container { padding: 15px; }
+      .footer-content { grid-template-columns: 2fr 1fr 1fr; }
+    }
+
+    @media (max-width: 992px) {
+      .header-section { flex-direction: column; text-align: center; gap: 20px; }
+      .header-eko { width: 100px; }
+      .alternative-banks-grid { grid-template-columns: 1fr; }
+      .best-bank-header { flex-direction: column; gap: 20px; align-items: flex-start; }
+      .best-bank-score { align-self: flex-start; }
+      .eko-advice-section { flex-direction: column; text-align: center; }
+      .footer-content { grid-template-columns: 1fr 1fr; }
+      .footer-col-main { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-bar { padding: 10px 15px; }
+      .logo-section img { height: 40px; }
+      .user-avatar-btn { width: 40px; height: 40px; }
+      .history-nav-btn span { display: none; }
+      .history-nav-btn { width: 40px; height: 40px; padding: 0; justify-content: center; }
+      .header-text h1 { font-size: 1.5rem; }
+      .wallet-balance .balance-value { font-size: 2rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      .best-bank-info { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .best-bank-actions { flex-direction: column; }
+      .best-bank-actions .bank-action-btn { width: 100%; justify-content: center; }
+      .alternative-bank-actions .bank-action-btn { flex: 1; justify-content: center; }
+      .charts-container { grid-template-columns: 1fr; }
+      .chart-container { height: 250px; }
+      .results-filter { flex-direction: row; }
+      .filter-select { min-width: 150px; }
+      .footer { padding: 20px 15px 12px; text-align: center; }
+      .footer-content { grid-template-columns: 1fr; gap: 20px; }
+      .footer-col { text-align: center; }
+      .footer-logo { justify-content: center; }
+      .social-icons { justify-content: center; }
+      .footer-links a:hover { padding-right: 0; }
+      .footer-app-buttons { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .app-badge { min-height: 64px; justify-content: center; padding: 14px 16px; border-radius: 16px; }
+      .app-badge i { font-size: 1.9rem; }
+      .app-badge-name { font-size: 1rem; font-weight: 800; }
+      .app-badge-label { font-size: 0.75rem; font-weight: 600; }
+      .eko-assistant { bottom: 15px; right: 15px; }
+      .eko-assistant img { width: 60px; }
+      .eko-tooltip { width: 250px; font-size: 0.9rem; }
+      .bank-details-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 576px) {
+      .section-title { font-size: 1.3rem; }
+      .wallet-balance .balance-value { font-size: 1.8rem; }
+      .points-notice { flex-direction: column; gap: 15px; align-items: flex-start; }
+      .best-bank-grid { grid-template-columns: 1fr; }
+      .alternative-bank-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .alternative-bank-actions { flex-direction: column; }
+      .alternative-bank-actions .bank-action-btn { width: 100%; }
+      .results-header { flex-direction: column; align-items: flex-start; }
+      .results-filter { width: 100%; }
+      .filter-select { flex: 1; min-width: 0; }
+      .eko-assistant img { width: 50px; }
+      .eko-tooltip { width: 200px; font-size: 0.85rem; }
+      .footer-about { font-size: 0.85rem; }
+      .footer-links h3 { font-size: 1rem; }
+      .footer-social-icon { width: 36px; height: 36px; font-size: 1rem; }
+      .confirm-actions { flex-direction: column; }
+      .confirm-actions .modal-btn { width: 100%; }
+      .eko-no-results-actions { flex-direction: column; }
+      .eko-no-results-actions .modal-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- شاشة التحميل الابتدائية -->
+  <div class="loading-screen" id="loading-screen">
+    <img src="./ASSETS/EQO/advising.png" alt="إيكو يتحمّل" class="loading-eko">
+    <div class="loading-text" id="loading-text">إيكو بيجهّزلك تحليل القروض...</div>
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
+    </div>
+  </div>
+
+  <!-- شاشة تحليل التحميل المطورة (الـ 15 ثانية) -->
+  <div class="analysis-loading-screen" id="analysis-loading-screen">
+    <img src="./ASSETS/EQO/sure.png" alt="إيكو يحلل" class="analysis-loading-eko">
+    <div class="analysis-loading-text" id="analysis-loading-text">إيكو بيحلل بياناتك...</div>
+    <div class="analysis-loading-progress-container">
+      <div class="analysis-loading-progress-bar">
+        <div class="analysis-loading-progress-fill" id="analysis-loading-progress-fill"></div>
+      </div>
+      <div class="analysis-loading-time" id="analysis-loading-time">15 ثانية متبقية</div>
+      <div class="analysis-loading-countdown-circle"></div>
+      <div class="analysis-message" id="analysis-message">جاري تحليل عروض البنوك...</div>
+    </div>
+  </div>
+
+  <!-- مودال المستخدم -->
+  <div class="user-modal" id="user-modal">
+    <div class="user-modal-content">
+      <button class="user-modal-close" id="user-modal-close">×</button>
+      <div class="user-modal-header">
+        <img src="./ASSETS/EQO/user.png" alt="صورة المستخدم" class="user-modal-avatar" id="user-modal-avatar">
+        <div class="user-modal-info">
+          <h3 id="user-modal-name">اسم المستخدم</h3>
+          <p id="user-modal-email">البريد الإلكتروني</p>
+        </div>
+      </div>
+      <div class="user-modal-divider"></div>
+      <a href="index.html" class="user-modal-item">
+        <i class="bi bi-house-door"></i>
+        الصفحة الرئيسية
+      </a>
+      <a href="dashboard.html" class="user-modal-item">
+        <i class="bi bi-speedometer2"></i>
+        لوحة التحكم
+      </a>
+      <a href="settings.html" class="user-modal-item">
+        <i class="bi bi-gear"></i>
+        إعدادات الحساب
+      </a>
+      <div class="user-modal-divider"></div>
+      <a href="#" class="user-modal-item user-modal-logout" id="user-modal-logout">
+        <i class="bi bi-box-arrow-left"></i>
+        تسجيل الخروج
+      </a>
+    </div>
+  </div>
+
+  <!-- مودال تأكيد تسجيل الخروج -->
+  <div class="logout-modal" id="logout-confirm-modal">
+    <div class="logout-content">
+      <div class="logout-icon">
+        <i class="bi bi-box-arrow-left"></i>
+      </div>
+      <h3 class="logout-title">تأكيد تسجيل الخروج</h3>
+      <p class="logout-message">هل أنت متأكد من تسجيل الخروج؟</p>
+      <div class="logout-buttons">
+        <button class="modal-btn cancel" id="logout-cancel">إلغاء</button>
+        <button class="modal-btn confirm" id="logout-confirm" style="background-color: var(--danger-color);">نعم، سجل الخروج</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال عدم كفاية الرصيد -->
+  <div class="insufficient-points-modal" id="insufficient-modal">
+    <div class="insufficient-content">
+      <button class="modal-close" id="insufficient-close">×</button>
+      <div class="modal-icon warning">
+        <i class="bi bi-exclamation-triangle"></i>
+      </div>
+      <h3>رصيد غير كافٍ</h3>
+      <div class="confirm-details">
+        <div class="detail-row">
+          <span class="label">تكلفة الخدمة:</span>
+          <span class="value" id="insufficient-cost">15 نقطة</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">رصيدك الحالي:</span>
+          <span class="value" id="insufficient-balance">0 نقطة</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">النقاط المطلوبة:</span>
+          <span class="value" id="insufficient-needed">15 نقطة</span>
+        </div>
+      </div>
+      <p style="color: var(--light-text); margin: 20px 0;">
+        رصيد نقاطك غير كافٍ لاستخدام هذه الخدمة. يمكنك شحن رصيدك من لوحة التحكم.
+      </p>
+      <div class="confirm-actions">
+        <button class="modal-btn cancel" id="insufficient-cancel">رجوع</button>
+        <button class="modal-btn buy" id="insufficient-buy">شحن الرصيد</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال نجاح العملية -->
+  <div class="success-modal" id="success-modal">
+    <div class="success-content">
+      <button class="modal-close" id="success-close">×</button>
+      <div class="modal-icon success">
+        <i class="bi bi-check-circle"></i>
+      </div>
+      <h3>تمت العملية بنجاح!</h3>
+      <div class="confirm-details">
+        <div class="detail-row">
+          <span class="label">الخدمة:</span>
+          <span class="value">تحليل القروض الذكي</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">تكلفة الخدمة:</span>
+          <span class="value" id="success-deducted">15 نقطة</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">الرصيد المتبقي:</span>
+          <span class="value" id="success-remaining">0 نقطة</span>
+        </div>
+      </div>
+      <p style="color: var(--light-text); margin-bottom: 20px;">
+        تم خصم التكلفة من رصيدك بنجاح. جاري تحليل بياناتك...
+      </p>
+      <button class="modal-btn confirm" id="success-continue">متابعة التحليل</button>
+    </div>
+  </div>
+
+  <!-- مودال تفاصيل البنك -->
+  <div class="bank-details-modal" id="bank-details-modal">
+    <div class="bank-details-content">
+      <button class="modal-close" id="bank-details-close">×</button>
+      <div class="bank-details-header">
+        <img id="detail-bank-logo" src="./ASSETS/banks/NBE.jpg" alt="شعار البنك" class="bank-details-logo">
+        <div class="bank-details-info">
+          <h3 id="detail-bank-name">البنك الأهلي المصري</h3>
+          <p id="detail-bank-type">بنك حكومي</p>
+        </div>
+      </div>
+      
+      <div class="bank-details-grid">
+        <div class="bank-details-card">
+          <h4>معلومات عامة</h4>
+          <ul class="bank-details-list" id="detail-general-info">
+            <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+          </ul>
+        </div>
+        
+        <div class="bank-details-card">
+          <h4>بيانات القروض</h4>
+          <ul class="bank-details-list" id="detail-loan-info">
+            <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+          </ul>
+        </div>
+        
+        <div class="bank-details-card">
+          <h4>شروط القبول</h4>
+          <ul class="bank-details-list" id="detail-conditions">
+            <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+          </ul>
+        </div>
+        
+        <div class="bank-details-card">
+          <h4>التكاليف الإضافية</h4>
+          <ul class="bank-details-list" id="detail-extra-costs">
+            <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال سجل العمليات المحفوظة -->
+  <div class="history-modal" id="history-modal">
+    <div class="history-content">
+      <button class="modal-close" id="history-close">×</button>
+      <h3><i class="bi bi-bookmark-star" style="color: var(--primary-color); margin-left: 10px;"></i>العمليات المحفوظة</h3>
+      
+      <div class="history-list" id="history-list">
+        <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+      </div>
+      
+      <div class="confirm-actions" style="justify-content: center;">
+        <button class="modal-btn cancel" id="history-close-btn">إغلاق</button>
+        <button class="modal-btn danger" id="delete-all-history-btn"><i class="bi bi-trash"></i> حذف الكل</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال تفاصيل العملية المحفوظة -->
+  <div class="history-detail-modal" id="history-detail-modal">
+    <div class="history-detail-content">
+      <button class="modal-close" id="history-detail-close">×</button>
+      <h3><i class="bi bi-file-text" style="color: var(--primary-color); margin-left: 10px;"></i>تفاصيل العملية</h3>
+      
+      <div id="history-detail-container">
+        <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+      </div>
+      
+      <div class="confirm-actions" style="justify-content: center; margin-top: 20px;">
+        <button class="modal-btn confirm" id="history-detail-ok">حسناً</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال إيكو المحسّن لعدم وجود نتائج -->
+  <div class="eko-no-results-modal" id="eko-no-results-modal">
+    <div class="eko-no-results-content">
+      <button class="modal-close" id="eko-no-results-close">×</button>
+      
+      <div class="eko-no-results-icon">
+        <i class="bi bi-emoji-frown"></i>
+      </div>
+      
+      <h3>لا توجد بنوك مناسبة!</h3>
+      
+      <div class="eko-no-results-eko">
+        <img src="./ASSETS/EQO/sure.png" alt="إيكو">
+        <span>إيكو بيقولك:</span>
+      </div>
+      
+      <div class="eko-no-results-message">
+        <p><i class="bi bi-info-circle-fill"></i> مع الأسف، مفيش أي بنك يقدر يوفّرلك القرض بالمعايير اللي إنت طلبتها.</p>
+        <p class="highlight"><i class="bi bi-check-circle-fill"></i> لم يتم خصم نقاط من محفظتك لعدم توفر الخدمة المناسبة.</p>
+      </div>
+      
+      <p style="color: var(--light-text); font-size: 0.9rem; margin: 10px 0;">
+        تقدر تعدّل البيانات (زي مبلغ القرض أو المدة) وتحاول تاني. إيكو معاك في كل خطوة!
+      </p>
+      
+      <div class="eko-no-results-actions">
+        <button class="modal-btn confirm" id="eko-no-results-try-again">
+          <i class="bi bi-pencil-square"></i> تعديل البيانات
+        </button>
+        <button class="modal-btn cancel" id="eko-no-results-cancel">
+          إلغاء
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- شريط التنقل -->
+  <div class="nav-bar">
+    <div class="logo-section">
+      <a href="index.html">
+        <img src="./ASSETS/BanqOk.png" alt="BankOk">
+      </a>
+    </div>
+    
+    <div class="nav-actions" id="nav-actions">
+      <!-- يتم تعبئته بواسطة الجافاسكريبت -->
+    </div>
+  </div>
+
+  <!-- المحتوى الرئيسي -->
+  <div class="main-container">
+    <!-- رسائل التنبيه -->
+    <div class="alert alert-success" id="success-alert" style="display: none;">
+      <i class="bi bi-check-circle"></i>
+      <span id="success-message">تم تحليل القروض بنجاح!</span>
+    </div>
+    
+    <div class="alert alert-error" id="error-alert" style="display: none;">
+      <i class="bi bi-x-circle"></i>
+      <span id="error-message">حدث خطأ أثناء التحليل!</span>
+    </div>
+    
+    <div class="alert alert-info" id="info-alert" style="display: none;">
+      <i class="bi bi-info-circle"></i>
+      <span id="info-message"></span>
+    </div>
+
+    <!-- قسم العنوان -->
+    <section class="header-section" id="header-section">
+      <div class="header-text">
+        <h1>تحليل القروض الذكي</h1>
+        <p>أدخل بياناتك واحصل على أفضل عروض القروض المناسبة لك من بين جميع البنوك المصرية</p>
+      </div>
+      <img src="./ASSETS/EQO/helpful.png" alt="إيكو المساعد" class="header-eko">
+    </section>
+
+    <!-- محفظة النقاط -->
+    <section class="wallet-section">
+      <div class="section-header">
+        <h2 class="section-title"><i class="bi bi-wallet2"></i> محفظة النقاط</h2>
+        <div style="color: var(--light-text);">تكلفة التحليل: <strong id="points-used-text">15 نقطة</strong></div>
+      </div>
+      
+      <div class="electronic-wallet" id="electronic-wallet">
+        <div class="wallet-header">
+          <div class="wallet-logo">
+            <i class="bi bi-wallet2"></i>
+            <span>محفظة BanqOK</span>
+          </div>
+        </div>
+        <div class="wallet-balance">
+          <div class="balance-label">الرصيد المتاح</div>
+          <div class="balance-value" id="points-balance">0 <span class="currency">نقطة</span></div>
+          <div class="last-update" id="last-update">
+            آخر تحديث: <span id="update-time">الآن</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <section class="data-form-section">
+    <h2 class="section-title"><i class="bi bi-person-badge"></i> بياناتك الشخصية والمالية</h2>
+    <div class="form-grid">
+      <!-- COL 1 -->
+      <div>
+        <div class="form-group">
+          <label for="profession">المهنة / فئة العميل</label>
+          <select id="profession">
+            <option value="government">موظف حكومي (قطاع عام)</option>
+            <option value="private">موظف قطاع خاص</option>
+            <option value="bank">موظف بنك (مصرفي)</option>
+            <option value="business">صاحب أعمال (شركة)</option>
+            <option value="freelance">صاحب مهنة حرة (طبيب/محامي/مهندس)</option>
+            <option value="doctor">طبيب أو طبيب أسنان</option>
+            <option value="pharmacist">صيدلاني</option>
+            <option value="professor">أستاذ جامعي</option>
+            <option value="retired">صاحب معاش</option>
+            <option value="petroleum">موظف قطاع بترول وغاز</option>
+            <option value="military">قوات مسلحة / شرطة</option>
+            <option value="journalist">صحفي</option>
+            <option value="abroad">مصري عامل بالخارج</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="age">العمر الحالي (سنة)</label>
+          <input type="number" id="age" min="21" max="70" value="35">
+          <div class="range-container">
+            <span class="range-value" id="age-value">35</span>
+            <input type="range" id="age-range" min="21" max="70" value="35">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="monthly-income">صافي الدخل الشهري (جنيه)</label>
+          <input type="number" id="monthly-income" min="1000" max="500000" step="500" value="10000">
+          <div class="range-container">
+            <span class="range-value" id="monthly-income-value">10,000</span>
+            <input type="range" id="monthly-income-range" min="1000" max="500000" step="500" value="10000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="work-duration">مدة النشاط/الخدمة الحالية (شهر)</label>
+          <input type="number" id="work-duration" min="0" max="600" value="24">
+          <div class="range-container">
+            <span class="range-value" id="work-duration-value">24</span>
+            <input type="range" id="work-duration-range" min="0" max="600" value="24">
+          </div>
+        </div>
+      </div>
+ 
+      <!-- COL 2 -->
+      <div>
+        <div class="form-group">
+          <label for="loan-purpose">الغرض من التمويل</label>
+          <select id="loan-purpose">
+            <option value="personal">تمويل شخصي (نقدي)</option>
+            <option value="car">تمويل سيارة</option>
+            <option value="mortgage">تمويل عقاري</option>
+            <option value="renovation">تمويل تشطيب وتحسين</option>
+            <option value="education">تمويل تعليم</option>
+            <option value="debt">سداد مديونيات</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="loan-amount">المبلغ المطلوب (جنيه)</label>
+          <input type="number" id="loan-amount" min="5000" max="10000000" step="1000" value="200000">
+          <div class="range-container">
+            <span class="range-value" id="loan-amount-value">200,000</span>
+            <input type="range" id="loan-amount-range" min="5000" max="10000000" step="1000" value="200000">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="repayment-period">مدة السداد المطلوبة (شهر)</label>
+          <input type="number" id="repayment-period" min="6" max="360" value="60">
+          <div class="range-container">
+            <span class="range-value" id="repayment-period-value">60</span>
+            <input type="range" id="repayment-period-range" min="6" max="360" value="60">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="collateral-type">نوع الضمان المقدم</label>
+          <select id="collateral-type">
+            <option value="none">بدون ضمان</option>
+            <option value="salary">بدون ضمان (تحويل مرتب)</option>
+            <option value="savings">بضمان وعاء ادخاري / شهادة</option>
+            <option value="property">بضمان وحدة سكنية</option>
+            <option value="credit">بضمان بطاقة ائتمان</option>
+          </select>
+        </div>
+        <!-- dynamic collateral fields -->
+        <div id="collateral-extra">
+          <div class="dynamic-fields">
+            <div class="dynamic-fields-title"><i class="bi bi-info-circle"></i> <span id="collateral-extra-title">تفاصيل الضمان</span></div>
+            <div id="collateral-extra-content"></div>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- COL 3 -->
+      <div>
+        <div class="form-group">
+          <label>هل أنت عميل لدى البنك مسبقاً؟</label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="existing-customer" value="yes"><span>نعم</span></label>
+            <label class="radio-option"><input type="radio" name="existing-customer" value="no" checked><span>لا</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>هل تفضل تحويل الراتب؟</label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="salary-transfer" value="yes"><span>نعم (لأقل فائدة)</span></label>
+            <label class="radio-option"><input type="radio" name="salary-transfer" value="no" checked><span>لا</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>هل سبق لك أخذ قروض من قبل؟</label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="prev-loans" value="yes"><span>نعم</span></label>
+            <label class="radio-option"><input type="radio" name="prev-loans" value="no" checked><span>لا</span></label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>التصنيف الائتماني (i-Score)</label>
+          <select id="credit-score">
+            <option value="excellent">ممتاز (750+)</option>
+            <option value="good" selected>جيد (650-749)</option>
+            <option value="fair">مقبول (550-649)</option>
+            <option value="poor">ضعيف (أقل من 550)</option>
+            <option value="unknown">غير معروف</option>
+          </select>
+        </div>
+        <div class="form-group" id="car-condition-group" style="display:none">
+          <label>حالة السيارة المطلوبة</label>
+          <select id="car-condition">
+            <option value="new">سيارة جديدة</option>
+            <option value="used">سيارة مستعملة</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+      
+      <div class="form-actions">
+        <button class="analyze-btn" id="analyze-btn">
+          <i class="bi bi-calculator"></i>
+          تحليل القروض (<span id="analyze-cost">15</span> نقطة)
+        </button>
+      </div>
+    </section>
+
+    <!-- قسم النتائج -->
+    <section class="results-section" id="results-section">
+      <div class="results-header">
+        <h2 class="section-title"><i class="bi bi-graph-up-arrow"></i> نتائج التحليل</h2>
+        <div class="results-filter">
+          <select class="filter-select" id="sort-filter">
+            <option value="interest">الأفضل (أقل فائدة)</option>
+            <option value="installment">القسط الأقل</option>
+            <option value="score">التقييم الأعلى</option>
+          </select>
+          <select class="filter-select" id="bank-type-filter">
+            <option value="all">جميع البنوك</option>
+            <option value="government">بنوك حكومية</option>
+            <option value="private">بنوك خاصة</option>
+            <option value="islamic">بنوك إسلامية</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- أفضل بنك -->
+      <div class="best-bank-section">
+        <div class="best-bank-badge">الأفضل لك</div>
+        
+        <div class="best-bank-header">
+          <div class="best-bank-info">
+            <img id="best-bank-logo" src="./ASSETS/banks/NBE.jpg" alt="شعار البنك" class="best-bank-logo">
+            <div class="best-bank-details">
+              <h3 id="best-bank-name">البنك الأهلي المصري</h3>
+              <p id="best-bank-type">بنك حكومي | الحد الأدنى للمرتب: 2,000 جنيه</p>
+            </div>
+          </div>
+          <div class="best-bank-score">
+            <div class="score-value" id="best-bank-score">92</div>
+            <div class="score-label">نقطة تقييم</div>
+          </div>
+        </div>
+        
+        <div class="best-bank-reason">
+          <div class="reason-title">
+            <i class="bi bi-lightbulb"></i>
+            لماذا اخترناه لك؟
+          </div>
+          <p id="best-bank-reason">
+            هذا البنك هو الأنسب لك لأنه يوفر أقل فائدة بنسبة 14% سنوياً، ويسهل شروطه للعاملين في الجهة الحكومية، ويقدم فترة سداد تصل إلى 7 سنوات تناسب قدراتك المالية.
+          </p>
+        </div>
+        
+        <div class="best-bank-grid">
+          <div class="best-bank-card">
+            <div class="value" id="best-monthly-installment">2,450</div>
+            <div class="label">القسط الشهري (جنيه)</div>
+          </div>
+          <div class="best-bank-card">
+            <div class="value" id="best-total-interest">17,600</div>
+            <div class="label">إجمالي الفائدة (جنيه)</div>
+          </div>
+          <div class="best-bank-card">
+            <div class="value" id="best-total-payment">117,600</div>
+            <div class="label">إجمالي المدفوع (جنيه)</div>
+          </div>
+          <div class="best-bank-card">
+            <div class="value" id="best-installment-ratio">24.5%</div>
+            <div class="label">نسبة القسط من الدخل</div>
+          </div>
+        </div>
+        
+        <div class="best-bank-actions">
+          <button class="bank-action-btn details-btn" id="best-bank-details-btn">
+            <i class="bi bi-info-circle"></i>
+            تفاصيل البنك
+          </button>
+          <button class="bank-action-btn apply-btn" id="best-bank-apply-btn">
+            <i class="bi bi-send-check"></i>
+            التقديم للقرض
+          </button>
+          <button class="bank-action-btn save-result-btn" id="save-result-btn">
+            <i class="bi bi-bookmark"></i>
+            حفظ النتيجة
+          </button>
+        </div>
+      </div>
+
+      <!-- البنوك البديلة -->
+      <div class="alternative-banks-section">
+        <h3 class="section-title"><i class="bi bi-arrow-left-right"></i> أفضل 3 بدائل أخرى</h3>
+        
+        <div class="alternative-banks-grid" id="alternative-banks-grid">
+          <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+        </div>
+      </div>
+
+      <!-- الإحصائيات الدائرية 3D -->
+      <div class="pie-charts-container" id="pie-charts-container">
+        <div class="pie-chart-card">
+          <div class="pie-chart-title">
+            <i class="bi bi-pie-chart"></i>
+            توزيع أسعار الفائدة
+          </div>
+          <div class="mini-chart-container">
+            <canvas id="interestDistributionChart"></canvas>
+          </div>
+        </div>
+        <div class="pie-chart-card">
+          <div class="pie-chart-title">
+            <i class="bi bi-pie-chart"></i>
+            توزيع القسط الشهري
+          </div>
+          <div class="mini-chart-container">
+            <canvas id="installmentDistributionChart"></canvas>
+          </div>
+        </div>
+        <div class="pie-chart-card">
+          <div class="pie-chart-title">
+            <i class="bi bi-pie-chart"></i>
+            توزيع الملاءمة
+          </div>
+          <div class="mini-chart-container">
+            <canvas id="suitabilityDistributionChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- المخطط الزمني -->
+      <div class="time-chart-section">
+        <h3 class="section-title"><i class="bi bi-graph-up"></i> تحليل القرض عبر المدة</h3>
+        <div class="time-chart-container">
+          <canvas id="timeChart"></canvas>
+        </div>
+        <p style="text-align: center; color: var(--light-text); margin-top: 10px;">يوضح هذا الرسم تطور رصيد القرض المتبقي مع مرور الشهور (باستخدام الفائدة المتناقصة)</p>
+      </div>
+
+      <!-- المقارنة البصرية -->
+      <div class="comparison-section">
+        <h3 class="section-title"><i class="bi bi-bar-chart"></i> مقارنة بصرية بين أفضل العروض</h3>
+        
+        <div class="charts-container">
+          <div class="chart-container">
+            <canvas id="interestChart"></canvas>
+          </div>
+          <div class="chart-container">
+            <canvas id="installmentChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- نصيحة إيكو -->
+      <div class="eko-advice-section">
+        <div class="eko-advice-image">
+          <img src="./ASSETS/EQO/advising.png" alt="إيكو">
+        </div>
+        <div class="eko-advice-content">
+          <h3><i class="bi bi-lightbulb"></i> نصيحة إيكو الذهبية</h3>
+          <p id="eko-advice-text">
+            اختيارك للبنك الأهلي المصري ممتاز! تأكد من تحويل مرتبك للبنك للحصول على أقل فائدة ممكنة. أيضاً، حاول تقليل مدة القرض لتوفير في الفوائد الإجمالية.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- إيكو المساعد -->
+  <div class="eko-assistant" id="eko-assistant">
+    <div class="eko-tooltip" id="eko-tooltip">
+      أهلاً! أنا إيكو، مساعدك في تحليل القروض. هساعدك تلاقي أفضل قرض يناسب دخلك واحتياجاتك!
+    </div>
+    <img src="./ASSETS/EQO/TRUST.png" alt="إيكو المساعد" id="eko-image">
+  </div>
+
+  <!-- الفوتر -->
+  <footer class="footer" id="footer">
+    <div class="footer-content">
+      <div class="footer-col footer-col-main">
+        <div class="footer-logo">
+          <img src="./ASSETS/BanqOk.png" alt="BanqOK">
+        </div>
+        
+        <p class="footer-about">
+          BanqOK هو أول موقع في مصر يقارن بين خدمات القروض والودائع في كل البنوك المصرية. نقدم لك كل المعلومات التي تحتاجها لاتخاذ القرار المالي الصحيح.
+        </p>
+        
+        <div class="footer-social">
+          <div class="social-title">تابعنا على</div>
+          <div class="social-icons">
+            <a href="https://facebook.com/banqok" target="_blank" class="footer-social-icon" aria-label="فيسبوك">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="https://instagram.com/banqok" target="_blank" class="footer-social-icon" aria-label="انستجرام">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="https://tiktok.com/@banqok" target="_blank" class="footer-social-icon" aria-label="تيك توك">
+            <i class="bi bi-tiktok"></i>
+          </a>
+          <a href="https://twitter.com/banqok" target="_blank" class="footer-social-icon" aria-label="تويتر">
+            <i class="bi bi-twitter-x"></i>
+          </a>
+          <a href="https://linkedin.com/company/banqok" target="_blank" class="footer-social-icon" aria-label="لينكد إن">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="https://youtube.com/@banqok" target="_blank" class="footer-social-icon" aria-label="يوتيوب">
+            <i class="bi bi-youtube"></i>
+          </a>
+          <a href="https://wa.me/201000000000" target="_blank" class="footer-social-icon" aria-label="واتساب">
+            <i class="bi bi-whatsapp"></i>
+          </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-col">
+        <h3 class="footer-title"><i class="bi bi-link-45deg"></i> روابط سريعة</h3>
+        <ul class="footer-links">
+          <li><a href="index.html"><i class="bi bi-chevron-left"></i> الصفحة الرئيسية</a></li>
+          <li><a href="dashboard.html"><i class="bi bi-chevron-left"></i> لوحة التحكم</a></li>
+          <li><a href="settings.html"><i class="bi bi-chevron-left"></i> إعدادات الحساب</a></li>
+          <li><a href="loan-analysis.html"><i class="bi bi-chevron-left"></i> تحليل القروض</a></li>
+          <li><a href="deposit-analysis.html"><i class="bi bi-chevron-left"></i> تحليل الودائع</a></li>
+          <li><a href="transactions.html"><i class="bi bi-chevron-left"></i> سجل العمليات</a></li>
+          <li><a href="index.html#points"><i class="bi bi-chevron-left"></i> نظام النقاط</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h3 class="footer-title"><i class="bi bi-question-circle"></i> الدعم والمساعدة</h3>
+        <ul class="footer-links">
+        <li><a href="support.html#faq"><i class="bi bi-chevron-left"></i> الأسئلة الشائعة</a></li>
+        <li><a href="support.html#videos"><i class="bi bi-chevron-left"></i> فيديوهات شرح</a></li>
+        <li><a href="support.html#privacy"><i class="bi bi-chevron-left"></i> سياسة الخصوصية</a></li>
+        <li><a href="support.html#terms"><i class="bi bi-chevron-left"></i> الشروط والأحكام</a></li>
+        <li><a href="support.html#security"><i class="bi bi-chevron-left"></i> نصائح أمان</a></li>
+        <li><a href="support.html#technical"><i class="bi bi-chevron-left"></i> الدعم الفني</a></li>
+        <li><a href="support.html#responsibility"><i class="bi bi-chevron-left"></i> المسؤولية الدينية</a></li>
+        <li><a href="support.html#contact"><i class="bi bi-chevron-left"></i> اتصل بنا</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h3 class="footer-title"><i class="bi bi-phone"></i> تطبيق BanqOK</h3>
+        <div class="footer-app-buttons">
+          <a href="#" class="app-badge google">
+            <i class="bi bi-google-play"></i>
+            <div class="app-badge-text">
+              <span class="app-badge-label">احصل عليه من</span>
+              <span class="app-badge-name">Google Play</span>
+            </div>
+          </a>
+          <a href="#" class="app-badge apple">
+            <i class="bi bi-apple"></i>
+            <div class="app-badge-text">
+              <span class="app-badge-label">احصل عليه من</span>
+              <span class="app-badge-name">App Store</span>
+            </div>
+          </a>
+          <a href="#" class="app-badge huawei">
+            <i class="bi bi-phone"></i>
+            <div class="app-badge-text">
+              <span class="app-badge-label">احصل عليه من</span>
+              <span class="app-badge-name">AppGallery</span>
+            </div>
+          </a>
+          <a href="#" class="app-badge apk">
+            <i class="bi bi-file-earmark-arrow-down"></i>
+            <div class="app-badge-text">
+              <span class="app-badge-label">تحميل مباشر</span>
+              <span class="app-badge-name">APK</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-divider"></div>
+      
+      <div class="footer-bottom">
+        <div class="footer-copyright">
+          <div class="copyright-text">
+            <i class="bi bi-c-circle"></i> 2025 BanqOK. جميع الحقوق محفوظة.
+            <span class="separator">|</span>
+            <span>أول موقع مصري لمقارنة البنوك</span>
+          </div>
+          <div class="legal-links">
+            <a href="#">سياسة الخصوصية</a>
+            <span class="dot">•</span>
+            <a href="#">الشروط والأحكام</a>
+            <span class="dot">•</span>
+            <a href="#">خريطة الموقع</a>
+          </div>
+        </div>
+         <div class="footer-credits">
+        <span>تصميم وتطوير <a href="#" style="color: #10b981; text-decoration: none;">فريق BanqOK</a></span>
+        <span class="separator">|</span>
+        <span>الإصدار 2.5.0</span>
+      </div>
+      </div>
+    </div>
+    <div id="footer-particles"></div>
+  </footer>
+
+ <script>
+    
+const DB_NAME = 'BanksDatabase';
+const DB_VERSION = 1;
+const STORE_NAME = 'banks';
+const USER_DB_NAME = 'db-banqok';
+const USER_DB_VERSION = 2;
+const USER_STORE_NAME = 'users';
+
+// نسخة العمل من البيانات
+let banksData = [];
+let currentUser = null;
+let analysisResults = [];
+let interestChart = null;
+let installmentChart = null;
+let timeChart = null;
+let interestDistributionChart = null;
+let installmentDistributionChart = null;
+let suitabilityDistributionChart = null;
+let currentTransactionId = null;
+let serviceCost = 15;
+let lastUserData = null;
+let lastUpdateTime = new Date();
+let dashboardData = null;
+let currentTheme = null;
+let ekoMessageTimeout = null;
+let analysisLoadingInterval = null;
+let db = null;
+let userDb = null;
+
+// ==================== تهيئة قاعدة بيانات المستخدم ====================
+function initUserDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(USER_DB_NAME, USER_DB_VERSION);
+    
+    request.onerror = function(event) {
+      console.error("خطأ في فتح قاعدة بيانات المستخدم:", event.target.error);
+      reject(event.target.error);
+    };
+    
+    request.onsuccess = function(event) {
+      userDb = event.target.result;
+      console.log('✅ تم فتح قاعدة بيانات المستخدم بنجاح');
+      resolve(userDb);
+    };
+    
+    request.onupgradeneeded = function(event) {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(USER_STORE_NAME)) {
+        db.createObjectStore(USER_STORE_NAME, { keyPath: 'email' });
+        console.log('✅ تم إنشاء store المستخدمين');
+      }
+    };
+  });
+}
+
+// ==================== تحديث بيانات المستخدم في قاعدة البيانات ====================
+function updateUserInDatabase(userData) {
+  return new Promise((resolve, reject) => {
+    if (!userDb) {
+      reject("قاعدة البيانات غير متاحة");
+      return;
+    }
+    
+    const transaction = userDb.transaction([USER_STORE_NAME], 'readwrite');
+    const objectStore = transaction.objectStore(USER_STORE_NAME);
+    const request = objectStore.put(userData);
+    
+    request.onsuccess = function() {
+      console.log('✅ تم تحديث بيانات المستخدم في قاعدة البيانات');
+      
+      // إرسال حدث لتحديث الصفحات الأخرى
+      window.dispatchEvent(new CustomEvent('userDataUpdated', { 
+        detail: { user: userData } 
+      }));
+      
+      resolve();
+    };
+    
+    request.onerror = function(event) {
+      console.error('❌ خطأ في تحديث بيانات المستخدم:', event.target.error);
+      reject(event.target.error);
+    };
+  });
+}
+
+// ==================== جلب أحدث بيانات المستخدم من قاعدة البيانات ====================
+function refreshUserFromDatabase() {
+  return new Promise((resolve, reject) => {
+    if (!userDb || !currentUser || !currentUser.email) {
+      if (currentUser) {
+        // إذا لم تكن قاعدة البيانات متاحة، نستخدم البيانات من localStorage
+        resolve(currentUser);
+      } else {
+        reject("معلومات المستخدم غير متاحة");
+      }
+      return;
+    }
+    
+    const transaction = userDb.transaction([USER_STORE_NAME], 'readonly');
+    const objectStore = transaction.objectStore(USER_STORE_NAME);
+    const request = objectStore.get(currentUser.email);
+    
+    request.onsuccess = function(event) {
+      const userData = event.target.result;
+      if (userData) {
+        // تحديث البيانات المحفوظة محلياً
+        currentUser = { ...currentUser, ...userData };
+        localStorage.setItem('banqok_user', JSON.stringify(currentUser));
+        
+        // تحديث العرض
+        document.getElementById('points-balance').textContent = currentUser.points || 0;
+        
+        // إرسال حدث لتحديث الصفحات الأخرى
+        window.dispatchEvent(new CustomEvent('userDataUpdated', { 
+          detail: { user: currentUser } 
+        }));
+        
+        resolve(userData);
+      } else {
+        resolve(currentUser);
+      }
+    };
+    
+    request.onerror = function(event) {
+      console.error('❌ خطأ في جلب بيانات المستخدم:', event.target.error);
+      resolve(currentUser);
+    };
+  });
+}
+
+// ==================== مستمع للتغييرات في localStorage ====================
+function setupLocalStorageListener() {
+  window.addEventListener('storage', function(e) {
+    // التحقق من أن التغيير يخص بيانات المستخدم
+    if (e.key === 'banqok_user' && e.newValue) {
+      console.log('🔄 تم اكتشاف تغيير في بيانات المستخدم');
+      try {
+        currentUser = JSON.parse(e.newValue);
+        document.getElementById('points-balance').textContent = currentUser.points || 0;
+        updateUserProfilePicture();
+        
+        // تحديث قاعدة البيانات
+        updateUserInDatabase(currentUser);
+      } catch (error) {
+        console.error('خطأ في تحديث بيانات المستخدم:', error);
+      }
+    }
+  });
+  
+  // مستمع للأحداث المخصصة من الصفحات الأخرى
+  window.addEventListener('userDataUpdated', function(event) {
+    if (event.detail && event.detail.user) {
+      console.log('🔄 تم استقبال تحديث من صفحة أخرى');
+      
+      // تحديث بيانات المستخدم الحالية إذا كان نفس المستخدم
+      if (currentUser && currentUser.email === event.detail.user.email) {
+        currentUser = event.detail.user;
+        localStorage.setItem('banqok_user', JSON.stringify(currentUser));
+        document.getElementById('points-balance').textContent = currentUser.points || 0;
+        updateUserProfilePicture();
+      }
+    }
+  });
+  
+  console.log('👂 تم إعداد مستمع للتحديثات اللحظية');
+}
+
+// ==================== تحميل البيانات من IndexedDB للبنوك ====================
+async function loadBanksFromDB() {
+  try {
+    return await window.loadBanksFromDB();
+  } catch (error) {
+    console.error('Error loading banks:', error);
+    return JSON.parse(JSON.stringify(window.completeBanksData));
+  }
+}
+
+// ==================== التحقق من تسجيل الدخول ====================
+function checkUserLogin() {
+  const userData = localStorage.getItem('banqok_user');
+  
+  if (!userData) {
+    window.location.href = 'login.html';
+    return;
+  }
+  
+  try {
+    currentUser = JSON.parse(userData);
+    
+    if (currentUser.isAdmin) {
+      window.location.href = 'admin-dashboard.html';
+    }
+  } catch (error) {
+    console.error('خطأ في تحليل بيانات المستخدم:', error);
+    window.location.href = 'login.html';
+  }
+}
+
+// ==================== تحميل بيانات المستخدم ====================
+function loadUserData() {
+  if (!currentUser) {
+    setTimeout(loadUserData, 100);
+    return;
+  }
+  
+  updateUserProfilePicture();
+  
+  const pointsBalance = currentUser.points || 0;
+  document.getElementById('points-balance').textContent = pointsBalance;
+  
+  loadDashboardSettings();
+  
+  document.getElementById('user-modal-name').textContent = `${currentUser.firstName} ${currentUser.lastName || ''}`;
+  document.getElementById('user-modal-email').textContent = currentUser.email;
+  
+  // تحديث قاعدة البيانات
+  updateUserInDatabase(currentUser);
+}
+
+function updateUserProfilePicture() {
+  if (!currentUser) return;
+  
+  const profilePicUrl = currentUser.profilePic || './ASSETS/EQO/user.png';
+  
+  const userAvatarBtn = document.getElementById('user-avatar-btn');
+  if (userAvatarBtn) {
+    userAvatarBtn.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = profilePicUrl;
+    img.alt = 'صورة المستخدم';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '50%';
+    userAvatarBtn.appendChild(img);
+  }
+  
+  const userModalAvatar = document.getElementById('user-modal-avatar');
+  if (userModalAvatar) userModalAvatar.src = profilePicUrl;
+}
+
+function updateLastUpdateTime() {
+  lastUpdateTime = new Date();
+  const dateStr = lastUpdateTime.toLocaleDateString('ar-EG');
+  const timeStr = lastUpdateTime.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+  const updateTimeElement = document.getElementById('update-time');
+  if (updateTimeElement) {
+    updateTimeElement.textContent = `${dateStr} - ${timeStr}`;
+  }
+}
+
+function updateUserDataDisplay() {
+  if (!currentUser) return;
+  document.getElementById('points-balance').textContent = currentUser.points || 0;
+  updateUserProfilePicture();
+}
+
+// ==================== تحميل إعدادات لوحة التحكم ====================
+function loadDashboardSettings() {
+  const savedDashboardData = localStorage.getItem('banqokDashboardData');
+  
+  if (savedDashboardData) {
+    try {
+      dashboardData = JSON.parse(savedDashboardData);
+      
+      if (dashboardData.wallet && dashboardData.wallet.themes) {
+        const selectedTheme = dashboardData.wallet.theme || 'default';
+        currentTheme = dashboardData.wallet.themes[selectedTheme] || dashboardData.wallet.themes['default'];
+        
+        if (currentTheme) {
+          applyThemeToAllElements();
+        }
+      }
+      
+      if (dashboardData.services && dashboardData.services.list) {
+        const loanService = dashboardData.services.list.find(s => s.id === 'loan');
+        if (loanService) {
+          serviceCost = loanService.cost || 15;
+          document.getElementById('points-used-text').textContent = `تكلفة التحليل: ${serviceCost} نقطة`;
+          document.getElementById('analyze-cost').textContent = serviceCost;
+          document.getElementById('analyze-btn').innerHTML = `<i class="bi bi-calculator"></i> تحليل القروض (${serviceCost} نقطة)`;
+        }
+      }
+      
+      console.log('✅ تم تطبيق السيم من صفحة المستخدم');
+    } catch (error) {
+      console.error('خطأ في تحميل إعدادات السيم:', error);
+    }
+  }
+}
+
+function applyThemeToAllElements() {
+  if (!currentTheme) return;
+  
+  if (currentTheme.bgColor) {
+    document.documentElement.style.setProperty('--primary-color', currentTheme.bgColor);
+  }
+  if (currentTheme.glowColor) {
+    document.documentElement.style.setProperty('--primary-hover', currentTheme.glowColor);
+  }
+  
+  const headerSection = document.querySelector('.header-section');
+  if (headerSection && currentTheme.bgColor && currentTheme.glowColor) {
+    headerSection.style.background = `linear-gradient(135deg, ${currentTheme.bgColor} 0%, ${currentTheme.glowColor} 100%)`;
+  }
+  
+  const electronicWallet = document.querySelector('.electronic-wallet');
+  if (electronicWallet && currentTheme.bgColor && currentTheme.glowColor) {
+    electronicWallet.style.background = `linear-gradient(135deg, ${currentTheme.bgColor} 0%, ${darkenColor(currentTheme.glowColor, 10)} 100%)`;
+  }
+  
+  const sectionTitles = document.querySelectorAll('.section-title i');
+  sectionTitles.forEach(icon => {
+    icon.style.color = currentTheme.bgColor || '#10b981';
+  });
+  
+  const bestBankSection = document.querySelector('.best-bank-section');
+  if (bestBankSection) bestBankSection.style.borderColor = currentTheme.bgColor || '#10b981';
+  
+  const bestBankBadge = document.querySelector('.best-bank-badge');
+  if (bestBankBadge) bestBankBadge.style.background = currentTheme.bgColor || '#10b981';
+  
+  const bestBankReason = document.querySelector('.best-bank-reason');
+  if (bestBankReason) {
+    bestBankReason.style.background = lightenColor(currentTheme.bgColor || '#10b981', 85);
+    bestBankReason.style.borderRightColor = currentTheme.bgColor || '#10b981';
+  }
+  
+  const bestBankCards = document.querySelectorAll('.best-bank-card .value');
+  bestBankCards.forEach(card => card.style.color = currentTheme.bgColor || '#10b981');
+  
+  const ekoAdvice = document.querySelector('.eko-advice-section');
+  if (ekoAdvice) ekoAdvice.style.borderRightColor = currentTheme.bgColor || '#10b981';
+  
+  const ekoAdviceTitle = document.querySelector('.eko-advice-content h3');
+  if (ekoAdviceTitle) ekoAdviceTitle.style.color = currentTheme.bgColor || '#10b981';
+  
+  const analyzeBtn = document.getElementById('analyze-btn');
+  if (analyzeBtn) analyzeBtn.style.background = currentTheme.bgColor || '#10b981';
+  
+  const detailsBtns = document.querySelectorAll('.details-btn');
+  detailsBtns.forEach(btn => btn.style.background = currentTheme.accentColor || '#3b82f6');
+  
+  const applyBtns = document.querySelectorAll('.apply-btn');
+  applyBtns.forEach(btn => btn.style.background = currentTheme.bgColor || '#10b981');
+  
+  applyThemeToNavbarButtons();
+  applyThemeToFooter();
+  
+  addParticlesToHeader();
+  addParticlesToWallet();
+  addParticlesToFooter();
+}
+
+function applyThemeToNavbarButtons() {
+  if (!currentTheme) return;
+  const primaryColor = currentTheme.bgColor || '#10b981';
+  const userAvatarBtn = document.getElementById('user-avatar-btn');
+  if (userAvatarBtn) userAvatarBtn.style.borderColor = primaryColor;
+  
+  const navButtons = document.querySelectorAll('.history-nav-btn, .refresh-btn');
+  navButtons.forEach(btn => {
+    btn.style.color = primaryColor;
+    btn.style.borderColor = primaryColor;
+  });
+}
+
+function applyThemeToFooter() {
+  if (!currentTheme) return;
+  const footer = document.getElementById('footer');
+  if (!footer) return;
+  if (currentTheme.bgColor && currentTheme.glowColor) {
+    const footerBgColor = darkenColor(currentTheme.bgColor, 40);
+    const footerGradient = `linear-gradient(135deg, ${footerBgColor} 0%, ${darkenColor(currentTheme.glowColor, 50)} 100%)`;
+    footer.style.background = footerGradient;
+  }
+  
+  const footerSocialIcons = document.querySelectorAll('.footer-social-icon');
+  footerSocialIcons.forEach(icon => {
+    icon.addEventListener('mouseenter', () => {
+      icon.style.backgroundColor = currentTheme.bgColor || '#10b981';
+    });
+    icon.addEventListener('mouseleave', () => {
+      icon.style.backgroundColor = 'rgba(255,255,255,0.08)';
+    });
+  });
+  
+  const appBadges = document.querySelectorAll('.app-badge');
+  appBadges.forEach(badge => {
+    badge.addEventListener('mouseenter', () => {
+      badge.style.borderColor = currentTheme.bgColor || '#10b981';
+    });
+    badge.addEventListener('mouseleave', () => {
+      badge.style.borderColor = 'rgba(255,255,255,0.1)';
+    });
+  });
+}
+
+function addParticlesToHeader() {
+  const header = document.querySelector('.header-section');
+  if (!header || !currentTheme) return;
+  const existingParticles = header.querySelectorAll('.header-particle');
+  existingParticles.forEach(p => p.remove());
+  const particleCount = currentTheme.particleCount || 12;
+  const availableParticles = currentTheme.symbols || ['✨', '⭐', '🌟', '💫', '💰', '🏦'];
+  const particleColor = 'white';
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle header-particle';
+    particle.textContent = availableParticles[Math.floor(Math.random() * availableParticles.length)];
+    particle.style.color = particleColor;
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%`;
+    const duration = 18 + Math.random() * 12;
+    const delay = Math.random() * 10;
+    const opacity = 0.15 + Math.random() * 0.15;
+    particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite, particleSparkle ${3 + Math.random() * 4}s ease-in-out ${delay}s infinite`;
+    particle.style.fontSize = `${1.2 + Math.random() * 1.8}rem`;
+    particle.style.opacity = opacity.toString();
+    header.appendChild(particle);
+  }
+}
+
+function addParticlesToWallet() {
+  const wallet = document.querySelector('.electronic-wallet');
+  if (!wallet || !currentTheme) return;
+  const existingParticles = wallet.querySelectorAll('.wallet-particle');
+  existingParticles.forEach(p => p.remove());
+  const particleCount = currentTheme.particleCount ? Math.floor(currentTheme.particleCount * 0.7) : 8;
+  const availableParticles = currentTheme.symbols || ['✨', '⭐', '🌟', '💫', '💰'];
+  const particleColor = 'white';
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle wallet-particle';
+    particle.textContent = availableParticles[Math.floor(Math.random() * availableParticles.length)];
+    particle.style.color = particleColor;
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%`;
+    const duration = 15 + Math.random() * 10;
+    const delay = Math.random() * 12;
+    const opacity = 0.2 + Math.random() * 0.15;
+    particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite, particleSparkle ${2.5 + Math.random() * 3}s ease-in-out ${delay}s infinite`;
+    particle.style.fontSize = `${1 + Math.random() * 1.5}rem`;
+    particle.style.opacity = opacity.toString();
+    wallet.appendChild(particle);
+  }
+}
+
+function addParticlesToFooter() {
+  const footer = document.getElementById('footer');
+  if (!footer || !currentTheme) return;
+  const existingParticles = footer.querySelectorAll('.footer-particle');
+  existingParticles.forEach(p => p.remove());
+  const particleCount = currentTheme.particleCount ? Math.floor(currentTheme.particleCount * 0.6) : 8;
+  const availableParticles = currentTheme.symbols || ['✨', '⭐', '🌟', '💫'];
+  const particleColor = currentTheme.textColor || '#ffffff';
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle footer-particle';
+    particle.textContent = availableParticles[Math.floor(Math.random() * availableParticles.length)];
+    particle.style.color = particleColor;
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${10 + Math.random() * 80}%`;
+    const duration = 25 + Math.random() * 15;
+    const delay = Math.random() * 15;
+    const opacity = 0.1 + Math.random() * 0.15;
+    particle.style.animation = `floatParticleHorizontal ${duration}s linear ${delay}s infinite, particleSparkle ${4 + Math.random() * 3}s ease-in-out ${delay}s infinite`;
+    particle.style.fontSize = `${1 + Math.random() * 1.2}rem`;
+    particle.style.opacity = opacity.toString();
+    footer.appendChild(particle);
+  }
+}
+
+function lightenColor(color, percent) {
+  if (color.startsWith('#')) {
+    let r = parseInt(color.substring(1, 3), 16);
+    let g = parseInt(color.substring(3, 5), 16);
+    let b = parseInt(color.substring(5, 7), 16);
+    r = Math.min(255, Math.floor(r + (255 - r) * (percent / 100)));
+    g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)));
+    b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)));
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  }
+  return color;
+}
+
+function darkenColor(color, percent) {
+  if (color.startsWith('#')) {
+    let r = parseInt(color.substring(1, 3), 16);
+    let g = parseInt(color.substring(3, 5), 16);
+    let b = parseInt(color.substring(5, 7), 16);
+    r = Math.floor(r * (100 - percent) / 100);
+    g = Math.floor(g * (100 - percent) / 100);
+    b = Math.floor(b * (100 - percent) / 100);
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  }
+  return color;
+}
+
+// ==================== إعداد عناصر النطاق ====================
+function setupRangeInputs() {
+  const ageInput = document.getElementById('age');
+  const ageRange = document.getElementById('age-range');
+  const ageValue = document.getElementById('age-value');
+  ageInput.addEventListener('input', function() { ageRange.value = this.value; ageValue.textContent = this.value; });
+  ageRange.addEventListener('input', function() { ageInput.value = this.value; ageValue.textContent = this.value; });
+
+  const incomeInput = document.getElementById('monthly-income');
+  const incomeRange = document.getElementById('monthly-income-range');
+  const incomeValue = document.getElementById('monthly-income-value');
+  incomeInput.addEventListener('input', function() { incomeRange.value = this.value; incomeValue.textContent = formatNumber(this.value); });
+  incomeRange.addEventListener('input', function() { incomeInput.value = this.value; incomeValue.textContent = formatNumber(this.value); });
+
+  const loanAmountInput = document.getElementById('loan-amount');
+  const loanAmountRange = document.getElementById('loan-amount-range');
+  const loanAmountValue = document.getElementById('loan-amount-value');
+  loanAmountInput.addEventListener('input', function() { loanAmountRange.value = this.value; loanAmountValue.textContent = formatNumber(this.value); });
+  loanAmountRange.addEventListener('input', function() { loanAmountInput.value = this.value; loanAmountValue.textContent = formatNumber(this.value); });
+
+  const repaymentPeriodInput = document.getElementById('repayment-period');
+  const repaymentPeriodRange = document.getElementById('repayment-period-range');
+  const repaymentPeriodValue = document.getElementById('repayment-period-value');
+  repaymentPeriodInput.addEventListener('input', function() { repaymentPeriodRange.value = this.value; repaymentPeriodValue.textContent = this.value; });
+  repaymentPeriodRange.addEventListener('input', function() { repaymentPeriodInput.value = this.value; repaymentPeriodValue.textContent = this.value; });
+
+  const workDurationInput = document.getElementById('work-duration');
+  const workDurationRange = document.getElementById('work-duration-range');
+  const workDurationValue = document.getElementById('work-duration-value');
+  workDurationInput.addEventListener('input', function() { workDurationRange.value = this.value; workDurationValue.textContent = this.value; });
+  workDurationRange.addEventListener('input', function() { workDurationInput.value = this.value; workDurationValue.textContent = this.value; });
+}
+
+function formatNumber(num) {
+  return parseInt(num).toLocaleString('ar-EG');
+}
+
+// ==================== إعداد المودالات ====================
+function setupInsufficientPointsModal() {
+  const insufficientModal = document.getElementById('insufficient-modal');
+  const insufficientClose = document.getElementById('insufficient-close');
+  const insufficientCancel = document.getElementById('insufficient-cancel');
+  const insufficientBuy = document.getElementById('insufficient-buy');
+  
+  if (insufficientClose) insufficientClose.addEventListener('click', closeInsufficientModal);
+  if (insufficientCancel) insufficientCancel.addEventListener('click', closeInsufficientModal);
+  
+  if (insufficientBuy) {
+    insufficientBuy.addEventListener('click', function() {
+      window.location.href = 'dashboard.html#purchase';
+    });
+  }
+  
+  if (insufficientModal) {
+    insufficientModal.addEventListener('click', function(e) {
+      if (e.target === this) closeInsufficientModal();
+    });
+  }
+}
+
+function closeInsufficientModal() {
+  document.getElementById('insufficient-modal').classList.remove('active');
+}
+
+function setupSuccessModal() {
+  const successModal = document.getElementById('success-modal');
+  const successClose = document.getElementById('success-close');
+  const successContinue = document.getElementById('success-continue');
+  
+  if (successClose) successClose.addEventListener('click', closeSuccessModal);
+  
+  if (successContinue) {
+    successContinue.addEventListener('click', function() {
+      closeSuccessModal();
+      performAnalysis();
+    });
+  }
+  
+  if (successModal) {
+    successModal.addEventListener('click', function(e) {
+      if (e.target === this) closeSuccessModal();
+    });
+  }
+}
+
+function closeSuccessModal() {
+  document.getElementById('success-modal').classList.remove('active');
+}
+
+function setupUserModal() {
+  const userModal = document.getElementById('user-modal');
+  const userModalClose = document.getElementById('user-modal-close');
+  
+  if (userModalClose) userModalClose.addEventListener('click', closeUserModal);
+  
+  if (userModal) {
+    userModal.addEventListener('click', function(e) {
+      if (e.target === this) closeUserModal();
+    });
+  }
+}
+
+function openUserModal() {
+  const userModal = document.getElementById('user-modal');
+  if (userModal) {
+    userModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeUserModal() {
+  const userModal = document.getElementById('user-modal');
+  if (userModal) {
+    userModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+}
+
+function setupLogoutModal() {
+  const logoutModal = document.getElementById('logout-confirm-modal');
+  const logoutCancel = document.getElementById('logout-cancel');
+  const logoutConfirm = document.getElementById('logout-confirm');
+  
+  if (logoutCancel) {
+    logoutCancel.addEventListener('click', function() {
+      logoutModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    });
+  }
+  
+  if (logoutConfirm) {
+    logoutConfirm.addEventListener('click', function() {
+      localStorage.removeItem('banqok_user');
+      window.location.href = 'index.html';
+    });
+  }
+  
+  if (logoutModal) {
+    logoutModal.addEventListener('click', function(e) {
+      if (e.target === this) {
+        logoutModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+    });
+  }
+}
+
+function logoutUser(e) {
+  e.preventDefault();
+  closeUserModal();
+  const logoutModal = document.getElementById('logout-confirm-modal');
+  if (logoutModal) {
+    logoutModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function setupHistoryModal() {
+  const historyModal = document.getElementById('history-modal');
+  const historyClose = document.getElementById('history-close');
+  const historyCloseBtn = document.getElementById('history-close-btn');
+  const deleteAllBtn = document.getElementById('delete-all-history-btn');
+  
+  if (historyClose) historyClose.addEventListener('click', closeHistoryModal);
+  if (historyCloseBtn) historyCloseBtn.addEventListener('click', closeHistoryModal);
+  
+  if (deleteAllBtn) {
+    deleteAllBtn.addEventListener('click', function() {
+      if (confirm('هل أنت متأكد من حذف جميع العمليات المحفوظة؟')) {
+        deleteAllHistory();
+      }
+    });
+  }
+  
+  if (historyModal) {
+    historyModal.addEventListener('click', function(e) {
+      if (e.target === this) closeHistoryModal();
+    });
+  }
+}
+
+function closeHistoryModal() {
+  document.getElementById('history-modal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+function setupHistoryDetailModal() {
+  const detailModal = document.getElementById('history-detail-modal');
+  const detailClose = document.getElementById('history-detail-close');
+  const detailOk = document.getElementById('history-detail-ok');
+  
+  if (detailClose) detailClose.addEventListener('click', closeHistoryDetailModal);
+  if (detailOk) detailOk.addEventListener('click', closeHistoryDetailModal);
+  
+  if (detailModal) {
+    detailModal.addEventListener('click', function(e) {
+      if (e.target === this) closeHistoryDetailModal();
+    });
+  }
+}
+
+function closeHistoryDetailModal() {
+  document.getElementById('history-detail-modal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+function setupEkoNoResultsModal() {
+  const modal = document.getElementById('eko-no-results-modal');
+  const closeBtn = document.getElementById('eko-no-results-close');
+  const tryAgainBtn = document.getElementById('eko-no-results-try-again');
+  const cancelBtn = document.getElementById('eko-no-results-cancel');
+  
+  if (closeBtn) closeBtn.addEventListener('click', closeEkoNoResultsModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeEkoNoResultsModal);
+  
+  if (tryAgainBtn) {
+    tryAgainBtn.addEventListener('click', function() {
+      closeEkoNoResultsModal();
+      document.querySelector('.data-form-section').scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+  
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === this) closeEkoNoResultsModal();
+    });
+  }
+}
+
+function closeEkoNoResultsModal() {
+  document.getElementById('eko-no-results-modal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+function showEkoNoResultsModal() {
+  document.getElementById('eko-no-results-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function setupAnalysisLoadingScreen() {
+  const loadingScreen = document.getElementById('analysis-loading-screen');
+  if (loadingScreen) {
+    loadingScreen.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  }
+}
+
+function showAnalysisLoading() {
+  const loadingScreen = document.getElementById('analysis-loading-screen');
+  const progressFill = document.getElementById('analysis-loading-progress-fill');
+  const timeText = document.getElementById('analysis-loading-time');
+  const loadingText = document.getElementById('analysis-loading-text');
+  const messageEl = document.getElementById('analysis-message');
+  
+  if (!loadingScreen) return;
+  
+  loadingScreen.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  let secondsLeft = 15;
+  const totalSeconds = 15;
+  
+  if (progressFill) progressFill.style.width = '0%';
+  if (timeText) timeText.textContent = `${secondsLeft} ثانية متبقية`;
+  if (messageEl) messageEl.textContent = 'جاري تحليل عروض البنوك...';
+  
+  if (analysisLoadingInterval) {
+    clearInterval(analysisLoadingInterval);
+  }
+  
+  analysisLoadingInterval = setInterval(() => {
+    secondsLeft--;
+    
+    if (secondsLeft >= 0) {
+      const progressPercent = ((totalSeconds - secondsLeft) / totalSeconds) * 100;
+      if (progressFill) progressFill.style.width = `${progressPercent}%`;
+      if (timeText) timeText.textContent = `${secondsLeft} ثانية متبقية`;
+      
+      if (secondsLeft === 10) {
+        if (loadingText) loadingText.textContent = 'إيكو بيقارن بين عروض البنوك...';
+        if (messageEl) messageEl.textContent = 'مقارنة أسعار الفائدة والشروط';
+      } else if (secondsLeft === 5) {
+        if (loadingText) loadingText.textContent = 'إيكو بيجهز النتائج ليك...';
+        if (messageEl) messageEl.textContent = 'يتم تجهيز التقارير والمخططات';
+      }
+    } else {
+      clearInterval(analysisLoadingInterval);
+      loadingScreen.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  }, 1000);
+  
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, 15000);
+  });
+}
+
+// ==================== إعداد زر التحليل ====================
+function setupAnalyzeButton() {
+  const analyzeBtn = document.getElementById('analyze-btn');
+  
+  if (analyzeBtn) {
+    analyzeBtn.addEventListener('click', async function() {
+      const userData = collectUserData();
+      lastUserData = userData;
+      
+      if (!validateUserData(userData)) {
+        return;
+      }
+      
+      const userPoints = currentUser.points || 0;
+      
+      if (userPoints < serviceCost) {
+        showInsufficientPointsModal(serviceCost, userPoints);
+        return;
+      }
+      
+      await deductPointsAndAnalyze(userData);
+    });
+  }
+}
+
+async function deductPointsAndAnalyze(userData) {
+  const userPoints = currentUser.points || 0;
+  
+  // تحميل أحدث البيانات من IndexedDB
+  banksData = await loadBanksFromDB();
+  
+  // التحقق أولاً من وجود بنوك مناسبة قبل الخصم
+  const suitableBanksResults = await filterSuitableBanks(userData);
+  
+  if (suitableBanksResults.length === 0) {
+    // لا توجد بنوك مناسبة → إظهار مودال إيكو المحسّن وعدم الخصم
+    showEkoNoResultsModal();
+    showEkoMessage("مع الأسف مفيش أي بنك يقدر يوفّرلك القرض بالمعايير دي. جرب تعدّل البيانات!");
+    return;
+  }
+  
+  // يوجد بنوك مناسبة → نكمل عملية الخصم
+  const newPoints = userPoints - serviceCost;
+  currentUser.points = newPoints;
+  localStorage.setItem('banqok_user', JSON.stringify(currentUser));
+  
+  // تحديث قاعدة البيانات
+  await updateUserInDatabase(currentUser);
+  
+  // إرسال حدث لتحديث الصفحات الأخرى
+  window.dispatchEvent(new CustomEvent('userDataUpdated', { 
+    detail: { user: currentUser } 
+  }));
+  
+  document.getElementById('points-balance').textContent = newPoints;
+  
+  createTransaction(serviceCost, newPoints);
+  
+  const analyzeBtn = document.getElementById('analyze-btn');
+  if (analyzeBtn) {
+    analyzeBtn.classList.add('spinning');
+    analyzeBtn.disabled = true;
+    analyzeBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> جاري التحليل...';
+  }
+  
+  await showAnalysisLoading();
+  await performAnalysisAfterDeduction(userData, suitableBanksResults);
+  
+  if (analyzeBtn) {
+    analyzeBtn.classList.remove('spinning');
+    analyzeBtn.disabled = false;
+    analyzeBtn.innerHTML = `<i class="bi bi-calculator"></i> تحليل القروض (${serviceCost} نقطة)`;
+  }
+}
+
+async function performAnalysisAfterDeduction(userData, suitableBanksResults) {
+  analysisResults = suitableBanksResults;
+  
+  // ترتيب النتائج حسب المعايير المطلوبة: أقل فائدة -> أقل قسط -> أقل نسبة قسط
+  analysisResults.sort((a, b) => {
+    if (a.loan.interestRate !== b.loan.interestRate) 
+      return a.loan.interestRate - b.loan.interestRate;
+    if (a.monthlyInstallment !== b.monthlyInstallment)
+      return a.monthlyInstallment - b.monthlyInstallment;
+    return a.installmentRatio - b.installmentRatio;
+  });
+  
+  displayResults(analysisResults);
+  
+  document.getElementById('results-section').classList.add('active');
+  
+  // حفظ النتيجة بعد الخصم مباشرة
+  saveAnalysisResult(userData, analysisResults[0], analysisResults.slice(0,4));
+  
+  showEkoMessage(`وجدنا ${analysisResults.length} بنك يناسبك! أفضل عرض من ${analysisResults[0].bank.name}، شوف التفاصيل!`);
+  
+  document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ==================== دوال التحليل الجديدة ====================
+function collectUserData() {
+  const existingCustomer = document.querySelector('input[name="existing-customer"]:checked');
+  const salaryTransfer = document.querySelector('input[name="salary-transfer"]:checked');
+  
+  return {
+    profession: document.getElementById('profession').value,
+    age: parseInt(document.getElementById('age').value),
+    monthlyIncome: parseInt(document.getElementById('monthly-income').value),
+    loanPurpose: document.getElementById('loan-purpose').value,
+    loanAmount: parseInt(document.getElementById('loan-amount').value),
+    repaymentPeriod: parseInt(document.getElementById('repayment-period').value),
+    collateralType: document.getElementById('collateral-type').value,
+    workDuration: parseInt(document.getElementById('work-duration').value),
+    existingCustomer: existingCustomer ? existingCustomer.value === 'yes' : false,
+    salaryTransfer: salaryTransfer ? salaryTransfer.value === 'yes' : false
+  };
+}
+
+function validateUserData(data) {
+  if (data.monthlyIncome < 1000) {
+    showError('الدخل الشهري لا يمكن أن يقل عن 1000 جنيه.');
+    return false;
+  }
+  if (data.loanAmount < 5000) {
+    showError('مبلغ القرض لا يمكن أن يقل عن 5000 جنيه.');
+    return false;
+  }
+  if (data.age < 18 || data.age > 75) {
+    showError('العمر يجب أن يكون بين 18 و 75 سنة.');
+    return false;
+  }
+  if (data.repaymentPeriod < 6 || data.repaymentPeriod > 360) {
+    showError('مدة السداد يجب أن تكون بين 6 و 360 شهراً.');
+    return false;
+  }
+  return true;
+}
+
+function showInsufficientPointsModal(cost, balance) {
+  const costEl = document.getElementById('insufficient-cost');
+  const balanceEl = document.getElementById('insufficient-balance');
+  const neededEl = document.getElementById('insufficient-needed');
+  
+  if (costEl) costEl.textContent = cost + ' نقطة';
+  if (balanceEl) balanceEl.textContent = balance + ' نقطة';
+  if (neededEl) neededEl.textContent = (cost - balance) + ' نقطة';
+  
+  document.getElementById('insufficient-modal').classList.add('active');
+}
+
+function createTransaction(deductedPoints, newBalance) {
+  if (!currentUser) return;
+  
+  const transactionId = Date.now();
+  currentTransactionId = transactionId;
+  
+  const transaction = {
+    id: transactionId,
+    date: new Date().toISOString(),
+    description: 'تحليل القروض الذكي',
+    type: 'debit',
+    points: deductedPoints,
+    balance: newBalance,
+    status: 'completed',
+    details: `تحليل قرض - ${new Date().toLocaleDateString('ar-EG')}`
+  };
+  
+  const userTransactionsKey = `banqok_transactions_${currentUser.email}`;
+  let transactions = [];
+  const savedTransactions = localStorage.getItem(userTransactionsKey);
+  if (savedTransactions) {
+    try { transactions = JSON.parse(savedTransactions); } catch (error) { console.error(error); }
+  }
+  transactions.unshift(transaction);
+  localStorage.setItem(userTransactionsKey, JSON.stringify(transactions));
+}
+
+// دالة لتحليل شروط القرض بشكل موسع
+function parseConditions(conditions) {
+  if (!conditions) return { requiresSalaryTransfer: false, professionKeywords: [], allowedCollateral: [], minWorkDuration: 0, minAge: 0, maxAge: 100 };
+  
+  const conditionsText = conditions.toLowerCase();
+  
+  // التحقق من متطلب تحويل الراتب
+  const requiresSalaryTransfer = conditionsText.includes('تحويل مرتب') || conditionsText.includes('بتحويل مرتب') || conditionsText.includes('تحويل راتب');
+  
+  // استخراج الكلمات الدالة على المهن (قائمة شاملة)
+  const professionKeywords = [];
+  const professionList = ['طبيب', 'صيدلي', 'مهندس', 'محامي', 'معلم', 'أستاذ جامعي', 'صحفي', 'قوات مسلحة', 'شرطة', 'كهرباء', 'بترول', 'مصرفي', 'موظف بنك', 'قطاع عام', 'حكومي', 'قطاع خاص', 'خاص', 'عامل بالخارج', 'خارج مصر', 'صاحب عمل', 'شركة', 'حر', 'تقاعد', 'معاش'];
+  for (const prof of professionList) {
+    if (conditionsText.includes(prof)) {
+      professionKeywords.push(prof);
+    }
+  }
+  
+  // استخراج مدة الخدمة الدنيا
+  let minWorkDuration = 0;
+  const durationMatch = conditionsText.match(/(\d+)\s*شهر/);
+  if (durationMatch) {
+    minWorkDuration = parseInt(durationMatch[1]);
+  }
+  
+  // استخراج الحد الأدنى للعمر
+  let minAge = 0;
+  const ageMinMatch = conditionsText.match(/(?:لا يقل العمر عن|العمر لا يقل عن|الحد الأدنى للعمر|أقل عمر)\s*(\d+)/);
+  if (ageMinMatch) minAge = parseInt(ageMinMatch[1]);
+  
+  // استخراج الحد الأقصى للعمر
+  let maxAge = 100;
+  const ageMaxMatch = conditionsText.match(/(?:لا يزيد العمر عن|العمر لا يزيد عن|الحد الأقصى للعمر|أكبر عمر)\s*(\d+)/);
+  if (ageMaxMatch) maxAge = parseInt(ageMaxMatch[1]);
+  
+  // التحقق من نوع الضمان المطلوب
+  let allowedCollateral = [];
+  if (conditionsText.includes('وعاء ادخاري') || conditionsText.includes('وديعة')) allowedCollateral.push('savings');
+  if (conditionsText.includes('وحدة سكنية') || conditionsText.includes('عقاري')) allowedCollateral.push('property');
+  if (conditionsText.includes('بطاقة ائتمان')) allowedCollateral.push('credit');
+  if (conditionsText.includes('بدون ضمان') || conditionsText.includes('دون ضمان')) allowedCollateral.push('none');
+  
+  return { requiresSalaryTransfer, professionKeywords, allowedCollateral, minWorkDuration, minAge, maxAge };
+}
+
+// دالة لترجمة المهنة إلى كلمات مفتاحية للمقارنة
+function getProfessionKeywords(professionValue) {
+  const mapping = {
+    'government': ['موظف حكومي', 'قطاع عام', 'حكومي', 'موظف بالحكومة', 'قوات مسلحة', 'شرطة', 'كهرباء', 'بترول', 'صحفي'],
+    'private': ['قطاع خاص', 'خاص', 'موظف بشركة', 'قطاع الأعمال'],
+    'bank': ['مصرفي', 'موظف بنك', 'بنك', 'قطاع مصرفي'],
+    'business': ['صاحب عمل', 'شركة', 'أعمال حرة', 'رجل أعمال', 'تاجر'],
+    'freelance': ['حر', 'مهنة حرة', 'مستقل', 'محامي', 'مهندس', 'طبيب', 'صيدلي', 'أستاذ جامعي'],
+    'doctor': ['طبيب', 'طبيب أسنان', 'جراح', 'دكتور'],
+    'pharmacist': ['صيدلي', 'صيدلاني'],
+    'professor': ['أستاذ جامعي', 'أستاذ', 'دكتور جامعي'],
+    'retired': ['معاش', 'تقاعد', 'متقاعد', 'صاحب معاش'],
+    'petroleum': ['بترول', 'غاز', 'بترول وغاز'],
+    'military': ['قوات مسلحة', 'شرطة', 'ضابط', 'جندي', 'عسكري', 'أمن'],
+    'journalist': ['صحفي', 'إعلامي', 'مراسل'],
+    'abroad': ['عامل بالخارج', 'خارج مصر', 'مغترب']
+  };
+  return mapping[professionValue] || [];
+}
+
+function isProfessionMatch(professionValue, loanKeywords) {
+  if (loanKeywords.length === 0) return true; // لا توجد شروط مهنية
+  const userProfKeywords = getProfessionKeywords(professionValue);
+  for (const loanKw of loanKeywords) {
+    for (const userKw of userProfKeywords) {
+      if (loanKw.includes(userKw) || userKw.includes(loanKw)) return true;
+    }
+  }
+  return false;
+}
+
+// دالة للتحقق مما إذا كان القرض مناسباً للمستخدم بناءً على جميع الشروط
+function isLoanSuitableForUser(loan, userData) {
+  const parsed = parseConditions(loan.conditions);
+  const fullText = (loan.conditions + ' ' + loan.description).toLowerCase();
+  
+  // 1. التحقق من تحويل الراتب (مع مراعاة رغبة المستخدم)
+  if (parsed.requiresSalaryTransfer && !userData.salaryTransfer) {
+    return false; // القرض يتطلب تحويل راتب والمستخدم لا يريد التحويل
+  }
+  // إذا كان المستخدم يريد تحويل الراتب (salaryTransfer = true) والقرض لا يطلب تحويلاً، فهو مقبول.
+  // لا نرفض القرض إذا كان المستخدم يريد التحويل والقرض لا يطلبه (لأنه قد يكون متاحاً مع تحويل الراتب أيضاً)
+  // لكن يجب أن نفضل لاحقاً القروض التي تدعم تحويل الراتب.
+  
+  // 2. التحقق من المهنة
+  if (parsed.professionKeywords.length > 0) {
+    if (!isProfessionMatch(userData.profession, parsed.professionKeywords)) {
+      return false;
+    }
+  }
+  
+  // 3. التحقق من مدة الخدمة الدنيا
+  if (parsed.minWorkDuration > 0 && userData.workDuration < parsed.minWorkDuration) {
+    return false;
+  }
+  
+  // 4. التحقق من العمر
+  if (parsed.minAge > 0 && userData.age < parsed.minAge) return false;
+  if (parsed.maxAge < 100 && userData.age > parsed.maxAge) return false;
+  
+  // 5. التحقق من نوع الضمان
+  if (parsed.allowedCollateral.length > 0) {
+    // إذا كان القرض يحدد أنواع ضمان محددة، يجب أن يكون ضمان المستخدم ضمنها
+    if (!parsed.allowedCollateral.includes(userData.collateralType)) {
+      return false;
+    }
+  } else {
+    // إذا لم يحدد القرض ضماناً محدداً، فهو يقبل أي ضمان بما في ذلك بدون ضمان
+    // لا مشكلة
+  }
+  
+  // 6. التحقق من أن المستخدم ليس عميلاً إذا كان القرض يتطلب ذلك
+  // البحث عن عبارات مثل "لعملاء البنك فقط" أو "للعملاء الحاليين"
+  if (fullText.includes('لعملاء البنك') && !userData.existingCustomer) {
+    return false;
+  }
+  // بعض القروض قد تشترط ألا يكون المستخدم عميلاً؟ نادر لكن نتحقق
+  if (fullText.includes('غير العملاء') && userData.existingCustomer) {
+    return false;
+  }
+  
+  return true;
+}
+
+// دالة لتصفية البنوك المناسبة واختيار أفضل قرض لكل بنك
+async function filterSuitableBanks(userData) {
+  const results = [];
+  
+  for (const bank of banksData) {
+    // التحقق من الحد الأدنى للمرتب
+    if (userData.monthlyIncome < bank.minSalary) continue;
+    
+    // الحصول على فئة القروض حسب الغرض
+    const categoryLoans = bank.loanCategories[userData.loanPurpose];
+    if (!categoryLoans || categoryLoans.length === 0) continue;
+    
+    // تصفية المنتجات المناسبة ضمن هذا البنك
+    const suitableLoans = [];
+    for (const loan of categoryLoans) {
+      // التحقق من مبلغ القرض
+      if (userData.loanAmount < loan.minAmount) continue;
+      if (loan.maxAmount > 0 && userData.loanAmount > loan.maxAmount) continue;
+      
+      // التحقق من مدة السداد
+      if (userData.repaymentPeriod < loan.minTerm) continue;
+      if (userData.repaymentPeriod > loan.maxTerm) continue;
+      
+      // التحقق من جميع الشروط الأخرى (المهنة، مدة الخدمة، الضمان، العمر، تحويل الراتب، كونه عميلاً)
+      if (!isLoanSuitableForUser(loan, userData)) continue;
+      
+      suitableLoans.push(loan);
+    }
+    
+    if (suitableLoans.length === 0) continue;
+    
+    // اختيار أفضل قرض من بين المناسبين: أقل فائدة، ثم أقل قسط (بعد الحساب)
+    // نحتاج إلى حساب القسط لكل قرض لترتيبها
+    const loansWithDetails = suitableLoans.map(loan => {
+      const monthlyInstallment = calculateEMI(userData.loanAmount, loan.interestRate, userData.repaymentPeriod, loan.interestType);
+      return { loan, monthlyInstallment };
+    });
+    // ترتيب حسب أقل فائدة ثم أقل قسط
+    loansWithDetails.sort((a, b) => {
+      if (a.loan.interestRate !== b.loan.interestRate) return a.loan.interestRate - b.loan.interestRate;
+      return a.monthlyInstallment - b.monthlyInstallment;
+    });
+    const bestLoan = loansWithDetails[0].loan;
+    const monthlyInstallment = loansWithDetails[0].monthlyInstallment;
+    
+    const totalInterest = (monthlyInstallment * userData.repaymentPeriod) - userData.loanAmount;
+    const totalPayment = monthlyInstallment * userData.repaymentPeriod;
+    const installmentRatio = (monthlyInstallment / userData.monthlyIncome) * 100;
+    
+    // حساب درجة التقييم (تعطي أولوية للفائدة الأقل والقسط الأقل ونسبة القسط الأقل)
+    let score = 100;
+    // عقوبة الفائدة المرتفعة: كل 1% فوق 12% تخفض 3 درجات
+    const interestPenalty = Math.max(0, (bestLoan.interestRate - 12) * 3);
+    score -= interestPenalty;
+    // عقوبة نسبة القسط عن 30%: كل 5% فوق 30% تخفض 5 درجات
+    if (installmentRatio > 30) {
+      const ratioPenalty = Math.min(30, (installmentRatio - 30) / 5 * 5);
+      score -= ratioPenalty;
+    }
+    // مكافأة تحويل الراتب إذا كان المستخدم يريد ذلك والقرض يدعمه
+    if (userData.salaryTransfer && (bestLoan.conditions || '').toLowerCase().includes('تحويل')) {
+      score += 8;
+    }
+    // مكافأة كون المستخدم عميلاً للبنك إذا كان القرض يفضل ذلك
+    if (userData.existingCustomer && (bestLoan.conditions || '').toLowerCase().includes('عملاء')) {
+      score += 5;
+    }
+    score = Math.max(0, Math.min(100, Math.round(score)));
+    
+    results.push({
+      bank: bank,
+      loan: bestLoan,
+      monthlyInstallment: monthlyInstallment,
+      totalInterest: totalInterest,
+      totalPayment: totalPayment,
+      installmentRatio: installmentRatio,
+      score: score,
+      suitability: getSuitabilityLevel(score, installmentRatio, userData.monthlyIncome * 0.5)
+    });
+  }
+  
+  return results;
+}
+
+// دالة محسنة لحساب القسط الشهري تدعم الفائدة المتناقصة والثابتة
+function calculateEMI(principal, annualRate, months, interestType = 'decreasing') {
+  if (interestType === 'fixed') {
+    // الفائدة الثابتة: الفائدة = أصل القرض * المعدل السنوي * عدد السنوات
+    const years = months / 12;
+    const totalInterest = principal * (annualRate / 100) * years;
+    const totalPayment = principal + totalInterest;
+    return totalPayment / months;
+  } else {
+    // الفائدة المتناقصة (الأكثر شيوعاً)
+    const monthlyRate = annualRate / 100 / 12;
+    if (monthlyRate === 0) return principal / months;
+    const factor = Math.pow(1 + monthlyRate, months);
+    return principal * monthlyRate * factor / (factor - 1);
+  }
+}
+
+function getSuitabilityLevel(score, installmentRatio, maxInstallment) {
+  if (score >= 85) return 'ممتاز';
+  if (score >= 70) return 'جيد جداً';
+  if (score >= 60) return 'جيد';
+  return 'مقبول';
+}
+
+function displayResults(results) {
+  if (results.length === 0) return;
+  displayBestBank(results[0]);
+  displayAlternativeBanks(results.slice(1, 4));
+  displayEkoAdvice(results[0], results);
+  createCharts(results.slice(0, 4));
+  createPieCharts(results);
+  createTimeChart(results[0]);
+}
+
+function displayBestBank(result) {
+  const bank = result.bank;
+  const loan = result.loan;
+  document.getElementById('best-bank-logo').src = bank.logo;
+  document.getElementById('best-bank-name').textContent = bank.name;
+  document.getElementById('best-bank-type').textContent = `${bank.type === 'government' ? 'بنك حكومي' : bank.type === 'islamic' ? 'بنك إسلامي' : 'بنك خاص'} | الحد الأدنى للمرتب: ${formatNumber(bank.minSalary)} جنيه`;
+  document.getElementById('best-bank-score').textContent = result.score;
+  document.getElementById('best-bank-reason').innerHTML = generateBankReason(result);
+  document.getElementById('best-monthly-installment').textContent = formatNumber(Math.round(result.monthlyInstallment));
+  document.getElementById('best-total-interest').textContent = formatNumber(Math.round(result.totalInterest));
+  document.getElementById('best-total-payment').textContent = formatNumber(Math.round(result.totalPayment));
+  document.getElementById('best-installment-ratio').textContent = result.installmentRatio.toFixed(1) + '%';
+  
+  document.getElementById('best-bank-details-btn').setAttribute('data-bank-id', bank.id);
+  document.getElementById('best-bank-apply-btn').setAttribute('data-bank-id', bank.id);
+}
+
+function generateBankReason(result) {
+  const bank = result.bank;
+  const loan = result.loan;
+  let reason = `<strong>${bank.name}</strong> هو الأنسب لك للأسباب التالية:<br>`;
+  reason += `• يقدم سعر فائدة ${loan.interestRate}% (${loan.interestType === 'decreasing' ? 'متناقصة' : 'ثابتة'}) وهو من أقل الأسعار المناسبة لطلبك.<br>`;
+  reason += `• القسط الشهري ${formatNumber(Math.round(result.monthlyInstallment))} جنيه يشكل ${result.installmentRatio.toFixed(1)}% فقط من دخلك، وهو ضمن النسبة الآمنة.<br>`;
+  if (result.score >= 85) reason += `• حصل على تقييم عالٍ (${result.score}) مقارنة بالبنوك الأخرى.<br>`;
+  if (bank.type === 'government') reason += `• يتمتع بسمعة واستقرار كبنك حكومي.<br>`;
+  if (lastUserData && lastUserData.salaryTransfer && (loan.conditions || '').toLowerCase().includes('تحويل')) {
+    reason += `• بما أنك توافق على تحويل الراتب، فقد حصلت على أفضل شروط الفائدة.<br>`;
+  }
+  return reason;
+}
+
+function displayAlternativeBanks(results) {
+  const container = document.getElementById('alternative-banks-grid');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  results.forEach(result => {
+    const bank = result.bank;
+    const loan = result.loan;
+    const bankCard = document.createElement('div');
+    bankCard.className = 'alternative-bank-card';
+    bankCard.innerHTML = `
+      <div class="alternative-bank-header">
+        <div class="alternative-bank-info">
+          <img src="${bank.logo}" alt="${bank.name}" class="alternative-bank-logo">
+          <div class="alternative-bank-name">
+            <h4>${bank.name}</h4>
+            <p>${bank.type === 'government' ? 'بنك حكومي' : bank.type === 'islamic' ? 'بنك إسلامي' : 'بنك خاص'}</p>
+          </div>
+        </div>
+        <div class="alternative-bank-score">${result.score}</div>
+      </div>
+      <div class="alternative-bank-details">
+        <div class="alternative-bank-detail"><span class="label">القسط الشهري</span><span class="value">${formatNumber(Math.round(result.monthlyInstallment))} جنيه</span></div>
+        <div class="alternative-bank-detail"><span class="label">إجمالي الفائدة</span><span class="value">${formatNumber(Math.round(result.totalInterest))} جنيه</span></div>
+        <div class="alternative-bank-detail"><span class="label">نسبة القسط من الدخل</span><span class="value">${result.installmentRatio.toFixed(1)}%</span></div>
+        <div class="alternative-bank-detail"><span class="label">سعر الفائدة</span><span class="value">${loan.interestRate}% (${loan.interestType === 'decreasing' ? 'متناقصة' : 'ثابتة'})</span></div>
+        <div class="alternative-bank-detail"><span class="label">مستوى الملاءمة</span><span class="value">${result.suitability}</span></div>
+      </div>
+      <div class="alternative-bank-actions">
+        <button class="bank-action-btn details-btn view-details-btn" data-bank-id="${bank.id}"><i class="bi bi-info-circle"></i> التفاصيل</button>
+        <button class="bank-action-btn apply-btn apply-loan-btn" data-bank-id="${bank.id}"><i class="bi bi-send-check"></i> التقديم</button>
+      </div>
+    `;
+    container.appendChild(bankCard);
+  });
+  
+  document.querySelectorAll('.view-details-btn').forEach(btn => {
+    btn.addEventListener('click', async function() {
+      const bankId = parseInt(this.getAttribute('data-bank-id'));
+      const banks = await loadBanksFromDB();
+      banksData = banks;
+      showBankDetails(bankId);
+    });
+  });
+  
+  document.querySelectorAll('.apply-loan-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const bankId = parseInt(this.getAttribute('data-bank-id'));
+      applyForLoan(bankId);
+    });
+  });
+}
+
+function displayEkoAdvice(bestResult, allResults) {
+  const adviceElement = document.getElementById('eko-advice-text');
+  if (!adviceElement) return;
+  const bank = bestResult.bank;
+  const loan = bestResult.loan;
+  let advice = '';
+  
+  if (bestResult.installmentRatio > 50) {
+    advice = '⚠️ تحذير: نسبة القسط من دخلك مرتفعة جداً (أكثر من 50%). هذا قد يشكل عبئاً كبيراً. ننصحك بتقليل مبلغ القرض أو زيادة المدة.';
+  } else if (bestResult.installmentRatio > 40) {
+    advice = '⚠️ تنبيه: نسبة القسط من دخلك مرتفعة (بين 40-50%). يفضل إعادة النظر في المبلغ أو المدة.';
+  } else if (bestResult.installmentRatio > 30) {
+    advice = '📊 نسبة القسط من دخلك مقبولة (بين 30-40%). يمكنك تحسينها بتحويل الراتب إن أمكن.';
+  } else if (bestResult.installmentRatio > 20) {
+    advice = '👍 ممتاز! نسبة القسط من دخلك جيدة جداً (بين 20-30%).';
+  } else {
+    advice = '🎉 رائع! نسبة القسط من دخلك منخفضة جداً (أقل من 20%). وضع مالي ممتاز.';
+  }
+  
+  advice += ` سعر الفائدة ${loan.interestRate}% `;
+  if (loan.interestRate <= 12) advice += 'منخفض جداً ومنافس بشدة.';
+  else if (loan.interestRate <= 15) advice += 'مناسب ومعقول.';
+  else if (loan.interestRate <= 18) advice += 'مرتفع نسبياً، حاول التفاوض أو البحث عن بدائل.';
+  else advice += 'مرتفع جداً، فكر في تخفيض المدة أو البحث عن عروض أفضل.';
+  
+  if (loan.interestType === 'decreasing') advice += ' الفائدة المتناقصة ستوفر عليك مبلغاً أكبر مع الوقت.';
+  else advice += ' الفائدة الثابتة تعني استقرار القسط لكن إجمالي الفائدة أعلى.';
+  
+  if (lastUserData && lastUserData.salaryTransfer && (loan.conditions || '').toLowerCase().includes('تحويل')) {
+    advice += ' بما أنك توافق على تحويل الراتب، أنت مؤهل لأفضل شروط الفائدة.';
+  }
+  
+  const totalSavings = bestResult.totalInterest * 0.1;
+  advice += ` 💡 نصيحة: تقليل مدة القرض بسنة واحدة قد يوفر لك حوالي ${formatNumber(Math.round(totalSavings))} جنيه من الفوائد.`;
+  
+  adviceElement.textContent = advice;
+}
+
+function createCharts(results) {
+  const ctx1 = document.getElementById('interestChart')?.getContext('2d');
+  const ctx2 = document.getElementById('installmentChart')?.getContext('2d');
+  
+  if (!ctx1 || !ctx2) return;
+  
+  if (interestChart) interestChart.destroy();
+  if (installmentChart) installmentChart.destroy();
+  
+  const bankNames = results.map(r => r.bank.name);
+  const interestRates = results.map(r => r.loan.interestRate);
+  const monthlyInstallments = results.map(r => Math.round(r.monthlyInstallment));
+  
+  interestChart = new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: bankNames,
+      datasets: [{
+        label: 'سعر الفائدة السنوي (%)',
+        data: interestRates,
+        backgroundColor: ['rgba(16, 185, 129, 0.8)', 'rgba(59, 130, 246, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+        borderColor: ['rgb(16, 185, 129)', 'rgb(59, 130, 246)', 'rgb(245, 158, 11)', 'rgb(239, 68, 68)'],
+        borderWidth: 2,
+        borderRadius: 8,
+        barPercentage: 0.6,
+        categoryPercentage: 0.8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top', labels: { font: { family: 'Cairo', size: 14 } } },
+        tooltip: { bodyFont: { family: 'Cairo' } }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'سعر الفائدة (%)' } }
+      }
+    }
+  });
+  
+  installmentChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: bankNames,
+      datasets: [{
+        label: 'القسط الشهري (جنيه)',
+        data: monthlyInstallments,
+        backgroundColor: ['rgba(16, 185, 129, 0.8)', 'rgba(59, 130, 246, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+        borderColor: ['rgb(16, 185, 129)', 'rgb(59, 130, 246)', 'rgb(245, 158, 11)', 'rgb(239, 68, 68)'],
+        borderWidth: 2,
+        borderRadius: 8,
+        barPercentage: 0.6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top', labels: { font: { family: 'Cairo', size: 14 } } },
+        tooltip: { bodyFont: { family: 'Cairo' } }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'القسط الشهري (جنيه)' } }
+      }
+    }
+  });
+}
+
+function createPieCharts(results) {
+  const ctx1 = document.getElementById('interestDistributionChart')?.getContext('2d');
+  const ctx2 = document.getElementById('installmentDistributionChart')?.getContext('2d');
+  const ctx3 = document.getElementById('suitabilityDistributionChart')?.getContext('2d');
+  
+  if (!ctx1 || !ctx2 || !ctx3) return;
+  
+  if (interestDistributionChart) interestDistributionChart.destroy();
+  if (installmentDistributionChart) installmentDistributionChart.destroy();
+  if (suitabilityDistributionChart) suitabilityDistributionChart.destroy();
+  
+  const interestCategories = {
+    'أقل من 14%': results.filter(r => r.loan.interestRate < 14).length,
+    '14% - 16%': results.filter(r => r.loan.interestRate >= 14 && r.loan.interestRate <= 16).length,
+    'أكثر من 16%': results.filter(r => r.loan.interestRate > 16).length
+  };
+  
+  interestDistributionChart = new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(interestCategories),
+      datasets: [{
+        data: Object.values(interestCategories),
+        backgroundColor: ['rgba(16, 185, 129, 0.8)', 'rgba(59, 130, 246, 0.8)', 'rgba(245, 158, 11, 0.8)'],
+        borderColor: ['rgb(16, 185, 129)', 'rgb(59, 130, 246)', 'rgb(245, 158, 11)'],
+        borderWidth: 3,
+        hoverOffset: 15,
+        borderRadius: 5,
+        spacing: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 12 } } },
+        tooltip: { bodyFont: { family: 'Cairo' } }
+      }
+    }
+  });
+  
+  const installmentCategories = {
+    'أقل من 1000 ج': results.filter(r => r.monthlyInstallment < 1000).length,
+    '1000 - 2000 ج': results.filter(r => r.monthlyInstallment >= 1000 && r.monthlyInstallment <= 2000).length,
+    'أكثر من 2000 ج': results.filter(r => r.monthlyInstallment > 2000).length
+  };
+  
+  installmentDistributionChart = new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(installmentCategories),
+      datasets: [{
+        data: Object.values(installmentCategories),
+        backgroundColor: ['rgba(16, 185, 129, 0.8)', 'rgba(59, 130, 246, 0.8)', 'rgba(245, 158, 11, 0.8)'],
+        borderColor: ['rgb(16, 185, 129)', 'rgb(59, 130, 246)', 'rgb(245, 158, 11)'],
+        borderWidth: 3,
+        hoverOffset: 15,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 12 } } },
+        tooltip: { bodyFont: { family: 'Cairo' } }
+      }
+    }
+  });
+  
+  const suitabilityCounts = {
+    'ممتاز': results.filter(r => r.suitability === 'ممتاز').length,
+    'جيد جداً': results.filter(r => r.suitability === 'جيد جداً').length,
+    'جيد': results.filter(r => r.suitability === 'جيد').length,
+    'مقبول': results.filter(r => r.suitability === 'مقبول').length
+  };
+  
+  suitabilityDistributionChart = new Chart(ctx3, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(suitabilityCounts),
+      datasets: [{
+        data: Object.values(suitabilityCounts),
+        backgroundColor: ['rgba(16, 185, 129, 0.8)', 'rgba(59, 130, 246, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+        borderColor: ['rgb(16, 185, 129)', 'rgb(59, 130, 246)', 'rgb(245, 158, 11)', 'rgb(239, 68, 68)'],
+        borderWidth: 3,
+        hoverOffset: 15,
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { family: 'Cairo', size: 12 } } },
+        tooltip: { bodyFont: { family: 'Cairo' } }
+      }
+    }
+  });
+}
+
+function createTimeChart(result) {
+  const ctx = document.getElementById('timeChart')?.getContext('2d');
+  if (!ctx) return;
+  
+  if (timeChart) timeChart.destroy();
+  
+  const principal = lastUserData?.loanAmount || 200000;
+  const annualRate = result.loan?.interestRate || 14;
+  const months = lastUserData?.repaymentPeriod || 60;
+  const interestType = result.loan?.interestType || 'decreasing';
+  
+  const schedule = calculateRepaymentSchedule(principal, annualRate, months, interestType);
+  const labels = schedule.map(item => `شهر ${item.month}`);
+  const remainingBalances = schedule.map(item => item.remainingBalance);
+  
+  timeChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels.slice(0, 13),
+      datasets: [
+        {
+          label: 'الرصيد المتبقي (جنيه)',
+          data: remainingBalances.slice(0, 13),
+          borderColor: 'rgba(16, 185, 129, 1)',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          borderWidth: 3,
+          pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+          tension: 0.4,
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top', labels: { font: { family: 'Cairo' } } },
+        tooltip: { bodyFont: { family: 'Cairo' } }
+      },
+      scales: {
+        y: { beginAtZero: false, title: { display: true, text: 'الرصيد (جنيه)' } },
+        x: { title: { display: true, text: 'الشهر' } }
+      }
+    }
+  });
+}
+
+function calculateRepaymentSchedule(principal, annualRate, months, interestType = 'decreasing') {
+  let monthlyRate = annualRate / 100 / 12;
+  let emi, balance = principal;
+  const schedule = [];
+  
+  if (interestType === 'fixed') {
+    const years = months / 12;
+    const totalInterest = principal * (annualRate / 100) * years;
+    const totalPayment = principal + totalInterest;
+    emi = totalPayment / months;
+    for (let i = 1; i <= months; i++) {
+      const remainingBalance = principal * (1 - i / months);
+      schedule.push({
+        month: i,
+        remainingBalance: remainingBalance > 0 ? remainingBalance : 0,
+        interestPaid: totalInterest / months,
+        principalPaid: emi - (totalInterest / months),
+        emi: emi
+      });
+    }
+  } else {
+    if (monthlyRate === 0) emi = principal / months;
+    else emi = principal * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+    for (let i = 1; i <= months; i++) {
+      const interest = balance * monthlyRate;
+      const principalPaid = emi - interest;
+      balance = balance - principalPaid;
+      if (balance < 0) balance = 0;
+      schedule.push({
+        month: i,
+        remainingBalance: balance,
+        interestPaid: interest,
+        principalPaid: principalPaid,
+        emi: emi
+      });
+    }
+  }
+  return schedule;
+}
+
+function saveAnalysisResult(userData, bestResult, topResults) {
+  if (!currentUser) return;
+  const resultId = Date.now();
+  const analysisRecord = {
+    id: resultId,
+    transactionId: currentTransactionId,
+    date: new Date().toISOString(),
+    userData: userData,
+    bestBank: {
+      id: bestResult.bank.id,
+      name: bestResult.bank.name,
+      logo: bestResult.bank.logo,
+      score: bestResult.score,
+      monthlyInstallment: bestResult.monthlyInstallment,
+      totalInterest: bestResult.totalInterest,
+      totalPayment: bestResult.totalPayment,
+      installmentRatio: bestResult.installmentRatio,
+      loan: {
+        interestRate: bestResult.loan.interestRate,
+        interestType: bestResult.loan.interestType,
+        minAmount: bestResult.loan.minAmount,
+        maxAmount: bestResult.loan.maxAmount,
+        minTerm: bestResult.loan.minTerm,
+        maxTerm: bestResult.loan.maxTerm,
+        conditions: bestResult.loan.conditions,
+        description: bestResult.loan.description
+      }
+    },
+    results: topResults.map(r => ({
+      bankId: r.bank.id,
+      bankName: r.bank.name,
+      bankLogo: r.bank.logo,
+      score: r.score,
+      monthlyInstallment: r.monthlyInstallment,
+      totalInterest: r.totalInterest,
+      totalPayment: r.totalPayment,
+      installmentRatio: r.installmentRatio,
+      suitability: r.suitability,
+      interestRate: r.loan.interestRate
+    }))
+  };
+  
+  const userAnalysisKey = `banqok_loan_analysis_${currentUser.email}`;
+  let analyses = [];
+  const savedAnalyses = localStorage.getItem(userAnalysisKey);
+  if (savedAnalyses) {
+    try { analyses = JSON.parse(savedAnalyses); } catch (error) { console.error(error); }
+  }
+  analyses.unshift(analysisRecord);
+  localStorage.setItem(userAnalysisKey, JSON.stringify(analyses));
+}
+
+function deleteAllHistory() {
+  if (!currentUser) return;
+  const userAnalysisKey = `banqok_loan_analysis_${currentUser.email}`;
+  localStorage.removeItem(userAnalysisKey);
+  closeHistoryModal();
+}
+
+function deleteHistoryItem(analysisId) {
+  if (!currentUser) return;
+  const userAnalysisKey = `banqok_loan_analysis_${currentUser.email}`;
+  const savedAnalyses = localStorage.getItem(userAnalysisKey);
+  if (savedAnalyses) {
+    try {
+      let analyses = JSON.parse(savedAnalyses);
+      analyses = analyses.filter(a => a.id !== analysisId);
+      localStorage.setItem(userAnalysisKey, JSON.stringify(analyses));
+      openHistoryModal();
+    } catch (error) { console.error(error); }
+  }
+}
+
+function setupFilters() {
+  const sortFilter = document.getElementById('sort-filter');
+  const bankTypeFilter = document.getElementById('bank-type-filter');
+  
+  function applyFilters() {
+    if (analysisResults.length === 0) return;
+    
+    let filtered = [...analysisResults];
+    const typeValue = bankTypeFilter.value;
+    if (typeValue !== 'all') {
+      filtered = filtered.filter(r => r.bank.type === typeValue);
+    }
+    
+    if (filtered.length === 0) {
+      return;
+    }
+    
+    const sortValue = sortFilter.value;
+    switch (sortValue) {
+      case 'installment': filtered.sort((a,b) => a.monthlyInstallment - b.monthlyInstallment); break;
+      case 'interest': filtered.sort((a,b) => a.loan.interestRate - b.loan.interestRate); break;
+      default: filtered.sort((a,b) => b.score - a.score);
+    }
+    
+    displayBestBank(filtered[0]);
+    displayAlternativeBanks(filtered.slice(1,4));
+    displayEkoAdvice(filtered[0], filtered);
+    createCharts(filtered.slice(0,4));
+    createPieCharts(filtered);
+    createTimeChart(filtered[0]);
+  }
+  
+  if (sortFilter) sortFilter.addEventListener('change', applyFilters);
+  if (bankTypeFilter) bankTypeFilter.addEventListener('change', applyFilters);
+}
+
+function setupBankDetailsModal() {
+  const modalClose = document.getElementById('bank-details-close');
+  const modal = document.getElementById('bank-details-modal');
+  
+  if (modalClose) modalClose.addEventListener('click', closeBankDetailsModal);
+  if (modal) {
+    modal.addEventListener('click', function(e) { if (e.target === this) closeBankDetailsModal(); });
+  }
+  
+  const bestBankDetailsBtn = document.getElementById('best-bank-details-btn');
+  if (bestBankDetailsBtn) {
+    bestBankDetailsBtn.addEventListener('click', async function() {
+      const bankId = parseInt(this.getAttribute('data-bank-id'));
+      const banks = await loadBanksFromDB();
+      banksData = banks;
+      showBankDetails(bankId);
+    });
+  }
+  
+  const bestBankApplyBtn = document.getElementById('best-bank-apply-btn');
+  if (bestBankApplyBtn) {
+    bestBankApplyBtn.addEventListener('click', function() {
+      const bankId = parseInt(this.getAttribute('data-bank-id'));
+      applyForLoan(bankId);
+    });
+  }
+  
+  const saveResultBtn = document.getElementById('save-result-btn');
+  if (saveResultBtn) {
+    saveResultBtn.addEventListener('click', function() {
+      if (!analysisResults || analysisResults.length === 0) {
+        showInfo('لا توجد نتائج لحفظها حالياً.');
+        return;
+      }
+      saveAnalysisResult(lastUserData, analysisResults[0], analysisResults.slice(0,4));
+      showEkoMessage('حفظنا النتيجة في سجل عملياتك! تقدر ترجع ليها في أي وقت من "العمليات المحفوظة".');
+    });
+  }
+}
+
+async function showBankDetails(bankId) {
+  const banks = await loadBanksFromDB();
+  const bank = banks.find(b => b.id === bankId);
+  if (!bank) return;
+  
+  let bestLoan = null;
+  if (lastUserData) {
+    const categoryLoans = bank.loanCategories[lastUserData.loanPurpose];
+    if (categoryLoans) {
+      const suitable = categoryLoans.filter(loan => 
+        lastUserData.loanAmount >= loan.minAmount &&
+        (loan.maxAmount === 0 || lastUserData.loanAmount <= loan.maxAmount) &&
+        lastUserData.repaymentPeriod >= loan.minTerm &&
+        lastUserData.repaymentPeriod <= loan.maxTerm &&
+        isLoanSuitableForUser(loan, lastUserData)
+      );
+      if (suitable.length) {
+        suitable.sort((a,b) => a.interestRate - b.interestRate);
+        bestLoan = suitable[0];
+      }
+    }
+  }
+  if (!bestLoan && bank.loanCategories[lastUserData?.loanPurpose || 'personal']) {
+    bestLoan = bank.loanCategories[lastUserData.loanPurpose || 'personal'][0];
+  }
+  
+  const loanPurpose = lastUserData?.loanPurpose || 'personal';
+  const loanTypeNames = { personal: 'شخصي', car: 'سيارة', mortgage: 'عقاري', renovation: 'تشطيب', education: 'تعليم', debt: 'سداد مديونيات' };
+  
+  document.getElementById('detail-bank-logo').src = bank.logo;
+  document.getElementById('detail-bank-name').textContent = bank.name;
+  document.getElementById('detail-bank-type').textContent = bank.type === 'government' ? 'بنك حكومي' : bank.type === 'islamic' ? 'بنك إسلامي' : 'بنك خاص';
+  
+  const generalInfo = document.getElementById('detail-general-info');
+  if (generalInfo) {
+    generalInfo.innerHTML = `
+      <li><span class="label">الاسم بالإنجليزية:</span><span class="value">${bank.nameEn}</span></li>
+      <li><span class="label">عدد الفروع:</span><span class="value">${bank.branches}</span></li>
+      <li><span class="label">الخدمات الإلكترونية:</span><span class="value">${bank.onlineAvailable ? 'متاحة' : 'غير متاحة'}</span></li>
+      <li><span class="label">الحد الأدنى للمرتب:</span><span class="value">${formatNumber(bank.minSalary)} جنيه</span></li>
+    `;
+  }
+  
+  const loanInfo = document.getElementById('detail-loan-info');
+  if (loanInfo && bestLoan) {
+    loanInfo.innerHTML = `
+      <li><span class="label">نوع القرض:</span><span class="value">${loanTypeNames[loanPurpose] || 'عام'}</span></li>
+      <li><span class="label">الحد الأدنى للقرض:</span><span class="value">${formatNumber(bestLoan.minAmount)} جنيه</span></li>
+      <li><span class="label">الحد الأقصى للقرض:</span><span class="value">${bestLoan.maxAmount > 0 ? formatNumber(bestLoan.maxAmount) + ' جنيه' : 'حسب الضمان'}</span></li>
+      <li><span class="label">سعر الفائدة:</span><span class="value">${bestLoan.interestRate}% ${bestLoan.interestType === 'decreasing' ? 'متناقصة' : 'ثابتة'}</span></li>
+      <li><span class="label">مدة السداد:</span><span class="value">${bestLoan.minTerm} - ${bestLoan.maxTerm} شهر</span></li>
+    `;
+  }
+  
+  const conditions = document.getElementById('detail-conditions');
+  if (conditions && bestLoan) {
+    conditions.innerHTML = `
+      <li><span class="label">الوصف:</span><span class="value">${bestLoan.description || 'غير محدد'}</span></li>
+      <li><span class="label">الشروط:</span><span class="value">${bestLoan.conditions || 'غير محدد'}</span></li>
+    `;
+  }
+  
+  const extraCosts = document.getElementById('detail-extra-costs');
+  if (extraCosts) {
+    extraCosts.innerHTML = `
+      <li><span class="label">مصاريف إدارية:</span><span class="value">حسب البنك</span></li>
+      <li><span class="label">غرامات تأخير:</span><span class="value">حسب البنك</span></li>
+      <li><span class="label">السداد المبكر:</span><span class="value">متاح</span></li>
+    `;
+  }
+  
+  document.getElementById('bank-details-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBankDetailsModal() {
+  document.getElementById('bank-details-modal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+function applyForLoan(bankId) {
+  const bank = banksData.find(b => b.id === bankId);
+  if (!bank) return;
+  if (confirm(`هل تريد التقديم للقرض في ${bank.name}؟\n\nسيتم توجيهك إلى موقع البنك لإكمال عملية التقديم.`)) {
+    setTimeout(() => {
+      window.open(`https://www.${bank.nameEn.toLowerCase().replace(/ /g, '')}.com`, '_blank');
+    }, 1500);
+  }
+}
+
+// ==================== دوال سجل العمليات المحفوظة ====================
+function openHistoryModal() {
+  const historyList = document.getElementById('history-list');
+  if (!historyList) return;
+  
+  const userAnalysisKey = `banqok_loan_analysis_${currentUser.email}`;
+  const savedAnalyses = localStorage.getItem(userAnalysisKey);
+  let analyses = [];
+  if (savedAnalyses) {
+    try { analyses = JSON.parse(savedAnalyses); } catch (error) { console.error(error); }
+  }
+  
+  if (analyses.length === 0) {
+    historyList.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--light-text);"><i class="bi bi-inbox" style="font-size: 3rem; display: block; margin-bottom: 15px;"></i>لا توجد عمليات محفوظة بعد</div>';
+  } else {
+    historyList.innerHTML = '';
+    analyses.slice(0, 20).forEach(analysis => {
+      const date = new Date(analysis.date).toLocaleDateString('ar-EG') + ' ' + new Date(analysis.date).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML = `
+        <div class="history-item-info">
+          <div class="history-item-title">${analysis.bestBank.name}</div>
+          <div class="history-item-date">${date}</div>
+          <div class="history-item-details">مبلغ القرض: ${formatNumber(analysis.userData.loanAmount)} جنيه | المدة: ${analysis.userData.repaymentPeriod} شهر</div>
+        </div>
+        <div class="history-item-actions">
+          <button class="history-view-btn view-analysis-btn" data-analysis-id="${analysis.id}"><i class="bi bi-eye"></i></button>
+          <button class="history-delete-btn delete-analysis-btn" data-analysis-id="${analysis.id}"><i class="bi bi-trash"></i></button>
+        </div>
+      `;
+      historyList.appendChild(item);
+    });
+    
+    document.querySelectorAll('.view-analysis-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const analysisId = parseInt(this.getAttribute('data-analysis-id'));
+        showAnalysisDetail(analysisId, analyses);
+      });
+    });
+    
+    document.querySelectorAll('.delete-analysis-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const analysisId = parseInt(this.getAttribute('data-analysis-id'));
+        if (confirm('هل أنت متأكد من حذف هذه العملية؟')) {
+          deleteHistoryItem(analysisId);
+        }
+      });
+    });
+  }
+  
+  document.getElementById('history-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function showAnalysisDetail(analysisId, analyses) {
+  const analysis = analyses.find(a => a.id === analysisId);
+  if (!analysis) return;
+  
+  const container = document.getElementById('history-detail-container');
+  const date = new Date(analysis.date).toLocaleDateString('ar-EG') + ' ' + new Date(analysis.date).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+  
+  let alternativeBanksHtml = '';
+  if (analysis.results && analysis.results.length > 1) {
+    analysis.results.slice(1).forEach(r => {
+      alternativeBanksHtml += `
+        <div style="background: #f9fafb; padding: 10px; border-radius: 8px; margin-bottom: 8px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="${r.bankLogo || './ASSETS/banks/default.jpg'}" style="width: 30px; height: 30px; border-radius: 50%; object-fit: contain;">
+            <strong>${r.bankName}</strong> - نقاط: ${r.score}
+          </div>
+          <div style="font-size: 0.9rem; color: var(--light-text); margin-top: 5px;">
+            القسط: ${formatNumber(Math.round(r.monthlyInstallment))} جنيه | الفائدة: ${r.interestRate}% | الملاءمة: ${r.suitability}
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  container.innerHTML = `
+    <div class="detail-section">
+      <h4><i class="bi bi-calendar"></i> تاريخ العملية</h4>
+      <p>${date}</p>
+    </div>
+    
+    <div class="detail-section">
+      <h4><i class="bi bi-person"></i> بيانات المستخدم</h4>
+      <ul class="bank-details-list">
+        <li><span class="label">المهنة:</span><span class="value">${analysis.userData.profession}</span></li>
+        <li><span class="label">العمر:</span><span class="value">${analysis.userData.age} سنة</span></li>
+        <li><span class="label">الدخل الشهري:</span><span class="value">${formatNumber(analysis.userData.monthlyIncome)} جنيه</span></li>
+        <li><span class="label">الغرض من القرض:</span><span class="value">${analysis.userData.loanPurpose}</span></li>
+        <li><span class="label">مبلغ القرض:</span><span class="value">${formatNumber(analysis.userData.loanAmount)} جنيه</span></li>
+        <li><span class="label">مدة السداد:</span><span class="value">${analysis.userData.repaymentPeriod} شهر</span></li>
+        <li><span class="label">نوع الضمان:</span><span class="value">${analysis.userData.collateralType}</span></li>
+        <li><span class="label">تحويل الراتب:</span><span class="value">${analysis.userData.salaryTransfer ? 'نعم' : 'لا'}</span></li>
+        <li><span class="label">عميل لدى البنك:</span><span class="value">${analysis.userData.existingCustomer ? 'نعم' : 'لا'}</span></li>
+      </ul>
+    </div>
+    
+    <div class="detail-section">
+      <h4><i class="bi bi-trophy"></i> البنك الأفضل</h4>
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+        <img src="${analysis.bestBank.logo}" alt="${analysis.bestBank.name}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: contain; border: 2px solid var(--primary-color); padding: 5px;">
+        <div>
+          <h5 style="margin: 0; font-size: 1.2rem;">${analysis.bestBank.name}</h5>
+          <p style="margin: 5px 0 0; color: var(--light-text);">نقاط التقييم: ${analysis.bestBank.score}</p>
+        </div>
+      </div>
+      <ul class="bank-details-list">
+        <li><span class="label">القسط الشهري:</span><span class="value">${formatNumber(Math.round(analysis.bestBank.monthlyInstallment))} جنيه</span></li>
+        <li><span class="label">إجمالي الفائدة:</span><span class="value">${formatNumber(Math.round(analysis.bestBank.totalInterest))} جنيه</span></li>
+        <li><span class="label">إجمالي المدفوع:</span><span class="value">${formatNumber(Math.round(analysis.bestBank.totalPayment))} جنيه</span></li>
+        <li><span class="label">نسبة القسط من الدخل:</span><span class="value">${analysis.bestBank.installmentRatio.toFixed(1)}%</span></li>
+        <li><span class="label">سعر الفائدة:</span><span class="value">${analysis.bestBank.loan.interestRate}% (${analysis.bestBank.loan.interestType === 'decreasing' ? 'متناقصة' : 'ثابتة'})</span></li>
+      </ul>
+    </div>
+    
+    <div class="detail-section">
+      <h4><i class="bi bi-bar-chart"></i> البنوك البديلة</h4>
+      ${alternativeBanksHtml || '<p>لا توجد بنوك بديلة</p>'}
+    </div>
+  `;
+  
+  document.getElementById('history-detail-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// ==================== تحديث النافبار ====================
+function updateNavbar() {
+  const navActions = document.getElementById('nav-actions');
+  if (!navActions) return;
+  
+  navActions.innerHTML = '';
+  
+  const historyBtn = document.createElement('button');
+  historyBtn.className = 'history-nav-btn';
+  historyBtn.id = 'history-nav-btn';
+  historyBtn.innerHTML = '<i class="bi bi-bookmark-star"></i><span> العمليات المحفوظة</span>';
+  historyBtn.addEventListener('click', openHistoryModal);
+  navActions.appendChild(historyBtn);
+  
+  const refreshBtn = document.createElement('button');
+  refreshBtn.className = 'refresh-btn';
+  refreshBtn.id = 'refresh-btn';
+  refreshBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i>';
+  refreshBtn.addEventListener('click', async function() {
+    this.classList.add('spinning');
+    await refreshUserFromDatabase();
+    setTimeout(() => {
+      this.classList.remove('spinning');
+    }, 1000);
+  });
+  navActions.appendChild(refreshBtn);
+  
+  const userAvatarBtn = document.createElement('button');
+  userAvatarBtn.className = 'user-avatar-btn';
+  userAvatarBtn.id = 'user-avatar-btn';
+  
+  const avatarSrc = currentUser?.profilePic || './ASSETS/EQO/user.png';
+  const avatarImg = document.createElement('img');
+  avatarImg.src = avatarSrc;
+  avatarImg.alt = 'صورة المستخدم';
+  avatarImg.style.width = '100%';
+  avatarImg.style.height = '100%';
+  avatarImg.style.objectFit = 'cover';
+  avatarImg.style.borderRadius = '50%';
+  
+  userAvatarBtn.appendChild(avatarImg);
+  navActions.appendChild(userAvatarBtn);
+  
+  userAvatarBtn.addEventListener('click', openUserModal);
+  
+  applyThemeToNavbarButtons();
+  
+  const userModalLogout = document.getElementById('user-modal-logout');
+  if (userModalLogout) {
+    userModalLogout.addEventListener('click', logoutUser);
+  }
+}
+
+// ==================== إعداد إيكو المساعد ====================
+function setupEkoAssistant() {
+  const ekoAssistant = document.getElementById('eko-assistant');
+  const ekoTooltip = document.getElementById('eko-tooltip');
+  const ekoImage = document.getElementById('eko-image');
+  
+  const ekoMessages = [
+    "أهلاً! أنا إيكو، مساعدك في تحليل القروض. هساعدك تلاقي أفضل قرض يناسب دخلك واحتياجاتك!",
+    "متقلقش من الأرقام! أنا هقارنلك بين كل البنوك وأوصيك بأفضل ٣ عروض!",
+    "كل ما تدخل بيانات أدق، النتيجة بتكون أفضل! خد وقتك في إدخال كل المعلومات!",
+    "لو محتار في أي حقل، إضغط عليا وأنا هشرحلك إزاي تدخل البيانات صح!",
+    "خلي بالك! القسط الشهري المفروض مايتعداش ٣٥٪ من مرتبك عشان تقدر تدفعه بسهولة!",
+    "البنوك الحكومية عادة بتكون فيها فوايد أقل، لكن الشروط بتكون أصعب شوية!",
+    "البنوك الخاصة ممكن تقدملك مبالغ أكبر، لكن الفوايد بتكون أعلى!",
+    "لو عايز أقل فايدة ممكنة، دور على القروض العقارية، بتكون فايدتها أقل!",
+    "تأكد من تحويل مرتبك للبنك عشان تحصل على أقل فائدة وأفضل الشروط!",
+    "سجل عملياتك بيحفظ كل تحليل عملته، تقدر ترجع ليها في أي وقت!"
+  ];
+  
+  setTimeout(() => {
+    if (ekoTooltip) ekoTooltip.innerHTML = ekoMessages[0];
+    if (ekoAssistant) ekoAssistant.classList.add('active');
+    setTimeout(() => { if (ekoAssistant) ekoAssistant.classList.remove('active'); }, 6000);
+  }, 3000);
+  
+  setInterval(() => {
+    const randomMessage = ekoMessages[Math.floor(Math.random() * ekoMessages.length)];
+    if (ekoTooltip) ekoTooltip.innerHTML = randomMessage;
+    if (ekoAssistant) ekoAssistant.classList.add('active');
+    setTimeout(() => { if (ekoAssistant) ekoAssistant.classList.remove('active'); }, 8000);
+  }, 25000);
+  
+  if (ekoAssistant) {
+    ekoAssistant.addEventListener('click', function() {
+      const randomMessage = ekoMessages[Math.floor(Math.random() * ekoMessages.length)];
+      if (ekoTooltip) ekoTooltip.innerHTML = randomMessage;
+      ekoAssistant.classList.add('active');
+      if (ekoImage) {
+        ekoImage.style.animation = 'pulse 0.5s ease-in-out';
+        setTimeout(() => { ekoImage.style.animation = 'float 4s ease-in-out infinite'; }, 500);
+      }
+      setTimeout(() => { ekoAssistant.classList.remove('active'); }, 8000);
+    });
+  }
+}
+
+// ==================== دوال مساعدة ====================
+function formatDate(date) {
+  return new Date(date).toLocaleDateString('ar-EG') + ' ' + new Date(date).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+}
+
+function showSuccess(message) {
+  const alertElement = document.getElementById('success-alert');
+  const messageElement = document.getElementById('success-message');
+  if (messageElement) messageElement.textContent = message;
+  if (alertElement) {
+    alertElement.style.display = 'flex';
+    setTimeout(() => { alertElement.style.display = 'none'; }, 5000);
+  }
+}
+
+function showError(message) {
+  const alertElement = document.getElementById('error-alert');
+  const messageElement = document.getElementById('error-message');
+  if (messageElement) messageElement.textContent = message;
+  if (alertElement) {
+    alertElement.style.display = 'flex';
+    setTimeout(() => { alertElement.style.display = 'none'; }, 5000);
+  }
+}
+
+function showInfo(message) {
+  const alertElement = document.getElementById('info-alert');
+  const messageElement = document.getElementById('info-message');
+  if (messageElement) messageElement.textContent = message;
+  if (alertElement) {
+    alertElement.style.display = 'flex';
+    setTimeout(() => { alertElement.style.display = 'none'; }, 5000);
+  }
+}
+
+function showEkoMessage(message) {
+  const ekoTooltip = document.getElementById('eko-tooltip');
+  const ekoAssistant = document.getElementById('eko-assistant');
+  if (ekoTooltip && ekoAssistant) {
+    ekoTooltip.innerHTML = message;
+    ekoAssistant.classList.add('active');
+    if (ekoMessageTimeout) clearTimeout(ekoMessageTimeout);
+    ekoMessageTimeout = setTimeout(() => {
+      ekoAssistant.classList.remove('active');
+    }, 8000);
+  }
+}
+
+// ==================== تهيئة الصفحة ====================
+async function init() {
+  checkUserLogin();
+  
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+    setTimeout(() => {
+      document.getElementById('loading-screen').style.display = 'none';
+    }, 500);
+  }, 2000);
+  
+  await initUserDatabase();
+  
+  banksData = await loadBanksFromDB();
+  console.log('✅ تم تحميل بيانات البنوك:', banksData.length);
+  
+  setupLocalStorageListener();
+  
+  setTimeout(loadUserData, 100);
+  
+  setupEkoAssistant();
+  
+  setupRangeInputs();
+  
+  setupAnalyzeButton();
+  
+  updateNavbar();
+  
+  setupFilters();
+  
+  setupInsufficientPointsModal();
+  setupSuccessModal();
+  
+  setupBankDetailsModal();
+  
+  setupUserModal();
+  
+  setupLogoutModal();
+  
+  setupHistoryModal();
+  setupHistoryDetailModal();
+  
+  setupEkoNoResultsModal();
+  
+  setupAnalysisLoadingScreen();
+  
+  setTimeout(() => {
+    loadDashboardSettings();
+    console.log('✅ تم تحميل جميع إعدادات لوحة التحكم بنجاح');
+  }, 1000);
+  
+  updateLastUpdateTime();
+  setInterval(updateLastUpdateTime, 60000);
+  
+  setTimeout(() => {
+    showEkoMessage("أهلاً في خدمة تحليل القروض! أدخل بياناتك علشان نساعدك تلاقي أفضل عرض!");
+  }, 2500);
+  
+  setInterval(async () => {
+    if (currentUser) {
+      await refreshUserFromDatabase();
+    }
+  }, 30000);
+}
+
+init();
+  </script>
+</body>
+</html>

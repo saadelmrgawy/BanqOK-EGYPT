@@ -1,0 +1,3494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>BANQOK - قارن واختار بنكك...وعلي مزاجك</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-color: #10b981;
+      --primary-hover: #059669;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --light-green: #d1fae5;
+      --text-color: #1f2937;
+      --light-text: #6b7280;
+      --bg-color: #f9fafb;
+      --card-bg: #ffffff;
+      --border-radius-sm: 12px;
+      --border-radius-md: 16px;
+      --border-radius-lg: 24px;
+      --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 20px 40px rgba(16, 185, 129, 0.15);
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --transition-slow: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+      direction: rtl;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes slideInDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transition: all 0.8s ease;
+    }
+    .animate-fade-up { transform: translateY(30px); }
+    .animate-fade-down { transform: translateY(-30px); }
+    .animate-fade-right { transform: translateX(-30px); }
+    .animate-fade-left { transform: translateX(30px); }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-eko {
+      width: clamp(80px, 15vw, 120px);
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .loading-text {
+      color: white;
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .loading-bar {
+      width: min(250px, 70%);
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .loading-progress {
+      height: 100%;
+      width: 0%;
+      background: white;
+      border-radius: 10px;
+      animation: loading 3s ease-in-out forwards;
+    }
+    @keyframes loading { 0% { width: 0%; } 100% { width: 100%; } }
+
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: floatParticle linear infinite;
+      opacity: 0.7;
+    }
+    .money-particle { background: linear-gradient(45deg, #10b981, #d1fae5); box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+    .coin-particle { background: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b); box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+    .network-particle { background: linear-gradient(45deg, #3b82f6, #60a5fa); box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+    @keyframes floatParticle { 0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.7; } 90% { opacity: 0.7; } 100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; } }
+
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 5%;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all var(--transition-normal);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+      box-shadow: var(--shadow-sm);
+    }
+    .logo-section {
+      display: flex;
+      align-items: center;
+      order: 2;
+      margin-right: auto;
+    }
+    .logo-section img {
+      height: 40px;
+      width: auto;
+      transition: transform var(--transition-fast);
+    }
+    .logo-section img:hover { transform: scale(1.05); }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 3vw, 20px);
+      order: 1;
+    }
+    .login-icon {
+      padding: 8px;
+      border-radius: 50%;
+      background: var(--bg-color);
+      color: var(--primary-color);
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all var(--transition-normal);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+    }
+    .login-icon:hover {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+    }
+    .user-avatar-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+      background: var(--bg-color);
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-normal);
+      padding: 0;
+    }
+    .user-avatar-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+    }
+    .user-avatar-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .user-avatar-btn i {
+      font-size: 1.3rem;
+      color: var(--primary-color);
+    }
+
+    .user-modal, .logout-modal, .app-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1005;
+      animation: fadeIn 0.3s ease;
+    }
+    .user-modal.active, .logout-modal.active, .app-popup.active { display: flex; }
+    .user-modal-content, .logout-content, .popup-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: clamp(20px, 5vw, 30px);
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      text-align: right;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 0.4s ease;
+    }
+    /* تحسين خاص بـ popup التطبيق */
+    .app-popup .popup-content {
+      text-align: center;
+      max-width: 400px;
+      padding: 30px 25px 35px;
+      border-radius: 32px;
+      background: linear-gradient(145deg, #ffffff, #f8fafc);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .popup-eko {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      margin: 0 auto 15px;
+      animation: float 3s ease-in-out infinite;
+      display: block;
+      padding: 8px;
+    }
+    .popup-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin: 15px 0 10px;
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .popup-message {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin: 10px 0;
+      color: #334155;
+    }
+    .popup-message strong {
+      color: var(--primary-color);
+    }
+    .popup-content .primary-btn {
+      margin-top: 20px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      border-radius: 40px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: white;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    .popup-content .primary-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
+    }
+    .popup-close {
+      position: absolute;
+      top: 15px;
+      left: 20px;
+      background: #f1f5f9;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: #64748b;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .popup-close:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+      transform: scale(1.05);
+    }
+
+    .user-modal-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--light-text);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all var(--transition-normal);
+    }
+    .user-modal-close:hover {
+      background: #f3f4f6;
+      color: var(--text-color);
+    }
+    .user-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+    }
+    .user-modal-avatar {
+      width: clamp(60px, 15vw, 80px);
+      height: clamp(60px, 15vw, 80px);
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-color);
+      flex-shrink: 0;
+    }
+    .user-modal-info h3 { margin: 0; font-size: clamp(1.1rem, 4vw, 1.3rem); color: var(--text-color); }
+    .user-modal-info p { margin: 5px 0 0; font-size: clamp(0.85rem, 3vw, 0.9rem); color: var(--light-text); }
+    .user-modal-divider { height: 1px; background: #eee; margin: 15px 0; }
+    .user-modal-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      color: var(--text-color);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all var(--transition-normal);
+      font-size: 1rem;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .user-modal-item:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: translateX(-5px);
+    }
+    .user-modal-item i { font-size: 1.2rem; width: 24px; text-align: center; }
+    .user-modal-logout { color: #dc2626; }
+    .user-modal-logout:hover { background: #fee2e2; }
+
+    .logout-icon { font-size: 4rem; margin-bottom: 20px; color: #dc2626; text-align: center; }
+    .logout-title { font-size: clamp(1.2rem, 5vw, 1.5rem); font-weight: 700; margin-bottom: 15px; color: var(--text-color); text-align: center; }
+    .logout-message { font-size: 1rem; line-height: 1.6; margin-bottom: 25px; color: var(--light-text); text-align: center; }
+    .logout-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+    .modal-btn {
+      padding: 12px 25px;
+      border-radius: var(--border-radius-md);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+    }
+    .modal-btn.cancel { background: white; color: var(--light-text); border: 2px solid #e5e7eb; }
+    .modal-btn.cancel:hover { background: #f3f4f6; }
+    .modal-btn.confirm { background: #dc2626; color: white; }
+    .modal-btn.confirm:hover { background: #b91c1c; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(220, 38, 38, 0.3); }
+
+    .alert-notification {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      animation: slideInDown 0.3s ease;
+      max-width: 400px;
+      margin: 0 auto;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .hero-section {
+      padding: clamp(30px, 5vw, 40px) 5% clamp(60px, 8vw, 80px);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 5vw, 60px);
+      align-items: center;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .hero-section .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    .hero-content {
+      text-align: right;
+      position: relative;
+      z-index: 3;
+    }
+    .hero-tagline {
+      font-size: clamp(0.9rem, 3vw, 1.1rem);
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: inline-block;
+      background: var(--light-green);
+      padding: 8px 16px;
+      border-radius: 30px;
+    }
+    .hero-title {
+      font-size: clamp(1.8rem, 6vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+    .hero-title span { color: var(--primary-color); }
+    .hero-description {
+      font-size: clamp(1rem, 3.5vw, 1.2rem);
+      color: var(--light-text);
+      margin-bottom: 35px;
+      line-height: 1.7;
+    }
+    .hero-buttons {
+      display: flex;
+      margin-bottom: 40px;
+      width: 100%;
+    }
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      width: 100%;
+    }
+    .hero-image {
+      text-align: center;
+      position: relative;
+      z-index: 3;
+    }
+    .eko-character {
+      width: 100%;
+      max-width: 450px;
+      border-radius: var(--border-radius-lg);
+      animation: float 6s ease-in-out infinite;
+      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15));
+    }
+
+    .primary-btn,
+    .secondary-btn,
+    .welcome-message,
+    .store-btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+    }
+
+    .primary-btn::before,
+    .secondary-btn::before,
+    .welcome-message::before,
+    .store-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .primary-btn:hover::before,
+    .secondary-btn:hover::before,
+    .welcome-message:hover::before,
+    .store-btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .primary-btn:hover,
+    .secondary-btn:hover,
+    .welcome-message:hover,
+    .store-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .primary-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    .primary-btn:hover {
+      background: linear-gradient(145deg, #10b981, #059669);
+      box-shadow: 0 0 25px rgba(16,185,129,0.5);
+    }
+
+    .secondary-btn {
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      padding: 12px 28px;
+      border-radius: var(--border-radius-md);
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      line-height: 1.5;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      display: inline-block;
+    }
+    .secondary-btn:hover {
+      background: linear-gradient(145deg, #10b981, #059669);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 0 25px rgba(16,185,129,0.5);
+    }
+
+    .welcome-message {
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+    .welcome-message:hover {
+      background: linear-gradient(145deg, var(--primary-color), var(--accent-hover));
+      box-shadow: 0 0 25px rgba(59,130,246,0.5);
+    }
+
+    .store-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 15px;
+      background: white;
+      border-radius: var(--border-radius-md);
+      text-decoration: none;
+      color: var(--text-color);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: all 0.4s ease;
+      width: 100%;
+      height: 100%;
+      min-height: 60px;
+    }
+    .store-btn.google:hover {
+      background: linear-gradient(145deg, #34a853, #2c8c47);
+      border-color: #34a853;
+      box-shadow: 0 0 25px rgba(52,168,83,0.5);
+      color: white;
+    }
+    .store-btn.apple:hover {
+      background: linear-gradient(145deg, #000000, #1a1a1a);
+      border-color: #000;
+      box-shadow: 0 0 25px rgba(0,0,0,0.5);
+      color: white;
+    }
+    .store-btn.huawei:hover {
+      background: linear-gradient(145deg, #c8102e, #a00d25);
+      border-color: #c8102e;
+      box-shadow: 0 0 25px rgba(200,16,46,0.5);
+      color: white;
+    }
+    .store-btn.apk:hover {
+      background: linear-gradient(145deg, #f39c12, #e67e22);
+      border-color: #f39c12;
+      box-shadow: 0 0 25px rgba(243,156,18,0.5);
+      color: white;
+    }
+    .store-btn:hover .store-label,
+    .store-btn:hover .store-name {
+      color: white;
+    }
+    .store-icon { font-size: 1.5rem; }
+    .store-text { display: flex; flex-direction: column; }
+    .store-label { font-size: 0.7rem; opacity: 0.7; }
+    .store-name { font-weight: 700; font-size: 0.9rem; }
+
+    .features-section {
+      padding: clamp(60px, 8vw, 80px) 5%;
+      background: white;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: clamp(40px, 6vw, 60px);
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 6vw, 2.3rem);
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: var(--text-color);
+    }
+    .section-subtitle {
+      font-size: clamp(1rem, 3.5vw, 1.1rem);
+      color: var(--light-text);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .features-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 5vw, 50px);
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .features-content { text-align: right; order: 1; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(15px, 3vw, 25px);
+    }
+    .feature-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: clamp(20px, 4vw, 25px);
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-slow);
+      border: 1px solid rgba(0, 0, 0, 0.03);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      transform: scaleX(0);
+      transition: transform var(--transition-normal);
+      transform-origin: right;
+    }
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-hover);
+    }
+    .feature-card:hover::before {
+      transform: scaleX(1);
+    }
+    .feature-icon-image {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 20px;
+      border-radius: 50%;
+      background: var(--light-green);
+      padding: 12px;
+      transition: all var(--transition-normal);
+    }
+    .feature-card:hover .feature-icon-image {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+    }
+    .feature-title {
+      font-size: clamp(1.1rem, 4vw, 1.3rem);
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+    .feature-desc {
+      font-size: clamp(0.9rem, 3vw, 1rem);
+      color: var(--light-text);
+      line-height: 1.6;
+    }
+    .features-image { text-align: center; order: 2; }
+    .features-image img {
+      max-width: 100%;
+      max-height: 300px;
+      width: auto;
+      border-radius: var(--border-radius-lg);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .stats-section {
+      padding: clamp(60px, 8vw, 80px) 5%;
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      color: white;
+    }
+    .stats-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 5vw, 50px);
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(15px, 3vw, 25px);
+    }
+    .stat-card {
+      text-align: center;
+      padding: clamp(20px, 4vw, 30px) clamp(15px, 3vw, 20px);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: var(--border-radius-lg);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .stat-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: white;
+      transform: scaleX(0);
+      transition: transform var(--transition-normal);
+    }
+    .stat-card:hover::before { transform: scaleX(1); }
+    .stat-image {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 15px;
+      transition: all var(--transition-normal);
+      background: transparent;
+      mix-blend-mode: multiply;
+      filter: brightness(1.2) contrast(1.2);
+    }
+    .stat-card:hover .stat-image {
+      transform: scale(1.2) rotate(10deg);
+      filter: brightness(1.4) contrast(1.3);
+    }
+    .stat-number-large {
+      font-size: clamp(1.8rem, 6vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 10px;
+      transition: all var(--transition-normal);
+    }
+    .stat-card:hover .stat-number-large { transform: scale(1.1); }
+    .stat-label-large { font-size: clamp(0.9rem, 3vw, 1.1rem); opacity: 0.9; }
+    .stats-image { text-align: center; }
+    .stats-image img {
+      max-width: 100%;
+      max-height: 350px;
+      width: auto;
+      border-radius: var(--border-radius-lg);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .banks-section {
+      padding: clamp(60px, 8vw, 80px) 5%;
+      background: var(--bg-color);
+      position: relative;
+      overflow: hidden;
+    }
+    .banks-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+      animation: hologram 15s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .banks-grid {
+      display: grid;
+      gap: 25px;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .bank-card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px 15px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 220px;
+      width: 100%;
+      justify-content: center;
+      transition: all 0.4s ease;
+    }
+
+    .bank-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .bank-card:hover::before {
+      transform: translateX(100%);
+    }
+
+    .bank-card:hover {
+      transform: translateY(-5px);
+      background: linear-gradient(145deg, 
+        rgba(var(--bank-color-rgb, 16,185,129), 0.95), 
+        rgba(var(--bank-color-rgb, 16,185,129), 0.8));
+      border-color: rgba(var(--bank-color-rgb), 0.5);
+      box-shadow: 0 0 25px rgba(var(--bank-color-rgb), 0.5);
+    }
+
+    .bank-logo {
+      width: 85px;
+      height: 85px;
+      object-fit: contain;
+      margin: 0 auto 15px;
+      border-radius: 50%;
+      background: white;
+      padding: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all var(--transition-normal);
+      position: relative;
+      z-index: 2;
+    }
+
+    .bank-card:hover .bank-logo {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(var(--bank-color-rgb, 16, 185, 129), 0.3);
+    }
+
+    .bank-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-color);
+      transition: color var(--transition-normal);
+      position: relative;
+      z-index: 2;
+      line-height: 1.3;
+    }
+
+    .bank-card:hover .bank-name,
+    .bank-card:hover .bank-type {
+      color: white;
+    }
+
+    .bank-type {
+      font-size: 0.75rem;
+      color: var(--light-text);
+      background: rgba(0, 0, 0, 0.02);
+      padding: 5px 12px;
+      border-radius: 50px;
+      display: inline-block;
+      transition: all var(--transition-normal);
+      position: relative;
+      z-index: 2;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .bank-card:hover .bank-type {
+      background: rgba(255,255,255,0.2);
+      border-color: white;
+    }
+
+    .banks-count {
+      text-align: center;
+      margin-top: 50px;
+      color: var(--light-text);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .banks-count span {
+      background: var(--primary-color);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+
+    @media (min-width: 1200px) {
+      .banks-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+    
+    @media (min-width: 992px) and (max-width: 1199px) {
+      .banks-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    
+    @media (min-width: 768px) and (max-width: 991px) {
+      .banks-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    
+    @media (max-width: 767px) {
+      .banks-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 15px;
+      }
+      .bank-card { 
+        height: 200px; 
+        padding: 20px 10px;
+      }
+      .bank-logo { width: 75px; height: 75px; }
+      .bank-name { font-size: 0.9rem; }
+      .bank-type { font-size: 0.7rem; padding: 4px 10px; }
+    }
+    
+    @media (max-width: 480px) {
+      .banks-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px;
+      }
+      .bank-card { 
+        height: 190px; 
+        padding: 15px 8px;
+      }
+      .bank-logo { width: 70px; height: 70px; }
+    }
+    
+    @media (max-width: 360px) {
+      .bank-card { height: 180px; }
+      .bank-logo { width: 65px; height: 65px; }
+    }
+
+    .points-section {
+      padding: clamp(60px, 7vw, 80px) 5%;
+      background: #ffffff;
+    }
+    .points-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: clamp(20px, 3vw, 30px);
+      max-width: 1400px;
+      margin: 0 auto 60px;
+    }
+    .point-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 28px 20px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-slow);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .point-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
+                                 rgba(16, 185, 129, 0.15) 0%,
+                                 rgba(0, 0, 0, 0) 80%);
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .point-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: skewX(-25deg);
+      transition: left 0.7s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .point-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(16, 185, 129, 0.3);
+      box-shadow: 0 20px 30px rgba(16, 185, 129, 0.15);
+    }
+    .point-card:hover::before { opacity: 0.4; }
+    .point-card:hover::after { left: 150%; }
+    .point-card.popular {
+      border: 2px solid #fbbf24;
+      box-shadow: 0 15px 30px rgba(251, 191, 36, 0.2);
+    }
+    .popular-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: #fbbf24;
+      color: #78350f;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+      z-index: 5;
+    }
+    .point-icon-image {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 18px;
+      border-radius: 50%;
+      border: 3px solid var(--light-green);
+      padding: 8px;
+      position: relative;
+      z-index: 2;
+      transition: transform var(--transition-normal);
+      background: white;
+    }
+    .point-card:hover .point-icon-image {
+      transform: scale(1.1);
+    }
+    .point-number {
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: var(--primary-color);
+      position: relative;
+      z-index: 2;
+    }
+    .point-card.popular .point-number { color: #fbbf24; }
+    .point-label {
+      font-size: 1rem;
+      color: var(--light-text);
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 2;
+    }
+    .point-price {
+      font-size: clamp(1.3rem, 4vw, 1.7rem);
+      font-weight: 800;
+      color: var(--text-color);
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 2;
+    }
+    .point-price-desc {
+      font-size: 0.95rem;
+      color: var(--light-text);
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 2;
+    }
+    .point-per-unit {
+      background: #f3f4f6;
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-size: 0.85rem;
+      color: var(--light-text);
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 2;
+    }
+    .point-btn {
+      padding: 12px 28px;
+      border-radius: var(--border-radius-md);
+      background: var(--primary-color);
+      color: #ffffff;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      margin-top: auto;
+      width: 100%;
+      max-width: 200px;
+      transition: all var(--transition-normal);
+    }
+    .point-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(16,185,129,0.3);
+    }
+    .point-card.popular .point-btn { background: #fbbf24; color: #78350f; }
+    .point-card.popular .point-btn:hover { background: #f59e0b; }
+    .special-offer-card {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border-radius: var(--border-radius-lg);
+      padding: clamp(22px, 4vw, 35px);
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 2px solid var(--primary-color);
+      box-shadow: 0 15px 35px rgba(16, 185, 129, 0.15);
+    }
+    .special-offer-card h3 {
+      color: var(--primary-color);
+      font-size: clamp(1.2rem, 4vw, 1.5rem);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .special-offer-card p {
+      color: var(--light-text);
+      font-size: clamp(1rem, 3vw, 1.1rem);
+      line-height: 1.7;
+    }
+    .special-offer-card strong { color: var(--primary-color); }
+
+    .payment-systems-section {
+      padding: clamp(60px, 8vw, 80px) 5%;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    }
+    .payment-systems-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 5vw, 50px);
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .payment-systems-content { text-align: right; order: 2; }
+    .payment-methods-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 40px 0;
+    }
+
+    .payment-method-card {
+      border-radius: var(--border-radius-lg);
+      padding: 20px 15px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 160px;
+      position: relative;
+      overflow: hidden;
+      color: white;
+      transition: all 0.4s ease;
+    }
+
+    .payment-method-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .payment-method-card:hover::before {
+      transform: translateX(100%);
+    }
+
+    .payment-method-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .payment-method-logo {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 15px;
+      border-radius: 16px;
+      padding: 8px;
+      background: white;
+      position: relative;
+      z-index: 2;
+      transition: transform var(--transition-normal);
+    }
+
+    .payment-method-card:hover .payment-method-logo {
+      transform: scale(1.1);
+    }
+
+    .payment-method-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin: 0;
+      position: relative;
+      z-index: 2;
+      color: white;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .payment-vodafone { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+    .payment-orange { background: linear-gradient(135deg, #ea580c, #c2410c); }
+    .payment-eand { background: linear-gradient(135deg, #dc2626, #991b1b); }
+    .payment-wepay { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+    .payment-instapay { background: linear-gradient(135deg, #a855f7, #9333ea); }
+    .payment-fawry { background: linear-gradient(135deg, #fbbf24, #d97706); }
+
+    .payment-systems-image { text-align: center; order: 1; }
+    .payment-systems-image img {
+      max-width: 100%;
+      max-height: 300px;
+      width: auto;
+      border-radius: var(--border-radius-lg);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .app-section {
+      padding: clamp(60px, 8vw, 80px) 5%;
+      background: white;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 5vw, 50px);
+      align-items: center;
+    }
+    .app-content { text-align: right; }
+    .app-features .feature-item { margin-bottom: 20px; }
+    .app-features .feature-item h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: clamp(1rem, 3.5vw, 1.1rem);
+      margin-bottom: 8px;
+    }
+    .app-features .feature-item h3 img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+    .app-features .feature-item p {
+      color: var(--light-text);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      padding-right: 38px;
+    }
+    .app-image { text-align: center; }
+    .app-image img {
+      max-width: 100%;
+      max-height: 400px;
+      width: auto;
+      border-radius: var(--border-radius-lg);
+      animation: float 6s ease-in-out infinite;
+    }
+    .app-stores {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .religion-section {
+      padding: clamp(60px, 8vw, 80px) 5%;
+      background: var(--bg-color);
+    }
+    .religion-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(25px, 4vw, 40px);
+      max-width: 1200px;
+      margin: 0 auto 50px;
+    }
+    .religion-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: clamp(25px, 5vw, 35px) 20px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-slow);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .religion-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
+                                 rgba(var(--religion-color-rgb, 16, 185, 129), 0.2) 0%,
+                                 rgba(0, 0, 0, 0) 80%);
+      opacity: 0;
+      transition: opacity var(--transition-normal);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .religion-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: skewX(-25deg);
+      transition: left 0.7s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .religion-card:hover {
+      transform: translateY(-12px) scale(1.02);
+      border-color: rgba(var(--religion-color-rgb), 0.3);
+      box-shadow: 0 20px 40px rgba(var(--religion-color-rgb), 0.2);
+    }
+    .religion-card:hover::before { opacity: 0.6; }
+    .religion-card:hover::after { left: 150%; }
+    .religion-logo {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 20px;
+      border-radius: 50%;
+      background: white;
+      padding: 10px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transition: all var(--transition-normal);
+      position: relative;
+      z-index: 2;
+    }
+    .religion-card:hover .religion-logo {
+      transform: scale(1.1) rotate(5deg);
+      box-shadow: 0 15px 35px rgba(var(--religion-color-rgb), 0.25);
+    }
+    .religion-name {
+      font-size: clamp(1.3rem, 5vw, 1.6rem);
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      transition: color var(--transition-normal);
+      position: relative;
+      z-index: 2;
+    }
+    .religion-card:hover .religion-name {
+      color: var(--religion-color);
+    }
+    .religion-stance {
+      font-size: 0.95rem;
+      color: var(--light-text);
+      line-height: 1.8;
+      position: relative;
+      z-index: 2;
+      background: rgba(0, 0, 0, 0.02);
+      padding: 20px;
+      border-radius: 16px;
+      margin-top: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      text-align: right;
+    }
+    .religion-card:hover .religion-stance {
+      background: rgba(var(--religion-color-rgb), 0.05);
+      color: var(--text-color);
+      border-color: rgba(var(--religion-color-rgb), 0.2);
+    }
+    .religion-stance i {
+      font-size: 1.2rem;
+      color: var(--religion-color);
+      margin-left: 5px;
+    }
+    .religion-stance strong {
+      color: var(--religion-color);
+    }
+    .religion-islam { --religion-color: #10b981; --religion-color-rgb: 16, 185, 129; }
+    .religion-christianity { --religion-color: #3b82f6; --religion-color-rgb: 59, 130, 246; }
+    .religion-judaism { --religion-color: #f59e0b; --religion-color-rgb: 245, 158, 11; }
+
+    .disclaimer-card {
+      background: linear-gradient(135deg, #fef3c7, #fffbeb);
+      border-radius: 20px;
+      padding: 25px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 2px solid #fbbf24;
+      box-shadow: 0 10px 25px rgba(251, 191, 36, 0.1);
+      text-align: center;
+      transition: all var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+    }
+    .disclaimer-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: skewX(-25deg);
+      transition: left 0.7s ease;
+      pointer-events: none;
+    }
+    .disclaimer-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 35px rgba(251, 191, 36, 0.2);
+    }
+    .disclaimer-card:hover::before {
+      left: 150%;
+    }
+    .disclaimer-card i {
+      font-size: 2rem;
+      color: #f59e0b;
+      margin-bottom: 10px;
+    }
+    .disclaimer-card h3 {
+      font-size: clamp(1.2rem, 4vw, 1.4rem);
+      font-weight: 800;
+      color: #92400e;
+      margin-bottom: 12px;
+    }
+    .disclaimer-card p {
+      font-size: clamp(0.9rem, 3vw, 1rem);
+      line-height: 1.7;
+      color: #78350f;
+    }
+    .disclaimer-card strong { color: #b45309; }
+
+    .how-it-works {
+      padding: clamp(60px, 8vw, 80px) 5%;
+      background: var(--bg-color);
+    }
+    .how-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 5vw, 50px);
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .step-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 25px 20px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-normal);
+      position: relative;
+      overflow: hidden;
+    }
+    .step-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .step-card:hover::before {
+      transform: translateX(100%);
+    }
+    .step-number {
+      width: 50px;
+      height: 50px;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 15px;
+      transition: all var(--transition-normal);
+    }
+    .step-card:hover .step-number {
+      background: white;
+      color: var(--primary-color);
+    }
+    .step-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-color);
+      transition: color var(--transition-normal);
+    }
+    .step-card:hover .step-title {
+      color: white;
+    }
+    .step-desc {
+      font-size: 0.95rem;
+      color: var(--light-text);
+      line-height: 1.6;
+      transition: color var(--transition-normal);
+    }
+    .step-card:hover .step-desc {
+      color: white;
+    }
+    .step-card:nth-child(1):hover {
+      background: linear-gradient(145deg, #10b981, #059669);
+    }
+    .step-card:nth-child(2):hover {
+      background: linear-gradient(145deg, #3b82f6, #2563eb);
+    }
+    .step-card:nth-child(3):hover {
+      background: linear-gradient(145deg, #f59e0b, #d97706);
+    }
+    .step-card:nth-child(4):hover {
+      background: linear-gradient(145deg, #8b5cf6, #7c3aed);
+    }
+    .how-image { text-align: center; }
+    .how-image img {
+      max-width: 100%;
+      max-height: 350px;
+      width: auto;
+      border-radius: var(--border-radius-lg);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .testimonials-section {
+      padding: clamp(60px, 8vw, 80px) 5%;
+      background: #ffffff;
+    }
+    .testimonials-container { max-width: 1400px; margin: 0 auto; }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+    .testimonial-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-slow);
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    .testimonial-card:nth-child(1)::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 0;
+      background: linear-gradient(to bottom, #10b981, #3b82f6);
+      transition: height 0.4s ease;
+    }
+    .testimonial-card:nth-child(1):hover::before { height: 100%; }
+    .testimonial-card:nth-child(2)::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 0;
+      height: 5px;
+      background: linear-gradient(to left, #f59e0b, #fbbf24);
+      transition: width 0.4s ease;
+    }
+    .testimonial-card:nth-child(2):hover::before { width: 100%; }
+    .testimonial-card:nth-child(3)::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 5px;
+      height: 0;
+      background: linear-gradient(to bottom, #ef4444, #dc2626);
+      transition: height 0.4s ease;
+    }
+    .testimonial-card:nth-child(3):hover::before { height: 100%; }
+    .testimonial-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-lg);
+    }
+    .testimonial-rating {
+      color: #fbbf24;
+      font-size: 1.2rem;
+      margin-bottom: 18px;
+      display: flex;
+      gap: 4px;
+      position: relative;
+      z-index: 2;
+    }
+    .testimonial-text {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-color);
+      margin-bottom: 25px;
+      font-style: italic;
+      flex-grow: 1;
+      position: relative;
+      z-index: 2;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: auto;
+      position: relative;
+      z-index: 2;
+    }
+    .author-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .author-info h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    .author-info p {
+      margin: 4px 0 0;
+      font-size: 0.9rem;
+      color: var(--light-text);
+    }
+
+    .eko-assistant {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 99;
+      transition: all var(--transition-normal);
+      cursor: pointer;
+      animation: float 4s ease-in-out infinite;
+    }
+    .eko-assistant img {
+      width: 70px;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+    }
+    .eko-assistant:hover img {
+      transform: scale(1.1);
+      animation: pulse 1s ease-in-out infinite;
+    }
+    .eko-tooltip {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      background: white;
+      color: var(--text-color);
+      padding: 12px;
+      border-radius: 12px;
+      width: 200px;
+      max-width: 90vw;
+      text-align: right;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border: 1px solid #e5e7eb;
+      z-index: 1000;
+      white-space: normal;
+      word-wrap: break-word;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-normal);
+      margin-bottom: 10px;
+    }
+    .eko-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 20px;
+      border-width: 8px;
+      border-style: solid;
+      border-color: white transparent transparent transparent;
+    }
+    .eko-assistant.active .eko-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .footer {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 45px 5% 25px;
+      position: relative;
+      overflow: hidden;
+      direction: rtl;
+      font-family: 'Cairo', sans-serif;
+      border-top: 5px solid linear-gradient(90deg, #10b981, #3b82f6);
+      box-shadow: 0 -20px 40px rgba(0,0,0,0.1);
+    }
+
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+      z-index: 10;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+      gap: 25px;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 5;
+    }
+
+    .footer-col-main {
+      text-align: right;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .footer-logo img {
+      height: 60px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      transition: transform 0.3s ease;
+    }
+
+    .footer-logo img:hover {
+      transform: scale(1.05);
+    }
+
+    .footer-about {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      color: #cbd5e1;
+      font-weight: 400;
+      max-width: 400px;
+    }
+
+    .footer-social {
+      margin-bottom: 15px;
+    }
+
+    .social-title {
+      font-size: 0.85rem;
+      color: white;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-social-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      color: #e2e8f0;
+      font-size: 1.1rem;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .footer-social-icon:hover {
+      background: #10b981;
+      color: white;
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(16,185,129,0.4);
+      border-color: transparent;
+    }
+
+    .footer-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid rgba(16,185,129,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-title i {
+      color: #10b981;
+      font-size: 1.1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      padding-right: 5px;
+    }
+
+    .footer-links a i {
+      font-size: 0.7rem;
+      color: #10b981;
+      transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: white;
+      padding-right: 8px;
+    }
+
+    .footer-links a:hover i {
+      transform: translateX(-3px);
+    }
+
+    .footer-app-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .app-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app-badge::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .app-badge:hover::before {
+      transform: translateX(100%);
+    }
+
+    .app-badge:hover {
+      background: rgba(16,185,129,0.2);
+      border-color: #10b981;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 15px rgba(16,185,129,0.2);
+    }
+
+    .app-badge i {
+      font-size: 1.5rem;
+      color: #10b981;
+    }
+
+    .app-badge-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-badge-label {
+      font-size: 0.65rem;
+      opacity: 0.8;
+      color: #cbd5e1;
+    }
+
+    .app-badge-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: white;
+    }
+
+    .footer-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), rgba(16,185,129,0.5), rgba(255,255,255,0.2), transparent);
+      margin: 25px 0 20px;
+      grid-column: 1 / -1;
+    }
+
+    .footer-bottom {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-copyright {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+
+    .copyright-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .separator {
+      color: #475569;
+      margin: 0 4px;
+    }
+
+    .legal-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .legal-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-size: 0.8rem;
+    }
+
+    .legal-links a:hover {
+      color: #10b981;
+      text-decoration: underline;
+    }
+
+    .dot {
+      color: #475569;
+      margin: 0 3px;
+    }
+
+    .footer-credits {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #64748b;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    @media (max-width: 1200px) {
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .footer-col-main {
+        grid-column: 1 / -1;
+      }
+      .footer-about {
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 992px) {
+      .footer {
+        padding: 35px 4% 20px;
+      }
+      .footer-content {
+        gap: 20px;
+      }
+      .footer-copyright {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-bar {
+        padding: 8px 4%;
+      }
+      .logo-section img {
+        height: 35px;
+      }
+      .user-avatar-btn,
+      .login-icon {
+        width: 35px;
+        height: 35px;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+      
+      .footer-col {
+        text-align: center;
+      }
+      
+      .footer-logo {
+        justify-content: center;
+      }
+      
+      .footer-logo img {
+        height: 55px;
+      }
+      
+      .footer-about {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 0.9rem;
+      }
+      
+      .social-icons {
+        justify-content: center;
+      }
+      
+      .footer-title {
+        justify-content: center;
+        font-size: 1.1rem;
+      }
+      
+      .footer-links a {
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      
+      .footer-links a:hover {
+        padding-right: 0;
+      }
+      
+      .app-badge {
+        max-width: 260px;
+        margin: 0 auto;
+        min-height: 60px;
+      }
+      
+      .app-badge i {
+        font-size: 1.6rem;
+      }
+      
+      .app-badge-name {
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+      
+      .app-badge-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+      
+      .footer-divider {
+        margin: 18px 0;
+      }
+      
+      .legal-links a {
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer {
+        padding: 30px 3% 15px;
+      }
+      
+      .footer-logo img {
+        height: 50px;
+      }
+      
+      .footer-title {
+        font-size: 1rem;
+      }
+      
+      .social-icons {
+        gap: 8px;
+      }
+      
+      .footer-social-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 1rem;
+      }
+      
+      .footer-about {
+        font-size: 0.85rem;
+      }
+      
+      .legal-links {
+        justify-content: center;
+      }
+      
+      .app-badge {
+        min-height: 55px;
+        padding: 8px 12px;
+      }
+      
+      .footer-links a {
+        font-size: 0.85rem;
+      }
+    }
+
+    @keyframes floatParticle {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+
+    .footer .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: floatParticle linear infinite;
+      opacity: 0.5;
+    }
+
+    .footer .money-particle {
+      background: linear-gradient(45deg, #10b981, #d1fae5);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .footer .coin-particle {
+      background: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .footer .network-particle {
+      background: linear-gradient(45deg, #3b82f6, #60a5fa);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    }
+
+    @media (max-width: 767px) {
+      .payment-methods-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .payment-method-card {
+        height: 150px;
+      }
+      .payment-method-logo {
+        width: 60px;
+        height: 60px;
+      }
+    }
+
+    @media (max-width: 575px) {
+      .payment-methods-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+      .payment-method-card {
+        height: 140px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat-image {
+        width: 60px;
+        height: 60px;
+      }
+      .stats-image img {
+        max-height: 280px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .app-stores {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 575px) {
+      .app-stores {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .app-stores {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 991px) {
+      .hero-section { grid-template-columns: 1fr; text-align: center; padding-top: 30px; }
+      .hero-content { text-align: center; }
+      .features-container { grid-template-columns: 1fr; }
+      .features-image { order: -1; }
+      .stats-container { grid-template-columns: 1fr; }
+      .stats-image { order: -1; }
+      .payment-systems-container { grid-template-columns: 1fr; }
+      .payment-systems-image { order: -1; }
+      .app-section { grid-template-columns: 1fr; }
+      .app-image { order: -1; }
+      .how-container { grid-template-columns: 1fr; }
+      .how-image { order: -1; }
+      .religion-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 767px) {
+      .hero-buttons { justify-content: center; }
+      .btn-group { 
+        flex-direction: column; 
+        align-items: center; 
+        gap: 12px;
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
+      }
+      .primary-btn, .secondary-btn, .welcome-message { 
+        width: 100%; 
+        max-width: 100%;
+        padding: 14px 20px;
+      }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps-container { grid-template-columns: 1fr; }
+      .religion-grid { grid-template-columns: 1fr; }
+      .religion-logo { width: 80px; height: 80px; }
+      .points-cards { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 575px) {
+      .hero-title { font-size: 1.6rem; }
+      .section-title { font-size: 1.5rem; }
+    }
+
+    .bank-nbe { --bank-color: #14532d; --bank-color-rgb: 20, 83, 45; }
+    .bank-bm { --bank-color: #1e40af; --bank-color-rgb: 30, 64, 175; }
+    .bank-cib { --bank-color: #1e3a8a; --bank-color-rgb: 30, 58, 138; }
+    .bank-bdc { --bank-color: #ea580c; --bank-color-rgb: 234, 88, 12; }
+    .bank-scb { --bank-color: #0369a1; --bank-color-rgb: 3, 105, 161; }
+    .bank-hdb { --bank-color: #1e3a8a; --bank-color-rgb: 30, 58, 138; }
+    .bank-alex { --bank-color: #1d4ed8; --bank-color-rgb: 29, 78, 216; }
+    .bank-abe { --bank-color: #166534; --bank-color-rgb: 22, 101, 52; }
+    .bank-ebank { --bank-color: #0ea5e9; --bank-color-rgb: 14, 165, 233; }
+    .bank-aaib { --bank-color: #3b82f6; --bank-color-rgb: 59, 130, 246; }
+    .bank-aib { --bank-color: #2563eb; --bank-color-rgb: 37, 99, 235; }
+    .bank-eg { --bank-color: #60a5fa; --bank-color-rgb: 96, 165, 250; }
+    .bank-idb { --bank-color: #fbbf24; --bank-color-rgb: 251, 191, 36; }
+    .bank-redb { --bank-color: #10b981; --bank-color-rgb: 16, 185, 129; }
+    .bank-tub { --bank-color: #059669; --bank-color-rgb: 5, 150, 105; }
+    .bank-hsbc { --bank-color: #1e40af; --bank-color-rgb: 30, 64, 175; }
+    .bank-enbd { --bank-color: #f97316; --bank-color-rgb: 249, 115, 22; }
+    .bank-adib { --bank-color: #1e3a8a; --bank-color-rgb: 30, 58, 138; }
+    .bank-adcb { --bank-color: #14532d; --bank-color-rgb: 20, 83, 45; }
+    .bank-fab { --bank-color: #b91c1c; --bank-color-rgb: 185, 28, 28; }
+    .bank-mashreq { --bank-color: #0ea5e9; --bank-color-rgb: 14, 165, 233; }
+    .bank-abk { --bank-color: #16a34a; --bank-color-rgb: 22, 163, 74; }
+    .bank-nbk { --bank-color: #166534; --bank-color-rgb: 22, 101, 52; }
+    .bank-qnb { --bank-color: #1e40af; --bank-color-rgb: 30, 64, 175; }
+    .bank-saib { --bank-color: #dc2626; --bank-color-rgb: 220, 38, 38; }
+    .bank-cae { --bank-color: #15803d; --bank-color-rgb: 21, 128, 61; }
+    .bank-kfh { --bank-color: #1e3a8a; --bank-color-rgb: 30, 58, 138; }
+    .bank-baraka { --bank-color: #2563eb; --bank-color-rgb: 37, 99, 235; }
+    .bank-arab { --bank-color: #b91c1c; --bank-color-rgb: 185, 28, 28; }
+    .bank-attijari { --bank-color: #3b82f6; --bank-color-rgb: 59, 130, 246; }
+  </style>
+</head>
+<body>
+
+<div class="loading-screen" id="loading-screen">
+  <img src="./ASSETS/EQO/advising.png" alt="إيكو يتحمّل" class="loading-eko" id="loading-eko-img">
+  <div class="loading-text" id="loading-text">EQO بيجهّز كل حاجة علشانك...</div>
+  <div class="loading-bar">
+    <div class="loading-progress"></div>
+  </div>
+</div>
+
+<div class="logout-modal" id="logout-confirm-modal">
+  <div class="logout-content">
+    <div class="logout-icon">
+      <i class="bi bi-box-arrow-left"></i>
+    </div>
+    <h3 class="logout-title">تأكيد تسجيل الخروج</h3>
+    <p class="logout-message">هل أنت متأكد من تسجيل الخروج؟</p>
+    <div class="logout-buttons">
+      <button class="modal-btn cancel" id="logout-cancel">إلغاء</button>
+      <button class="modal-btn confirm" id="logout-confirm">نعم، سجل الخروج</button>
+    </div>
+  </div>
+</div>
+
+<div class="app-popup" id="app-popup">
+  <div class="popup-content">
+    <button class="popup-close" id="popup-close">×</button>
+    <img src="./ASSETS/EQO/look.png" alt="إيكو" class="popup-eko" id="popup-eko-img">
+    <h3 class="popup-title">يلا يا صاحبي! التطبيق لسة قادم!</h3>
+    <p class="popup-message">
+      إحنا دلوقتي شغالين على تطبيق BanqOK بكل جد، وهنطلقه في أقرب وقت!<br>
+      متقلقش، هيبقى أحلى وأسرع وأسهل من أي حاجة شفتها قبل كده!
+    </p>
+    <p class="popup-message">
+      <strong>خليك معانا وشرفنا على الموقع!</strong>
+    </p>
+    <button class="primary-btn" onclick="closePopup()">تمام، فهمت!</button>
+  </div>
+</div>
+
+<div class="user-modal" id="user-modal">
+  <div class="user-modal-content">
+    <button class="user-modal-close" id="user-modal-close">×</button>
+    <div class="user-modal-header">
+      <img src="./ASSETS/EQO/user.png" alt="صورة المستخدم" class="user-modal-avatar" id="user-modal-avatar">
+      <div class="user-modal-info">
+        <h3 id="user-modal-name">اسم المستخدم</h3>
+        <p id="user-modal-email">البريد الإلكتروني</p>
+      </div>
+    </div>
+    <div class="user-modal-divider"></div>
+    <a href="dashboard.html" class="user-modal-item">
+      <i class="bi bi-speedometer2"></i>
+      لوحة التحكم
+    </a>
+    <a href="settings.html" class="user-modal-item">
+      <i class="bi bi-gear"></i>
+      إعدادات الحساب
+    </a>
+    <div class="user-modal-divider"></div>
+    <a href="#" class="user-modal-item user-modal-logout" id="user-modal-logout">
+      <i class="bi bi-box-arrow-left"></i>
+      تسجيل الخروج
+    </a>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <div class="logo-section">
+    <a href="index.html">
+      <img src="./ASSETS/BanqOk.png" alt="BANQOK" id="logo-img">
+    </a>
+  </div>
+  <div class="nav-actions" id="nav-actions"></div>
+</div>
+
+<section class="hero-section" id="home">
+  <div class="particles" id="hero-particles"></div>
+  <div class="hero-content">
+    <div class="hero-tagline">قارن وإختار بنكك...وعلي مزاجك</div>
+    <h1 class="hero-title">أول موقع في مصر <span>بيقارن بين كل البنوك</span></h1>
+    <p class="hero-description">
+      موقع BanqOK الأول في مصر لمقارنة عروض القروض والودائع في جميع البنوك المصرية. 
+      وفر وقتك وفلوسك مع منصة المقارنة الذكية اللي بتنصحك بأفضل 3 خيارات مالية تناسب احتياجاتك من بين كل البنوك المتاحة، بدون أي تحيز.
+    </p>
+    <div class="hero-buttons" id="hero-buttons"></div>
+  </div>
+  <div class="hero-image">
+    <img src="./ASSETS/EQO/TRUST.png" alt="إيكو المساعد" class="eko-character" id="hero-eko-img">
+  </div>
+</section>
+
+<section class="features-section" id="why">
+  <div class="section-header">
+    <h2 class="section-title">ليه تختار BanqOK.؟</h2>
+    <p class="section-subtitle">
+      منصة ذكية تجمع كل اللي محتاجه علشان تاخد القرار المالي الصح في مكان واحد
+    </p>
+  </div>
+  <div class="features-container">
+    <div class="features-content">
+      <div class="features-grid">
+        <div class="feature-card animate-on-scroll animate-fade-up">
+          <img src="./ASSETS/icon/pros-cons_19000736.gif" alt="مقارنة ذكية" class="feature-icon-image" id="feature-icon-compare" onerror="this.src='https://via.placeholder.com/70x70?text=⚡'">
+          <h3 class="feature-title">مقارنة ذكية</h3>
+          <p class="feature-desc">
+            بنقارنلك كل عروض البنوك في مصر وبنرشحلك أفضل الخيارات تناسب دخلك واحتياجاتك
+          </p>
+        </div>
+        <div class="feature-card animate-on-scroll animate-fade-up">
+          <img src="./ASSETS/icon/recovery_19002119.gif" alt="بيانات محدثة" class="feature-icon-image" id="feature-icon-update" onerror="this.src='https://via.placeholder.com/70x70?text=🔄'">
+          <h3 class="feature-title">بيانات محدثة</h3>
+          <p class="feature-desc">
+            بياناتنا بتتحدث يومياً بشكل أوتوماتيكي من مصادر موثوقة تضمنلك دقة المعلومات
+          </p>
+        </div>
+        <div class="feature-card animate-on-scroll animate-fade-up">
+          <img src="./ASSETS/icon/recommendation_15577932.gif" alt="توصيات محايدة" class="feature-icon-image" id="feature-icon-recommend" onerror="this.src='https://via.placeholder.com/70x70?text=⭐'">
+          <h3 class="feature-title">توصيات محايدة</h3>
+          <p class="feature-desc">
+            خوارزميات ذكية بتحلل دخلك وبتوصيك بأفضل بنك يناسب وضعك المالي بدون أي تحيز
+          </p>
+        </div>
+        <div class="feature-card animate-on-scroll animate-fade-up">
+          <img src="./ASSETS/icon/crisis_18860523.gif" alt="تحليلات قوية" class="feature-icon-image" id="feature-icon-analytics" onerror="this.src='https://via.placeholder.com/70x70?text=📊'">
+          <h3 class="feature-title">تحليلات قوية</h3>
+          <p class="feature-desc">
+            تحليلات شاملة لكل التكاليف والفوائد وبنرشحلك الأفضل بناءً على احتياجاتك الحقيقية
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="features-image">
+      <img src="./ASSETS/EQO/3.png" alt="إيكو يشرح المميزات" id="features-eko-img">
+    </div>
+  </div>
+</section>
+
+<section class="stats-section" id="stats">
+  <div class="section-header">
+    <h2 class="section-title" style="color: white;">أرقام بتتكلم عنّا</h2>
+    <p class="section-subtitle" style="color: rgba(255, 255, 255, 0.9);">
+      إنجازاتنا وثقة عملائنا هي الشهادة الحقيقية لينا
+    </p>
+  </div>
+  <div class="stats-container">
+    <div class="stats-grid">
+      <div class="stat-card animate-on-scroll animate-fade-down">
+        <img src="./ASSETS/icon/bank (1).png" alt="البنوك" class="stat-image" id="stat-icon-banks" onerror="this.src='https://via.placeholder.com/70x70?text=🏦'">
+        <div class="stat-number-large" data-count="31">0</div>
+        <div class="stat-label-large">بنك مصري</div>
+      </div>
+      <div class="stat-card animate-on-scroll animate-fade-down">
+        <img src="./ASSETS/icon/leader.png" alt="المستخدمين" class="stat-image" id="stat-icon-users" onerror="this.src='https://via.placeholder.com/70x70?text=👥'">
+        <div class="stat-number-large" data-count="50000">0</div>
+        <div class="stat-label-large">مستخدم نشط</div>
+      </div>
+      <div class="stat-card animate-on-scroll animate-fade-down">
+        <img src="./ASSETS/icon/due-diligence.png" alt="العمليات" class="stat-image" id="stat-icon-operations" onerror="this.src='https://via.placeholder.com/70x70?text=📈'">
+        <div class="stat-number-large" data-count="12500">0</div>
+        <div class="stat-label-large">عملية تحليلية ناجحة</div>
+      </div>
+      <div class="stat-card animate-on-scroll animate-fade-down">
+        <img src="./ASSETS/icon/document.png" alt="الدقة" class="stat-image" id="stat-icon-accuracy" onerror="this.src='https://via.placeholder.com/70x70?text=🎯'">
+        <div class="stat-number-large" data-count="100">0</div>
+        <div class="stat-label-large">% دقة التوصيات</div>
+      </div>
+    </div>
+    <div class="stats-image">
+      <img src="./ASSETS/EQO/eqo.png" alt="إيكو مع الإحصائيات" id="stats-eko-img">
+    </div>
+  </div>
+</section>
+
+<section class="banks-section" id="compare">
+  <div class="section-header">
+    <h2 class="section-title">بنقارنلك كل البنوك المصرية</h2>
+    <p class="section-subtitle">
+      محلية، دولية، تجارية، إسلامية - بنقارن كل اللي محتاجه علشان تاخد قرارك
+    </p>
+  </div>
+  <div class="banks-grid" id="banks-grid-container"></div>
+  <div class="banks-count animate-on-scroll animate-fade-up">
+    <span id="banks-count-number">٣١</span> بنكاً تحت المقارنة والتحليل
+  </div>
+</section>
+
+<section class="points-section" id="points">
+  <div class="section-header">
+    <h2 class="section-title">عروض شراء النقاط</h2>
+    <p class="section-subtitle">
+      اشترِ نقاط BanqOK واستمتع بمقارنات شاملة وتوصيات ذكية لأفضل العروض البنكية
+    </p>
+  </div>
+  <div class="points-cards" id="points-cards-container"></div>
+  <div class="special-offer-card animate-on-scroll animate-fade-up" id="special-offer-container">
+    <h3><i class="bi bi-gem"></i> عرض خاص للمستخدمين الجدد</h3>
+    <p>
+      سجل حسابك الآن واحصل على <strong>٥٠ نقطة مجانية</strong> هدية ترحيبية!
+      ابدأ رحلتك المالية مع BANQOK واستمتع بتجربة مقارنة كاملة للبنوك.
+    </p>
+  </div>
+</section>
+
+<section class="payment-systems-section" id="payment">
+  <div class="section-header">
+    <h2 class="section-title">وسائل دفع متنوعة</h2>
+    <p class="section-subtitle">
+      اختر طريقة الدفع التي تناسبك من بين مجموعة واسعة من الخيارات الآمنة
+    </p>
+  </div>
+  <div class="payment-systems-container">
+    <div class="payment-systems-content">
+      <div class="payment-methods-grid">
+        <div class="payment-method-card payment-vodafone animate-on-scroll animate-fade-left">
+          <img src="./ASSETS/CASH/V.png" alt="فودافون كاش" class="payment-method-logo" onerror="this.src='https://via.placeholder.com/70x70?text=V'">
+          <p class="payment-method-name">فودافون كاش</p>
+        </div>
+        <div class="payment-method-card payment-orange animate-on-scroll animate-fade-left">
+          <img src="./ASSETS/CASH/O.png" alt="اورنج كاش" class="payment-method-logo" onerror="this.src='https://via.placeholder.com/70x70?text=O'">
+          <p class="payment-method-name">اورنج كاش</p>
+        </div>
+        <div class="payment-method-card payment-eand animate-on-scroll animate-fade-left">
+          <img src="./ASSETS/CASH/E.jpg" alt="إي أند كاش" class="payment-method-logo" onerror="this.src='https://via.placeholder.com/70x70?text=E'">
+          <p class="payment-method-name">إي أند كاش</p>
+        </div>
+        <div class="payment-method-card payment-wepay animate-on-scroll animate-fade-left">
+          <img src="./ASSETS/CASH/W.png" alt="وي باي" class="payment-method-logo" onerror="this.src='https://via.placeholder.com/70x70?text=W'">
+          <p class="payment-method-name">وي باي</p>
+        </div>
+        <div class="payment-method-card payment-instapay animate-on-scroll animate-fade-left">
+          <img src="./ASSETS/CASH/I.png" alt="انستا باي" class="payment-method-logo" onerror="this.src='https://via.placeholder.com/70x70?text=I'">
+          <p class="payment-method-name">انستا باي</p>
+        </div>
+        <div class="payment-method-card payment-fawry animate-on-scroll animate-fade-left">
+          <img src="./ASSETS/CASH/F.png" alt="فوري" class="payment-method-logo" onerror="this.src='https://via.placeholder.com/70x70?text=F'">
+          <p class="payment-method-name">فوري</p>
+        </div>
+      </div>
+    </div>
+    <div class="payment-systems-image">
+      <img src="./ASSETS/EQO/2.png" alt="إيكو مع أنظمة الدفع" id="payment-eko-img">
+    </div>
+  </div>
+</section>
+
+<section class="app-section" id="download">
+  <div class="app-content">
+    <div class="section-header" style="text-align: right;">
+      <h2 class="section-title">حمل تطبيق BanqOK الآن!</h2>
+      <p class="section-subtitle">
+        احصل على أفضل عروض القروض والودائع في جيبك. تطبيقنا سهل الاستخدام ويوفر كل المميزات في مكان واحد.
+      </p>
+    </div>
+    <div class="app-features">
+      <div class="feature-item">
+        <h3>
+          <img src="./ASSETS/icon/alarm_8721062.gif" alt="إشعارات" id="app-icon-notification" style="width: 28px; height: 28px;" onerror="this.src='https://via.placeholder.com/28x28?text=🔔'">
+          إشعارات فورية بأفضل العروض
+        </h3>
+        <p>نتنبّه لك فورياً بأي عرض جديد أو تعديل في أسعار الفائدة</p>
+      </div>
+      <div class="feature-item">
+        <h3>
+          <img src="./ASSETS/icon/menu_13896588.gif" alt="واجهة مبسطة" id="app-icon-interface" style="width: 28px; height: 28px;" onerror="this.src='https://via.placeholder.com/28x28?text=📱'">
+          واجهة مستخدم مبسطة
+        </h3>
+        <p>تطبيق صممناه ليكون سهلاً حتى للمستخدمين الجدد</p>
+      </div>
+      <div class="feature-item">
+        <h3>
+          <img src="./ASSETS/icon/shield_14251505.gif" alt="أمان" id="app-icon-security" style="width: 28px; height: 28px;" onerror="this.src='https://via.placeholder.com/28x28?text=🛡️'">
+          أمان وحماية كاملة
+        </h3>
+        <p>بياناتك في أمان مع تشفير متقدم وحماية خصوصية تامة</p>
+      </div>
+      <div class="feature-item">
+        <h3>
+          <img src="./ASSETS/icon/data-sync_19004046.gif" alt="مزامنة" id="app-icon-sync" style="width: 28px; height: 28px;" onerror="this.src='https://via.placeholder.com/28x28?text=🔄'">
+          مزامنة لحظية مع الموقع
+        </h3>
+        <p>أي تعديل تعمله على الموقع يظهر في التطبيق فوراً والعكس</p>
+      </div>
+    </div>
+    <div class="app-stores">
+      <div class="store-btn google" onclick="showAppPopup()">
+        <div class="store-icon"><i class="bi bi-google-play"></i></div>
+        <div class="store-text">
+          <div class="store-label">احصل عليه على</div>
+          <div class="store-name">Google Play</div>
+        </div>
+      </div>
+      <div class="store-btn apple" onclick="showAppPopup()">
+        <div class="store-icon"><i class="bi bi-apple"></i></div>
+        <div class="store-text">
+          <div class="store-label">حمله من</div>
+          <div class="store-name">App Store</div>
+        </div>
+      </div>
+      <div class="store-btn huawei" onclick="showAppPopup()">
+        <div class="store-icon"><i class="bi bi-phone"></i></div>
+        <div class="store-text">
+          <div class="store-label">حمله من</div>
+          <div class="store-name">Huawei Gallery</div>
+        </div>
+      </div>
+      <div class="store-btn apk" onclick="showAppPopup()">
+        <div class="store-icon"><i class="bi bi-download"></i></div>
+        <div class="store-text">
+          <div class="store-label">تحميل مباشر</div>
+          <div class="store-name">APK File</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="app-image">
+    <img src="./ASSETS/EQO/6.png" alt="التطبيق على الهاتف" id="app-eko-img">
+  </div>
+</section>
+
+<section class="religion-section" id="religion">
+  <div class="section-header">
+    <h2 class="section-title">موقف الأديان من الربا</h2>
+    <p class="section-subtitle">
+      تعرف على رأي الشرائع السماوية في التعاملات الربوية قبل اتخاذ أي قرار مالي
+    </p>
+  </div>
+  <div class="religion-grid">
+    <div class="religion-card religion-islam animate-on-scroll animate-fade-up">
+      <img src="./ASSETS/icon/crescent-moon_10180657.gif" alt="الإسلام" class="religion-logo" id="religion-icon-islam" onerror="this.src='https://via.placeholder.com/100x100?text=﷽'">
+      <h3 class="religion-name">الإسلام</h3>
+      <div class="religion-stance">
+        <i class="bi bi-quote"></i>
+        <strong>قال تعالى:</strong> ﴿وَأَحَلَّ اللَّهُ الْبَيْعَ وَحَرَّمَ الرِّبَا﴾ [البقرة:275]<br>
+        <strong>وقال رسول الله ﷺ:</strong> «لعن الله آكل الربا وموكله وكاتبه وشاهديه» (رواه مسلم)<br><br>
+        الربا من كبائر الذنوب، وهو محرم تحريماً قاطعاً في جميع صوره، سواء كان قرضاً أو فائدة على الودائع. وقد أجمعت المذاهب الإسلامية الأربعة على تحريم الربا وأنه من أكبر الكبائر بعد الشرك بالله.
+      </div>
+    </div>
+    <div class="religion-card religion-christianity animate-on-scroll animate-fade-up">
+      <img src="./ASSETS/icon/throne_18997289.gif" alt="المسيحية" class="religion-logo" id="religion-icon-christian" onerror="this.src='https://via.placeholder.com/100x100?text=✝'">
+      <h3 class="religion-name">المسيحية</h3>
+      <div class="religion-stance">
+        <i class="bi bi-quote"></i>
+        <strong>الإنجيل:</strong> «وَإِنْ أَقْرَضْتُمْ مَنْ تَرْجُونَ أَخْذَ الْفَائِدَةِ، فَأَيُّ فَضْلٍ لَكُمْ؟ حَتَّى الْخُطَاةُ يُقْرِضُونَ الْخُطَاةَ لِيَأْخُذُوا الْفَائِدَةَ. بَلْ أَحِبُّوا أَعْدَاءَكُمْ، وَأَقْرِضُوا أَنْفُسَكُمْ دُونَ أَنْ تَرْجُوا رَدَّاً» (لوقا 6: 34-35).<br><br>
+        الكنائس التقليدية (الأرثوذكسية والكاثوليكية) تحرم الفائدة الربوية، وتعتبرها استغلالاً لحاجة الإنسان وخطية. بينما بعض الكنائس البروتستانتية تجيزها بضوابط.
+      </div>
+    </div>
+    <div class="religion-card religion-judaism animate-on-scroll animate-fade-up">
+      <img src="./ASSETS/icon/mandala_10871644.gif" alt="اليهودية" class="religion-logo" id="religion-icon-jewish" onerror="this.src='https://via.placeholder.com/100x100?text=✡'">
+      <h3 class="religion-name">اليهودية</h3>
+      <div class="religion-stance">
+        <i class="bi bi-quote"></i>
+        <strong>التوراة:</strong> «إِنْ أَقْرَضْتَ مَالاً لِشَعْبِي، لِلْفَقِيرِ الَّذِي مَعَكَ، فَلاَ تَكُنْ لَهُ كَالْمُرَابِي، لاَ تَضَعُوا عَلَيْهِ رِباً» (سفر الخروج 22: 25).<br><br>
+        التوراة تحرم أخذ الفائدة من اليهودي لأخيه اليهودي تحريماً قاطعاً، بينما أبيحت مع غير اليهودي في ظروف محددة. وفي العصور الوسطى، تطورت أحكام "الهيتر عسكا" لتجنب الربا.
+      </div>
+    </div>
+  </div>
+  <div class="disclaimer-card animate-on-scroll animate-fade-up">
+    <i class="bi bi-exclamation-triangle"></i>
+    <h3>إبراء ذمة وتنبيه هام</h3>
+    <p>
+      <strong>BanqOK</strong> موقع تقني مستقل يقدم خدمات تحليل ومقارنة بيانات البنوك بموضوعية وحيادية.<br>
+      نحن <strong>لسنا مسؤولين</strong> عن أي قرارات مالية أو تعاقدية تتخذها بناءً على المعلومات المعروضة.<br>
+      ننصحك بشدة بالرجوع إلى <strong>أهل العلم والدين</strong> المختصين، واستشارة المستشارين الماليين المعتمدين.
+    </p>
+  </div>
+</section>
+
+<section class="how-it-works" id="how">
+  <div class="section-header">
+    <h2 class="section-title">كيف يعمل BanqOK..؟</h2>
+    <p class="section-subtitle">
+      4 خطوات بسيطة تفصلك عن أفضل قرار مالي في حياتك
+    </p>
+  </div>
+  <div class="how-container">
+    <div class="how-image">
+      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="عملية المقارنة">
+    </div>
+    <div class="steps-container">
+      <div class="step-card animate-on-scroll animate-fade-right">
+        <div class="step-number">1</div>
+        <h3 class="step-title">سجّل حسابك</h3>
+        <p class="step-desc">أنشئ حسابك مجاناً في دقيقة واحدة واحصل على 50 نقطة مجانية</p>
+      </div>
+      <div class="step-card animate-on-scroll animate-fade-right">
+        <div class="step-number">2</div>
+        <h3 class="step-title">أدخل بياناتك</h3>
+        <p class="step-desc">أدخل احتياجاتك المالية ودخلك الشهلي لتحليل مخصص لك</p>
+      </div>
+      <div class="step-card animate-on-scroll animate-fade-right">
+        <div class="step-number">3</div>
+        <h3 class="step-title">قارن واختار أفضل عروض</h3>
+        <p class="step-desc">شاهد مقارنة ذكية بين أفضل العروض الي بتناسب احتياجاتك من كل البنوك</p>
+      </div>
+      <div class="step-card animate-on-scroll animate-fade-right">
+        <div class="step-number">4</div>
+        <h3 class="step-title">وفر آلاف الجنيهات</h3>
+        <p class="step-desc">اتخذ قرارك المدروس ووفر آلاف الجنيهات دون دفع مبالغ زائدة</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials-section" id="testimonials">
+  <div class="section-header">
+    <h2 class="section-title">ماذا يقول عملاؤنا عنّا؟</h2>
+    <p class="section-subtitle">
+      استمع إلى تجارب من سبقوك واستفد من خبراتهم
+    </p>
+  </div>
+  <div class="testimonials-container">
+    <div class="testimonials-grid" id="testimonials-grid-container"></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="particles" id="footer-particles"></div>
+  
+  <div class="footer-content">
+    <div class="footer-col footer-col-main">
+      <div class="footer-logo">
+        <img src="./ASSETS/BanqOk.png" alt="BANQOK - أول موقع مصري لمقارنة البنوك">
+      </div>
+      
+      <p class="footer-about">
+        <strong>أول وأكبر موقع في مصر</strong> لمقارنة عروض القروض والودائع في جميع البنوك المصرية. 
+        بنقارنلك 31 بنكاً، بنحدث البيانات يومياً، وبنقدملك توصيات ذكية ومجانية عشان توفر فلوسك ووقتك.
+      </p>
+      
+      <div class="footer-social">
+        <h4 class="social-title">تابعنا على</h4>
+        <div class="social-icons">
+          <a href="https://facebook.com/banqok" target="_blank" class="footer-social-icon" aria-label="فيسبوك">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="https://instagram.com/banqok" target="_blank" class="footer-social-icon" aria-label="انستجرام">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="https://tiktok.com/@banqok" target="_blank" class="footer-social-icon" aria-label="تيك توك">
+            <i class="bi bi-tiktok"></i>
+          </a>
+          <a href="https://twitter.com/banqok" target="_blank" class="footer-social-icon" aria-label="تويتر">
+            <i class="bi bi-twitter-x"></i>
+          </a>
+          <a href="https://linkedin.com/company/banqok" target="_blank" class="footer-social-icon" aria-label="لينكد إن">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="https://youtube.com/@banqok" target="_blank" class="footer-social-icon" aria-label="يوتيوب">
+            <i class="bi bi-youtube"></i>
+          </a>
+          <a href="https://wa.me/201000000000" target="_blank" class="footer-social-icon" aria-label="واتساب">
+            <i class="bi bi-whatsapp"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-col">
+      <h3 class="footer-title">
+        <i class="bi bi-compass"></i>
+        روابط سريعة
+      </h3>
+      <ul class="footer-links">
+        <li><a href="index.html"><i class="bi bi-chevron-left"></i> الصفحة الرئيسية</a></li>
+        <li><a href="index.html#why"><i class="bi bi-chevron-left"></i> ليه تختار BanqOK؟</a></li>
+        <li><a href="index.html#compare"><i class="bi bi-chevron-left"></i> مقارنة البنوك</a></li>
+        <li><a href="index.html#points"><i class="bi bi-chevron-left"></i> نظام النقاط</a></li>
+        <li><a href="index.html#payment"><i class="bi bi-chevron-left"></i> وسائل الدفع</a></li>
+        <li><a href="index.html#download"><i class="bi bi-chevron-left"></i> تحميل التطبيق</a></li>
+        <li><a href="index.html#how"><i class="bi bi-chevron-left"></i> كيف يعمل BanqOK؟</a></li>
+        <li><a href="index.html#testimonials"><i class="bi bi-chevron-left"></i> آراء العملاء</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-col">
+      <h3 class="footer-title">
+        <i class="bi bi-question-circle"></i>
+        الدعم والمساعدة
+      </h3>
+      <ul class="footer-links">
+        <li><a href="support.html#faq"><i class="bi bi-chevron-left"></i> الأسئلة الشائعة</a></li>
+        <li><a href="support.html#videos"><i class="bi bi-chevron-left"></i> فيديوهات شرح</a></li>
+        <li><a href="support.html#privacy"><i class="bi bi-chevron-left"></i> سياسة الخصوصية</a></li>
+        <li><a href="support.html#terms"><i class="bi bi-chevron-left"></i> الشروط والأحكام</a></li>
+        <li><a href="support.html#security"><i class="bi bi-chevron-left"></i> نصائح أمان</a></li>
+        <li><a href="support.html#technical"><i class="bi bi-chevron-left"></i> الدعم الفني</a></li>
+        <li><a href="support.html#responsibility"><i class="bi bi-chevron-left"></i> المسؤولية الدينية</a></li>
+        <li><a href="support.html#contact"><i class="bi bi-chevron-left"></i> اتصل بنا</a></li>
+      </ul>
+    </div>
+    
+    <div class="footer-col">
+      <h3 class="footer-title">
+        <i class="bi bi-phone"></i>
+        تحميل التطبيق
+      </h3>
+      
+      <div class="footer-app-buttons">
+        <a href="#" class="app-badge" onclick="showAppPopup(); return false;">
+          <i class="bi bi-google-play"></i>
+          <div class="app-badge-text">
+            <span class="app-badge-label">Google Play</span>
+            <span class="app-badge-name">حمله من</span>
+          </div>
+        </a>
+        
+        <a href="#" class="app-badge" onclick="showAppPopup(); return false;">
+          <i class="bi bi-apple"></i>
+          <div class="app-badge-text">
+            <span class="app-badge-label">App Store</span>
+            <span class="app-badge-name">حمله من</span>
+          </div>
+        </a>
+        
+        <a href="#" class="app-badge" onclick="showAppPopup(); return false;">
+          <i class="bi bi-phone"></i>
+          <div class="app-badge-text">
+            <span class="app-badge-label">Huawei Gallery</span>
+            <span class="app-badge-name">حمله من</span>
+          </div>
+        </a>
+        
+        <a href="#" class="app-badge" onclick="showAppPopup(); return false;">
+          <i class="bi bi-download"></i>
+          <div class="app-badge-text">
+            <span class="app-badge-label">APK مباشر</span>
+            <span class="app-badge-name">تحميل</span>
+          </div>
+        </a>
+      </div>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        <div class="copyright-text">
+          <i class="bi bi-c-circle"></i>
+          2026 BanqOK. جميع الحقوق محفوظة.
+        </div>
+        <span class="separator">|</span>
+        <div class="legal-links">
+          <a href="support.html#privacy">الخصوصية</a>
+          <span class="dot">•</span>
+          <a href="support.html#terms">الشروط</a>
+          <span class="dot">•</span>
+          <a href="support.html#responsibility">إخلاء مسؤولية</a>
+        </div>
+      </div>
+      
+      <div class="footer-credits">
+        <span>تصميم وتطوير <a href="#" style="color: #10b981; text-decoration: none;">فريق BanqOK</a></span>
+        <span class="separator">|</span>
+        <span>الإصدار 2.5.0</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="eko-assistant" id="eko-assistant">
+  <div class="eko-tooltip" id="eko-tooltip">
+    أهلاً! أنا إيكو، مساعدك في موقع BanqOK. هساعدك تقارن بين كل البنوك وتلاقي العرض المناسب ليك!
+  </div>
+  <img src="./ASSETS/EQO/5.png" alt="إيكو المساعد" id="eko-assistant-img">
+</div>
+
+<script>
+  // ============================================
+  // البيانات الافتراضية - متوافقة مع لوحة التحكم
+  // ============================================
+  const defaultData = {
+    stats: {
+      banks: 31,
+      users: 50000,
+      operations: 12500,
+      accuracy: 100
+    },
+    banks: [
+      { name: "الأهلي المصري – NBE", abbr: "NBE", type: "بنك حكومي", logo: "./ASSETS/banks/NBE.jpg", color: "#14532d", colorRgb: "20,83,45" },
+      { name: "مصر – BM", abbr: "BM", type: "بنك حكومي", logo: "./ASSETS/banks/BM.PNG", color: "#1e40af", colorRgb: "30,64,175" },
+      { name: "التجاري الدولي – CIB", abbr: "CIB", type: "بنك خاص", logo: "./ASSETS/banks/CIB.png", color: "#1e3a8a", colorRgb: "30,58,138" },
+      { name: "القاهرة – BDC", abbr: "BDC", type: "بنك حكومي", logo: "./ASSETS/banks/BDC.png", color: "#ea580c", colorRgb: "234,88,12" },
+      { name: "قناة السويس – SCB", abbr: "SCB", type: "بنك تجاري", logo: "./ASSETS/banks/SCB.jpg", color: "#0369a1", colorRgb: "3,105,161" },
+      { name: "التعمير والإسكان – HDB", abbr: "HDB", type: "بنك حكومي", logo: "./ASSETS/banks/HDB.png", color: "#1e3a8a", colorRgb: "30,58,138" },
+      { name: "الإسكندرية – AlexBank", abbr: "AlexBank", type: "بنك تجاري", logo: "./ASSETS/banks/ALEX.png", color: "#1d4ed8", colorRgb: "29,78,216" },
+      { name: "الزراعي المصري – ABE", abbr: "ABE", type: "بنك حكومي", logo: "./ASSETS/banks/ABE.jpg", color: "#166534", colorRgb: "22,101,52" },
+      { name: "تنمية الصادرات – EBank", abbr: "EBank", type: "بنك حكومي", logo: "./ASSETS/banks/EBE.jpg", color: "#0ea5e9", colorRgb: "14,165,233" },
+      { name: "العربي الإفريقي – AAIB", abbr: "AAIB", type: "بنك دولي", logo: "./ASSETS/banks/AAIB.png", color: "#3b82f6", colorRgb: "59,130,246" },
+      { name: "العربي الدولي – AIB", abbr: "AIB", type: "بنك دولي", logo: "./ASSETS/banks/AIB.png", color: "#2563eb", colorRgb: "37,99,235" },
+      { name: "المصري الخليجي – EG Bank", abbr: "EG Bank", type: "بنك تجاري", logo: "./ASSETS/banks/EG.png", color: "#60a5fa", colorRgb: "96,165,250" },
+      { name: "الصناعي – IDB", abbr: "IDB", type: "بنك استثماري", logo: "./ASSETS/banks/IDB.png", color: "#fbbf24", colorRgb: "251,191,36" },
+      { name: "العقاري المصري العربي – REDB", abbr: "REDB", type: "بنك عقاري", logo: "./ASSETS/banks/REDB.png", color: "#10b981", colorRgb: "16,185,129" },
+      { name: "الواحد المتحد – TUB", abbr: "TUB", type: "بنك تجاري", logo: "./ASSETS/banks/TUB.jpg", color: "#059669", colorRgb: "5,150,105" },
+      { name: "إتش إس بي سي – HSBC", abbr: "HSBC", type: "بنك دولي", logo: "./ASSETS/banks/HSBC.png", color: "#1e40af", colorRgb: "30,64,175" },
+      { name: "الإمارات دبي الوطني – ENBD", abbr: "ENBD", type: "بنك دولي", logo: "./ASSETS/banks/ENBD.png", color: "#f97316", colorRgb: "249,115,22" },
+      { name: "أبوظبي الإسلامي – ADIB", abbr: "ADIB", type: "بنك إسلامي", logo: "./ASSETS/banks/ADIB.png", color: "#1e3a8a", colorRgb: "30,58,138" },
+      { name: "أبوظبي التجاري – ADCB", abbr: "ADCB", type: "بنك تجاري", logo: "./ASSETS/banks/ADCB.png", color: "#14532d", colorRgb: "20,83,45" },
+      { name: "أبوظبي الأول – FAB", abbr: "FAB", type: "بنك دولي", logo: "./ASSETS/banks/FAB.png", color: "#b91c1c", colorRgb: "185,28,28" },
+      { name: "المشرق – Mashreq", abbr: "Mashreq", type: "بنك دولي", logo: "./ASSETS/banks/mashreq.jpg", color: "#0ea5e9", colorRgb: "14,165,233" },
+      { name: "الأهلي الكويتي – ABK", abbr: "ABK", type: "بنك دولي", logo: "./ASSETS/banks/ABK.png", color: "#16a34a", colorRgb: "22,163,74" },
+      { name: "الوطني الكويتي – NBK", abbr: "NBK", type: "بنك دولي", logo: "./ASSETS/banks/NBK.jpg", color: "#166534", colorRgb: "22,101,52" },
+      { name: "قطر الوطني – QNB", abbr: "QNB", type: "بنك دولي", logo: "./ASSETS/banks/QNB.jpg", color: "#1e40af", colorRgb: "30,64,175" },
+      { name: "سايب – SAIB", abbr: "SAIB", type: "بنك دولي", logo: "./ASSETS/banks/SAIB.jpg", color: "#dc2626", colorRgb: "220,38,38" },
+      { name: "كريدي أجريكول – CAE", abbr: "CAE", type: "بنك دولي", logo: "./ASSETS/banks/كريدي اجريكول.jpg", color: "#15803d", colorRgb: "21,128,61" },
+      { name: "بيت التمويل الكويتي – KFH", abbr: "KFH", type: "بنك إسلامي", logo: "./ASSETS/banks/KFH.jpeg", color: "#1e3a8a", colorRgb: "30,58,138" },
+      { name: "البركة – Al Baraka", abbr: "Al Baraka", type: "بنك إسلامي", logo: "./ASSETS/banks/ALBRAKA.png", color: "#2563eb", colorRgb: "37,99,235" },
+      { name: "البنك العربي – Arab Bank", abbr: "Arab Bank", type: "بنك دولي", logo: "./ASSETS/banks/Arab.png", color: "#b91c1c", colorRgb: "185,28,28" },
+      { name: "التجاري وفا – Attijariwafa", abbr: "Attijariwafa", type: "بنك دولي", logo: "./ASSETS/banks/التجاري-وفا.png", color: "#3b82f6", colorRgb: "59,130,246" }
+    ],
+    points: {
+      cards: [
+        { points: "٥٠", label: "نقطة", price: "٤٥ ج.م", popular: false, pointsValue: 50, priceValue: 45 },
+        { points: "١٠٠", label: "نقطة", price: "٨٠ ج.م", popular: true, pointsValue: 100, priceValue: 80 },
+        { points: "١٥٠", label: "نقطة", price: "١٢٠ ج.م", popular: false, pointsValue: 150, priceValue: 120 },
+        { points: "٢٠٠", label: "نقطة", price: "١٥٠ ج.م", popular: false, pointsValue: 200, priceValue: 150 }
+      ],
+      welcomeOffer: "سجل حسابك الآن واحصل على <strong>٥٠ نقطة مجانية</strong> هدية ترحيبية! ابدأ رحلتك المالية مع BANQOK واستمتع بتجربة مقارنة كاملة للبنوك."
+    },
+    eko: {
+      images: {
+        loading: "./ASSETS/EQO/sure.png",
+        assistant: "./ASSETS/EQO/TRUST.png",
+        features: "./ASSETS/EQO/why.png",
+        hero: "./ASSETS/EQO/welcome.png",
+        stats: "./ASSETS/EQO/statistics.png",
+        app: "./ASSETS/EQO/download-app.png",
+        payment: "./ASSETS/EQO/CASH.png"
+      },
+      sizes: {
+        loading: 200,
+        assistant: 70,
+        hero: 600,
+        features: 400,
+        stats: 400,
+        app: 400,
+        payment: 400
+      },
+      messages: [
+        "أهلاً! أنا إيكو، مساعدك في موقع BANQOK. هساعدك تقارن بين كل البنوك وتلاقي العرض المناسب ليك!",
+        "عايز تقارن بين عروض القروض؟ أقولك على أفضل 3 بنوك تناسب دخلك ومصاريفك!",
+        "محتار في اختيار البنك المناسب لوديعة؟ إيكو يقدر يقارنلك كل العروض ويرشحلك الأفضل!",
+        "أسعار الفوايد اتغيرت؟ مش مشكلة! بياناتنا بتتحدث يومياً علشان تضمنلك أفضل سعر!",
+        "محتاج قرض شخصي أو عقاري؟ قوللي على احتياجاتك وأنا هدلك على أفضل 3 عروض!",
+        "البنوك كلها بتقدم عروض كتير! إيكو هيخلصلك المقارنة في ثواني ويوفرلك وقتك!"
+      ]
+    },
+    icons: {
+      featureIcons: {
+        compare: { url: "./ASSETS/icon/pros-cons_19000736.gif", width: 100, height: 100 },
+        update: { url: "./ASSETS/icon/recovery_19002119.gif", width: 100, height: 100 },
+        recommend: { url: "./ASSETS/icon/recommendation_15577932.gif", width: 100, height: 100 },
+        analytics: { url: "./ASSETS/icon/crisis_18860523.gif", width: 100, height: 100 }
+      },
+      statIcons: {
+        banks: { url: "./ASSETS/icon/bank (1).png", width: 50, height: 50 },
+        users: { url: "./ASSETS/icon/leader.png", width: 50, height: 50 },
+        operations: { url: "./ASSETS/icon/due-diligence.png", width: 50, height: 50 },
+        accuracy: { url: "./ASSETS/icon/document.png", width: 50, height: 50 }
+      },
+      pointIcons: {
+        default: { url: "./ASSETS/icon/flash-sale_19010530.gif", width: 100, height: 100 }
+      },
+      appIcons: {
+        notification: { url: "./ASSETS/icon/alarm_8721062.gif", width: 50, height: 50 },
+        interface: { url: "./ASSETS/icon/menu_13896588.gif", width: 50, height: 50 },
+        security: { url: "./ASSETS/icon/shield_14251505.gif", width: 50, height: 50 },
+        sync: { url: "./ASSETS/icon/data-sync_19004046.gif", width: 50, height: 50 }
+      },
+      religionIcons: {
+        islam: { url: "./ASSETS/icon/crescent-moon_10180657.gif", width: 120, height: 120 },
+        christian: { url: "./ASSETS/icon/throne_18997289.gif", width: 120, height: 120 },
+        jewish: { url: "./ASSETS/icon/mandala_10871644.gif", width: 120, height: 120 }
+      }
+    },
+    testimonials: [
+      { 
+        rating: 5, 
+        text: "موقع BanqOK جعل مقارنة البنوك أسهل شيء! كنت أحتاج قرضاً شخصياً ولم يكن لدي وقت لزيارة كل البنوك، الموقع وفر لي أفضل العروض من بين كل البنوك وأرشدني إلى الأفضل لي. وفرت لي الكثير!", 
+        author: "أحمد محمود", 
+        position: "مهندس برمجيات", 
+        city: "القاهرة", 
+        avatar: "https://randomuser.me/api/portraits/men/32.jpg" 
+      },
+      { 
+        rating: 5, 
+        text: "هذا الموقع غير حياتي المالية! كنت أرغب في فتح حساب ودائع ولم أعرف كيف أختار البنك المناسب. BanqOK قارن لي بين كل البنوك ورشح لي أفضل 3 خيارات بناءً على احتياجاتي. توفير رائع للوقت والجهد!", 
+        author: "سارة خالد", 
+        position: "طبيبة", 
+        city: "الإسكندرية", 
+        avatar: "https://randomuser.me/api/portraits/women/44.jpg" 
+      },
+      { 
+        rating: 4, 
+        text: "كنت محتار بين عروض قروض السيارات، BanqOK ساعدني في اختيار أفضل 3 عروض وفر لي أكثر من ١٥٠٠٠ جنيه على مدار فترة القرض. التحليلات كانت محايدة وشاملة لكل البنوك!", 
+        author: "مصطفى علي", 
+        position: "مهندس ميكانيكي", 
+        city: "الجيزة", 
+        avatar: "https://randomuser.me/api/portraits/men/67.jpg" 
+      }
+    ],
+    globalSizes: {
+      bankLogo: 85,
+      paymentLogo: 70,
+      featureIcon: 70,
+      statIcon: 70,
+      pointIcon: 70,
+      appIcon: 28,
+      religionIcon: 100,
+      testimonialAvatar: 52
+    },
+    lastUpdated: new Date().toISOString()
+  };
+
+  // ============================================
+  // المتغيرات العامة
+  // ============================================
+  let appData = JSON.parse(JSON.stringify(defaultData));
+  let currentUser = null;
+  let userCheckInterval = null;
+  let broadcastChannel = null;
+  let updateCheckInterval = null;
+
+  // ============================================
+  // نظام متطور لاستقبال التحديثات من لوحة التحكم
+  // ============================================
+  function initializeUpdateReceiver() {
+    console.log('📡 تهيئة نظام استقبال التحديثات...');
+    loadAllData();
+    window.addEventListener('storage', function(event) {
+      if (!event.key) return;
+      if (event.key === 'banqokHomeData' && event.newValue) {
+        try {
+          const newData = JSON.parse(event.newValue);
+          appData = mergeDeep(appData, newData);
+          refreshAllSections();
+          showNotification('تم تحديث المحتوى من لوحة التحكم', 'info');
+        } catch(e) { console.error(e); }
+      }
+      if (event.key === 'banqok_bank_colors' && event.newValue) {
+        try {
+          const colors = JSON.parse(event.newValue);
+          updateBankColors(colors);
+          renderBanks();
+          showNotification('تم تحديث ألوان البنوك', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_eko_images' && event.newValue) {
+        try {
+          const images = JSON.parse(event.newValue);
+          if (appData.eko) {
+            appData.eko.images = { ...appData.eko.images, ...images };
+            updateEkoImages();
+          }
+          showNotification('تم تحديث صور إيكو', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_eko_messages' && event.newValue) {
+        try {
+          const messages = JSON.parse(event.newValue);
+          if (Array.isArray(messages) && messages.length > 0) {
+            appData.eko.messages = messages;
+            setupEkoAssistant();
+          }
+          showNotification('تم تحديث رسائل إيكو', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_eko_sizes' && event.newValue) {
+        try {
+          const sizes = JSON.parse(event.newValue);
+          if (appData.eko) {
+            appData.eko.sizes = { ...appData.eko.sizes, ...sizes };
+            updateEkoSizes();
+          }
+          showNotification('تم تحديث أحجام إيكو', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_feature_icons' && event.newValue) {
+        try {
+          const icons = JSON.parse(event.newValue);
+          appData.icons.featureIcons = { ...appData.icons.featureIcons, ...icons };
+          updateFeatureIcons();
+          showNotification('تم تحديث أيقونات المميزات', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_stat_icons' && event.newValue) {
+        try {
+          const icons = JSON.parse(event.newValue);
+          appData.icons.statIcons = { ...appData.icons.statIcons, ...icons };
+          updateStatIcons();
+          showNotification('تم تحديث أيقونات الإحصائيات', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_app_icons' && event.newValue) {
+        try {
+          const icons = JSON.parse(event.newValue);
+          appData.icons.appIcons = { ...appData.icons.appIcons, ...icons };
+          updateAppIcons();
+          showNotification('تم تحديث أيقونات التطبيق', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_religion_icons' && event.newValue) {
+        try {
+          const icons = JSON.parse(event.newValue);
+          appData.icons.religionIcons = { ...appData.icons.religionIcons, ...icons };
+          updateReligionIcons();
+          showNotification('تم تحديث أيقونات الأديان', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_points_icon' && event.newValue) {
+        try {
+          const icon = JSON.parse(event.newValue);
+          appData.icons.pointIcons.default = { ...appData.icons.pointIcons.default, ...icon };
+          updatePointIcons();
+          showNotification('تم تحديث أيقونة النقاط', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_icons_data' && event.newValue) {
+        try {
+          const icons = JSON.parse(event.newValue);
+          if (icons) {
+            appData.icons = mergeDeep(appData.icons, icons);
+            refreshAllIcons();
+            showNotification('تم تحديث جميع الأيقونات', 'success');
+          }
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_points_data' && event.newValue) {
+        try {
+          const pointsData = JSON.parse(event.newValue);
+          if (pointsData.cards) appData.points.cards = pointsData.cards;
+          if (pointsData.welcomeOffer) appData.points.welcomeOffer = pointsData.welcomeOffer;
+          renderPoints();
+          showNotification('تم تحديث عروض النقاط', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_testimonials_data' && event.newValue) {
+        try {
+          const testimonials = JSON.parse(event.newValue);
+          if (Array.isArray(testimonials)) {
+            appData.testimonials = testimonials;
+            renderTestimonials();
+            showNotification('تم تحديث تجارب العملاء', 'success');
+          }
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_stats_data' && event.newValue) {
+        try {
+          const stats = JSON.parse(event.newValue);
+          appData.stats = { ...appData.stats, ...stats };
+          updateStatsFromData();
+          showNotification('تم تحديث الإحصائيات', 'success');
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_update_trigger' && event.newValue) {
+        try {
+          const update = JSON.parse(event.newValue);
+          handleUpdateSignal(update);
+        } catch(e) {}
+      }
+      if (event.key === 'banqok_bank_colors_update' && event.newValue) {
+        try {
+          const update = JSON.parse(event.newValue);
+          if (update.colors) {
+            updateBankColors(update.colors);
+            renderBanks();
+          }
+        } catch(e) {}
+      }
+    });
+
+    if ('BroadcastChannel' in window) {
+      try {
+        broadcastChannel = new BroadcastChannel('banqok_updates_channel');
+        broadcastChannel.onmessage = function(event) {
+          if (event.data && event.data.source === 'admin_panel') {
+            handleUpdateSignal(event.data);
+          }
+        };
+      } catch(e) {}
+    }
+
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.source === 'admin_panel') {
+        handleUpdateSignal(event.data);
+      }
+    });
+
+    startUpdateChecker();
+  }
+
+  function handleUpdateSignal(update) {
+    if (!update) return;
+    switch(update.section) {
+      case 'banks': loadBankColors(); renderBanks(); break;
+      case 'points': loadPointsData(); renderPoints(); break;
+      case 'stats': loadStatsData(); updateStatsFromData(); break;
+      case 'testimonials': loadTestimonialsData(); renderTestimonials(); break;
+      case 'eko': loadEkoData(); updateEkoImages(); updateEkoSizes(); setupEkoAssistant(); break;
+      case 'icons': loadIconsData(); refreshAllIcons(); break;
+      case 'all': loadAllData(); refreshAllSections(); break;
+      case 'test': console.log('📡 اختبار من لوحة التحكم'); showNotification('✅ لوحة التحكم متصلة', 'success'); break;
+    }
+    if (update.section && update.section !== 'test') {
+      showNotification(`تم تحديث ${getSectionName(update.section)} من لوحة التحكم`, 'info');
+    }
+  }
+
+  function startUpdateChecker() {
+    if (updateCheckInterval) clearInterval(updateCheckInterval);
+    updateCheckInterval = setInterval(() => {
+      loadBankColors();
+      loadPointsData();
+      loadEkoData();
+      loadIconsData();
+      loadTestimonialsData();
+      loadStatsData();
+    }, 3000);
+  }
+
+  function loadAllData() { loadBankColors(); loadPointsData(); loadStatsData(); loadTestimonialsData(); loadEkoData(); loadIconsData(); }
+  function loadBankColors() {
+    const savedData = localStorage.getItem('banqokHomeData');
+    if (savedData) try { const parsed = JSON.parse(savedData); if (parsed.banks) appData.banks = parsed.banks; } catch(e) {}
+    const savedColors = localStorage.getItem('banqok_bank_colors');
+    if (savedColors) try { const colors = JSON.parse(savedColors); updateBankColors(colors); } catch(e) {}
+  }
+  function updateBankColors(colors) { appData.banks.forEach((bank, index) => { if (colors[bank.abbr]) { bank.color = colors[bank.abbr].color || bank.color; bank.colorRgb = colors[bank.abbr].colorRgb || bank.colorRgb; } }); }
+  function loadPointsData() {
+    const savedPoints = localStorage.getItem('banqok_points_data');
+    if (savedPoints) try { const pointsData = JSON.parse(savedPoints); if (pointsData.cards) appData.points.cards = pointsData.cards; if (pointsData.welcomeOffer) appData.points.welcomeOffer = pointsData.welcomeOffer; } catch(e) {}
+    const savedData = localStorage.getItem('banqokHomeData');
+    if (savedData) try { const parsed = JSON.parse(savedData); if (parsed.points) { if (parsed.points.cards) appData.points.cards = parsed.points.cards; if (parsed.points.welcomeOffer) appData.points.welcomeOffer = parsed.points.welcomeOffer; } } catch(e) {}
+  }
+  function loadStatsData() { const savedData = localStorage.getItem('banqokHomeData'); if (savedData) try { const parsed = JSON.parse(savedData); if (parsed.stats) appData.stats = parsed.stats; } catch(e) {} }
+  function loadTestimonialsData() { const savedData = localStorage.getItem('banqokHomeData'); if (savedData) try { const parsed = JSON.parse(savedData); if (parsed.testimonials) appData.testimonials = parsed.testimonials; } catch(e) {} }
+  function loadEkoData() {
+    const savedImages = localStorage.getItem('banqok_eko_images');
+    if (savedImages) try { const images = JSON.parse(savedImages); appData.eko.images = { ...appData.eko.images, ...images }; } catch(e) {}
+    const savedMessages = localStorage.getItem('banqok_eko_messages');
+    if (savedMessages) try { const messages = JSON.parse(savedMessages); if (Array.isArray(messages) && messages.length > 0) appData.eko.messages = messages; } catch(e) {}
+    const savedSizes = localStorage.getItem('banqok_eko_sizes');
+    if (savedSizes) try { const sizes = JSON.parse(savedSizes); appData.eko.sizes = { ...appData.eko.sizes, ...sizes }; } catch(e) {}
+    const savedData = localStorage.getItem('banqokHomeData');
+    if (savedData) try { const parsed = JSON.parse(savedData); if (parsed.eko) { if (parsed.eko.images) appData.eko.images = { ...appData.eko.images, ...parsed.eko.images }; if (parsed.eko.sizes) appData.eko.sizes = { ...appData.eko.sizes, ...parsed.eko.sizes }; if (parsed.eko.messages) appData.eko.messages = parsed.eko.messages; } } catch(e) {}
+  }
+  function loadIconsData() {
+    const savedIcons = localStorage.getItem('banqok_icons_data');
+    if (savedIcons) try { const icons = JSON.parse(savedIcons); appData.icons = mergeDeep(appData.icons, icons); } catch(e) {}
+    const savedData = localStorage.getItem('banqokHomeData');
+    if (savedData) try { const parsed = JSON.parse(savedData); if (parsed.icons) appData.icons = mergeDeep(appData.icons, parsed.icons); } catch(e) {}
+  }
+
+  function updateFeatureIcons() { if (!appData.icons?.featureIcons) return; const icons = appData.icons.featureIcons; const compareIcon = document.getElementById('feature-icon-compare'); if (compareIcon && icons.compare) { compareIcon.src = icons.compare.url; compareIcon.style.width = `${icons.compare.width || 70}px`; compareIcon.style.height = `${icons.compare.height || 70}px`; } const updateIcon = document.getElementById('feature-icon-update'); if (updateIcon && icons.update) { updateIcon.src = icons.update.url; updateIcon.style.width = `${icons.update.width || 70}px`; updateIcon.style.height = `${icons.update.height || 70}px`; } const recommendIcon = document.getElementById('feature-icon-recommend'); if (recommendIcon && icons.recommend) { recommendIcon.src = icons.recommend.url; recommendIcon.style.width = `${icons.recommend.width || 70}px`; recommendIcon.style.height = `${icons.recommend.height || 70}px`; } const analyticsIcon = document.getElementById('feature-icon-analytics'); if (analyticsIcon && icons.analytics) { analyticsIcon.src = icons.analytics.url; analyticsIcon.style.width = `${icons.analytics.width || 70}px`; analyticsIcon.style.height = `${icons.analytics.height || 70}px`; } }
+  function updateStatIcons() { if (!appData.icons?.statIcons) return; const icons = appData.icons.statIcons; const banksIcon = document.getElementById('stat-icon-banks'); if (banksIcon && icons.banks) { banksIcon.src = icons.banks.url; banksIcon.style.width = `${icons.banks.width || 70}px`; banksIcon.style.height = `${icons.banks.height || 70}px`; } const usersIcon = document.getElementById('stat-icon-users'); if (usersIcon && icons.users) { usersIcon.src = icons.users.url; usersIcon.style.width = `${icons.users.width || 70}px`; usersIcon.style.height = `${icons.users.height || 70}px`; } const operationsIcon = document.getElementById('stat-icon-operations'); if (operationsIcon && icons.operations) { operationsIcon.src = icons.operations.url; operationsIcon.style.width = `${icons.operations.width || 70}px`; operationsIcon.style.height = `${icons.operations.height || 70}px`; } const accuracyIcon = document.getElementById('stat-icon-accuracy'); if (accuracyIcon && icons.accuracy) { accuracyIcon.src = icons.accuracy.url; accuracyIcon.style.width = `${icons.accuracy.width || 70}px`; accuracyIcon.style.height = `${icons.accuracy.height || 70}px`; } }
+  function updateAppIcons() { if (!appData.icons?.appIcons) return; const icons = appData.icons.appIcons; const notificationIcon = document.getElementById('app-icon-notification'); if (notificationIcon && icons.notification) { notificationIcon.src = icons.notification.url; notificationIcon.style.width = `${icons.notification.width || 28}px`; notificationIcon.style.height = `${icons.notification.height || 28}px`; } const interfaceIcon = document.getElementById('app-icon-interface'); if (interfaceIcon && icons.interface) { interfaceIcon.src = icons.interface.url; interfaceIcon.style.width = `${icons.interface.width || 28}px`; interfaceIcon.style.height = `${icons.interface.height || 28}px`; } const securityIcon = document.getElementById('app-icon-security'); if (securityIcon && icons.security) { securityIcon.src = icons.security.url; securityIcon.style.width = `${icons.security.width || 28}px`; securityIcon.style.height = `${icons.security.height || 28}px`; } const syncIcon = document.getElementById('app-icon-sync'); if (syncIcon && icons.sync) { syncIcon.src = icons.sync.url; syncIcon.style.width = `${icons.sync.width || 28}px`; syncIcon.style.height = `${icons.sync.height || 28}px`; } }
+  function updateReligionIcons() { if (!appData.icons?.religionIcons) return; const icons = appData.icons.religionIcons; const islamIcon = document.getElementById('religion-icon-islam'); if (islamIcon && icons.islam) { islamIcon.src = icons.islam.url; islamIcon.style.width = `${icons.islam.width || 100}px`; islamIcon.style.height = `${icons.islam.height || 100}px`; } const christianIcon = document.getElementById('religion-icon-christian'); if (christianIcon && icons.christian) { christianIcon.src = icons.christian.url; christianIcon.style.width = `${icons.christian.width || 100}px`; christianIcon.style.height = `${icons.christian.height || 100}px`; } const jewishIcon = document.getElementById('religion-icon-jewish'); if (jewishIcon && icons.jewish) { jewishIcon.src = icons.jewish.url; jewishIcon.style.width = `${icons.jewish.width || 100}px`; jewishIcon.style.height = `${icons.jewish.height || 100}px`; } }
+  function updatePointIcons() { if (!appData.icons?.pointIcons?.default) return; const icon = appData.icons.pointIcons.default; const pointIcons = document.querySelectorAll('.point-card .point-icon-image'); pointIcons.forEach(img => { img.src = icon.url; img.style.width = `${icon.width || 70}px`; img.style.height = `${icon.height || 70}px`; }); }
+  function refreshAllIcons() { updateFeatureIcons(); updateStatIcons(); updateAppIcons(); updateReligionIcons(); updatePointIcons(); }
+  function updateEkoImages() {
+    if (appData.eko && appData.eko.images) {
+      const images = appData.eko.images;
+      if (images.loading) document.getElementById('loading-eko-img')?.setAttribute('src', images.loading);
+      if (images.hero) document.getElementById('hero-eko-img')?.setAttribute('src', images.hero);
+      if (images.features) document.getElementById('features-eko-img')?.setAttribute('src', images.features);
+      if (images.stats) document.getElementById('stats-eko-img')?.setAttribute('src', images.stats);
+      if (images.payment) document.getElementById('payment-eko-img')?.setAttribute('src', images.payment);
+      if (images.app) document.getElementById('app-eko-img')?.setAttribute('src', images.app);
+      if (images.assistant) document.getElementById('eko-assistant-img')?.setAttribute('src', images.assistant);
+      const popupEko = document.getElementById('popup-eko-img');
+      if (popupEko && (!popupEko.src || popupEko.src.includes('normal.png') || popupEko.naturalWidth === 0)) {
+        const fallback = images.hero || images.assistant || './ASSETS/EQO/5.png';
+        if (fallback && !fallback.includes('undefined')) popupEko.src = fallback;
+      }
+      const userModalAvatar = document.getElementById('user-modal-avatar');
+      if (userModalAvatar && images.assistant && (!currentUser || !currentUser.profilePic)) userModalAvatar.setAttribute('src', images.assistant);
+    }
+  }
+  function updateEkoSizes() { if (!appData.eko || !appData.eko.sizes) return; const sizes = appData.eko.sizes; const loadingImg = document.getElementById('loading-eko-img'); if (loadingImg && sizes.loading) { loadingImg.style.width = `${sizes.loading}px`; loadingImg.style.height = 'auto'; } const heroImg = document.getElementById('hero-eko-img'); if (heroImg && sizes.hero) { heroImg.style.width = `${sizes.hero}px`; heroImg.style.height = 'auto'; } const featuresImg = document.getElementById('features-eko-img'); if (featuresImg && sizes.features) { featuresImg.style.width = `${sizes.features}px`; featuresImg.style.height = 'auto'; } const statsImg = document.getElementById('stats-eko-img'); if (statsImg && sizes.stats) { statsImg.style.width = `${sizes.stats}px`; statsImg.style.height = 'auto'; } const paymentImg = document.getElementById('payment-eko-img'); if (paymentImg && sizes.payment) { paymentImg.style.width = `${sizes.payment}px`; paymentImg.style.height = 'auto'; } const appImg = document.getElementById('app-eko-img'); if (appImg && sizes.app) { appImg.style.width = `${sizes.app}px`; appImg.style.height = 'auto'; } const assistantImg = document.getElementById('eko-assistant-img'); if (assistantImg && sizes.assistant) { assistantImg.style.width = `${sizes.assistant}px`; assistantImg.style.height = 'auto'; } const popupEko = document.getElementById('popup-eko-img'); if (popupEko && sizes.hero) { popupEko.style.width = `${Math.min(sizes.hero, 120)}px`; popupEko.style.height = 'auto'; } }
+  function getSectionName(section) { const names = { banks: 'البنوك', points: 'عروض النقاط', stats: 'الإحصائيات', testimonials: 'تجارب العملاء', eko: 'شخصية إيكو', icons: 'الأيقونات', all: 'جميع الأقسام' }; return names[section] || section; }
+  function mergeDeep(target, source) { if (typeof target !== 'object' || typeof source !== 'object') return source; for (const key in source) { if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) { if (!target[key]) target[key] = {}; mergeDeep(target[key], source[key]); } else if (Array.isArray(source[key])) { target[key] = [...source[key]]; } else { target[key] = source[key]; } } return target; }
+
+  function renderBanks() {
+    const container = document.getElementById('banks-grid-container');
+    const countElement = document.getElementById('banks-count-number');
+    if (!container || !appData.banks) return;
+    container.innerHTML = '';
+    appData.banks.forEach((bank, index) => {
+      const bankCard = document.createElement('div');
+      const className = `bank-card bank-${bank.abbr?.toLowerCase().replace(/\s+/g, '') || 'bank'} animate-on-scroll animate-fade-up`;
+      bankCard.className = className;
+      if (bank.colorRgb) bankCard.style.setProperty('--bank-color-rgb', bank.colorRgb);
+      if (bank.color) bankCard.style.setProperty('--bank-color', bank.color);
+      const logoSize = appData.globalSizes?.bankLogo || 85;
+      bankCard.innerHTML = `<img src="${bank.logo || './ASSETS/banks/default.png'}" alt="${bank.name || 'بنك'}" class="bank-logo" style="width: ${logoSize}px; height: ${logoSize}px; object-fit: contain;" onerror="this.src='https://via.placeholder.com/${logoSize}x${logoSize}?text=${bank.abbr || 'بنك'}'"><h3 class="bank-name">${bank.name || 'بنك'}</h3><div class="bank-type">${bank.type || 'بنك'}</div>`;
+      container.appendChild(bankCard);
+    });
+    if (countElement) countElement.textContent = appData.banks.length;
+  }
+  function renderPoints() {
+    const container = document.getElementById('points-cards-container');
+    const offerContainer = document.getElementById('special-offer-container');
+    if (!container || !appData.points?.cards) return;
+    container.innerHTML = '';
+    appData.points.cards.forEach((card, index) => {
+      const pointCard = document.createElement('div');
+      pointCard.className = `point-card animate-on-scroll animate-fade-up ${card.popular ? 'popular' : ''}`;
+      const iconSize = appData.icons?.pointIcons?.default?.width || 70;
+      const iconPath = appData.icons?.pointIcons?.default?.url || './ASSETS/icon/flash-sale_19010530.gif';
+      pointCard.innerHTML = `${card.popular ? '<div class="popular-badge">الأكثر مبيعاً</div>' : ''}<img src="${iconPath}" alt="نقاط" class="point-icon-image" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain;" onerror="this.src='https://via.placeholder.com/${iconSize}x${iconSize}?text=${card.points}'"><div class="point-number">${card.points || '٥٠'}</div><div class="point-label">${card.label || 'نقطة'}</div><div class="point-price">${card.price || '٤٥ ج.م'}</div><div class="point-price-desc">(النقطة بـ ${getPricePerPoint(card)} ج.م)</div><div class="point-per-unit">${getSavings(card)}</div><button class="point-btn">اشتري الآن</button>`;
+      container.appendChild(pointCard);
+    });
+    if (offerContainer && appData.points.welcomeOffer) { offerContainer.innerHTML = `<h3><i class="bi bi-gem"></i> عرض خاص للمستخدمين الجدد</h3><p>${appData.points.welcomeOffer}</p>`; }
+  }
+  function renderTestimonials() {
+    const container = document.getElementById('testimonials-grid-container');
+    if (!container || !appData.testimonials) return;
+    container.innerHTML = '';
+    appData.testimonials.forEach((testimonial, index) => {
+      const testimonialCard = document.createElement('div');
+      testimonialCard.className = 'testimonial-card animate-on-scroll animate-fade-up';
+      const stars = Array(5).fill(0).map((_, i) => `<i class="bi ${i < testimonial.rating ? 'bi-star-fill' : 'bi-star'}"></i>`).join('');
+      const avatarSize = appData.globalSizes?.testimonialAvatar || 52;
+      testimonialCard.innerHTML = `<div class="testimonial-rating">${stars}</div><p class="testimonial-text">${testimonial.text || 'تجربة العملاء'}</p><div class="testimonial-author"><img src="${testimonial.avatar || 'https://randomuser.me/api/portraits/men/32.jpg'}" alt="${testimonial.author || 'مستخدم'}" class="author-avatar" style="width: ${avatarSize}px; height: ${avatarSize}px; object-fit: cover;" onerror="this.src='https://randomuser.me/api/portraits/men/32.jpg'"><div class="author-info"><h4>${testimonial.author || 'مستخدم'}</h4><p>${testimonial.position || 'مستخدم'}، ${testimonial.city || 'القاهرة'}</p></div></div>`;
+      container.appendChild(testimonialCard);
+    });
+  }
+  function getPricePerPoint(card) { if (card.pointsValue && card.priceValue) return (card.priceValue / card.pointsValue).toFixed(2); const points = parseInt(String(card.points).replace(/[^\d]/g, '')); const price = parseInt(String(card.price).replace(/[^\d]/g, '')); if (points && price && !isNaN(points) && !isNaN(price) && points > 0) return (price / points).toFixed(2); return '0.90'; }
+  function getSavings(card) { const points = parseInt(String(card.points).replace(/[^\d]/g, '')) || 0; if (points === 50) return 'توفير ١٠٪'; if (points === 100) return 'توفير ٢٠٪'; if (points === 150) return 'توفير ٢٠٪'; if (points === 200) return 'توفير ٢٥٪'; return 'توفير ١٠٪'; }
+  function updateStatsFromData() { const statElements = document.querySelectorAll('.stat-number-large'); if (statElements.length >= 4 && appData.stats) { const values = [appData.stats.banks || 31, appData.stats.users || 50000, appData.stats.operations || 12500, appData.stats.accuracy || 100]; values.forEach((value, index) => { if (statElements[index]) { statElements[index].setAttribute('data-count', value); statElements[index].textContent = value; } }); setTimeout(setupCounters, 100); } }
+  function refreshAllSections() { renderBanks(); renderPoints(); renderTestimonials(); updateStatsFromData(); updateUserInterface(); updateEkoImages(); updateEkoSizes(); refreshAllIcons(); setupEkoAssistant(); }
+
+  function checkUserLogin() { const userData = localStorage.getItem('banqok_user'); if (!userData) { currentUser = null; updateUserInterface(); return false; } try { currentUser = JSON.parse(userData); updateUserInterface(); return true; } catch (error) { currentUser = null; updateUserInterface(); return false; } }
+  function updateUserInterface() { const navActions = document.getElementById('nav-actions'); const heroButtons = document.getElementById('hero-buttons'); if (!navActions) return; navActions.innerHTML = ''; if (currentUser) { const profilePic = currentUser.profilePic || (appData.eko?.images?.assistant || './ASSETS/EQO/5.png'); const userName = currentUser.firstName || 'مستخدم'; const userAvatarBtn = document.createElement('button'); userAvatarBtn.className = 'user-avatar-btn'; userAvatarBtn.id = 'user-avatar-btn'; userAvatarBtn.innerHTML = `<img src="${profilePic}" alt="صورة ${userName}">`; userAvatarBtn.title = `${userName} - ${currentUser.email || ''}`; navActions.appendChild(userAvatarBtn); updateUserModalInfo(currentUser); userAvatarBtn.addEventListener('click', openUserModal); if (heroButtons) { heroButtons.innerHTML = ''; const btnGroup = document.createElement('div'); btnGroup.className = 'btn-group'; const dashboardBtn = document.createElement('a'); dashboardBtn.className = 'primary-btn'; dashboardBtn.textContent = 'تعرف على خدماتنا'; dashboardBtn.href = 'dashboard.html'; const welcomeBtn = document.createElement('button'); welcomeBtn.className = 'secondary-btn'; welcomeBtn.textContent = `مرحباً، ${userName}!`; welcomeBtn.onclick = function(e) { e.preventDefault(); openUserModal(); }; btnGroup.appendChild(dashboardBtn); btnGroup.appendChild(welcomeBtn); heroButtons.appendChild(btnGroup); } } else { if (heroButtons) { heroButtons.innerHTML = ''; const btnGroup = document.createElement('div'); btnGroup.className = 'btn-group'; const registerBtn = document.createElement('a'); registerBtn.className = 'primary-btn'; registerBtn.textContent = 'سجل دلوقتي مجاناً'; registerBtn.href = 'login.html'; const appBtn = document.createElement('button'); appBtn.className = 'secondary-btn'; appBtn.textContent = 'حمل التطبيق الان'; appBtn.onclick = function() { document.getElementById('download').scrollIntoView({ behavior: 'smooth' }); }; btnGroup.appendChild(registerBtn); btnGroup.appendChild(appBtn); heroButtons.appendChild(btnGroup); } } }
+  function updateUserModalInfo(user) { const modalAvatar = document.getElementById('user-modal-avatar'); const modalName = document.getElementById('user-modal-name'); const modalEmail = document.getElementById('user-modal-email'); if (modalAvatar) modalAvatar.src = user.profilePic || (appData.eko?.images?.assistant || './ASSETS/EQO/5.png'); if (modalName) modalName.textContent = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'مستخدم'; if (modalEmail) modalEmail.textContent = user.email || 'البريد الإلكتروني'; }
+
+  function setupCounters() { const counters = document.querySelectorAll('.stat-number-large'); if (counters.length === 0) return; const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { const counter = entry.target; const target = parseInt(counter.getAttribute('data-count')) || 0; let current = 0; const step = Math.ceil(target / 50); const updateCounter = () => { current += step; if (current < target) { counter.textContent = current; requestAnimationFrame(updateCounter); } else { counter.textContent = target; } }; updateCounter(); observer.unobserve(counter); } }); }, { threshold: 0.5 }); counters.forEach(counter => observer.observe(counter)); }
+  function setupScrollAnimations() { const animatedElements = document.querySelectorAll('.animate-on-scroll'); const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }); animatedElements.forEach(element => observer.observe(element)); }
+  function setupCardMouseTracking() { const cards = document.querySelectorAll('.bank-card, .point-card, .religion-card'); cards.forEach(card => { card.addEventListener('mousemove', function(e) { const rect = this.getBoundingClientRect(); const x = ((e.clientX - rect.left) / rect.width) * 100; const y = ((e.clientY - rect.top) / rect.height) * 100; this.style.setProperty('--x', `${x}%`); this.style.setProperty('--y', `${y}%`); }); }); }
+  function setupEkoAssistant() { const ekoAssistant = document.getElementById('eko-assistant'); const ekoTooltip = document.getElementById('eko-tooltip'); if (!ekoAssistant || !ekoTooltip) return; let ekoMessages = appData.eko?.messages || defaultData.eko.messages; let currentIndex = 0; ekoAssistant.removeEventListener('click', handleEkoClick); if (window.ekoInterval) clearInterval(window.ekoInterval); function handleEkoClick() { const randomMsg = ekoMessages[Math.floor(Math.random() * ekoMessages.length)]; ekoTooltip.textContent = randomMsg; ekoAssistant.classList.add('active'); setTimeout(() => ekoAssistant.classList.remove('active'), 8000); } ekoAssistant.addEventListener('click', handleEkoClick); setTimeout(() => { ekoTooltip.textContent = ekoMessages[0]; ekoAssistant.classList.add('active'); setTimeout(() => ekoAssistant.classList.remove('active'), 8000); }, 4000); window.ekoInterval = setInterval(() => { currentIndex = (currentIndex + 1) % ekoMessages.length; ekoTooltip.textContent = ekoMessages[currentIndex]; ekoAssistant.classList.add('active'); setTimeout(() => ekoAssistant.classList.remove('active'), 8000); }, 30000); }
+
+  function createParticles(containerId) { const particlesContainer = document.getElementById(containerId); if (!particlesContainer) return; particlesContainer.innerHTML = ''; const particleCount = Math.floor(window.innerWidth / 20); for (let i = 0; i < particleCount; i++) { const particle = document.createElement('div'); const particleType = Math.floor(Math.random() * 3); const size = Math.random() * 8 + 3; const posX = Math.random() * 100; const duration = Math.random() * 20 + 15; const delay = Math.random() * 15; particle.style.width = `${size}px`; particle.style.height = `${size}px`; particle.style.left = `${posX}%`; particle.style.bottom = '0'; particle.style.animationDuration = `${duration}s`; particle.style.animationDelay = `${delay}s`; if (particleType === 0) particle.classList.add('particle', 'money-particle'); else if (particleType === 1) particle.classList.add('particle', 'coin-particle'); else particle.classList.add('particle', 'network-particle'); particlesContainer.appendChild(particle); } }
+  function createFooterParticles() { const particlesContainer = document.getElementById('footer-particles'); if (!particlesContainer) return; particlesContainer.innerHTML = ''; const particleCount = Math.floor(window.innerWidth / 30); for (let i = 0; i < particleCount; i++) { const particle = document.createElement('div'); const particleType = Math.floor(Math.random() * 3); const size = Math.random() * 6 + 2; const posX = Math.random() * 100; const duration = Math.random() * 20 + 15; const delay = Math.random() * 15; particle.style.width = `${size}px`; particle.style.height = `${size}px`; particle.style.left = `${posX}%`; particle.style.bottom = '0'; particle.style.animationDuration = `${duration}s`; particle.style.animationDelay = `${delay}s`; if (particleType === 0) particle.classList.add('particle', 'money-particle'); else if (particleType === 1) particle.classList.add('particle', 'coin-particle'); else particle.classList.add('particle', 'network-particle'); particlesContainer.appendChild(particle); } }
+
+  function openUserModal() { const modal = document.getElementById('user-modal'); if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; } }
+  function closeUserModal() { const modal = document.getElementById('user-modal'); if (modal) { modal.classList.remove('active'); document.body.style.overflow = 'auto'; } }
+  function openLogoutModal() { const modal = document.getElementById('logout-confirm-modal'); if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; } }
+  function closeLogoutModal() { const modal = document.getElementById('logout-confirm-modal'); if (modal) { modal.classList.remove('active'); document.body.style.overflow = 'auto'; } }
+  function logoutUser(e) { if (e) e.preventDefault(); closeUserModal(); openLogoutModal(); }
+  function confirmLogout() { localStorage.removeItem('banqok_user'); closeLogoutModal(); setTimeout(() => window.location.reload(), 300); }
+  function showAppPopup() { document.getElementById('app-popup')?.classList.add('active'); }
+  function closePopup() { document.getElementById('app-popup')?.classList.remove('active'); }
+  function showNotification(message, type = 'info') { const notification = document.createElement('div'); notification.className = `alert-notification ${type}`; notification.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;">×</button>`; document.body.appendChild(notification); setTimeout(() => notification.remove(), 5000); }
+
+  function setupEventListeners() { document.getElementById('popup-close')?.addEventListener('click', closePopup); document.getElementById('user-modal-close')?.addEventListener('click', closeUserModal); document.getElementById('user-modal-logout')?.addEventListener('click', logoutUser); document.getElementById('user-modal')?.addEventListener('click', function(e) { if (e.target === this) closeUserModal(); }); document.getElementById('logout-cancel')?.addEventListener('click', closeLogoutModal); document.getElementById('logout-confirm')?.addEventListener('click', confirmLogout); document.getElementById('logout-confirm-modal')?.addEventListener('click', function(e) { if (e.target === this) closeLogoutModal(); }); document.addEventListener('click', function(e) { if (e.target.classList.contains('point-btn') || e.target.closest('.point-btn')) { if (!currentUser) { window.location.href = 'login.html'; return; } const card = e.target.closest('.point-card'); if (card) { const points = card.querySelector('.point-number')?.textContent || 'نقاط'; alert(`عزيزي ${currentUser.firstName}، شكراً لرغبتك في شراء ${points}\nسيتم توجيهك إلى لوحة التحكم لإكمال العملية.`); setTimeout(() => window.location.href = 'dashboard.html', 1000); } } }); }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => { document.getElementById('loading-screen')?.classList.add('hidden'); setTimeout(() => { const loadingScreen = document.getElementById('loading-screen'); if (loadingScreen) loadingScreen.style.display = 'none'; }, 500); }, 2000);
+    loadAllData();
+    initializeUpdateReceiver();
+    renderBanks();
+    renderPoints();
+    renderTestimonials();
+    updateUserInterface();
+    updateStatsFromData();
+    refreshAllIcons();
+    updateEkoImages();
+    updateEkoSizes();
+    createParticles('hero-particles');
+    createFooterParticles();
+    setupCounters();
+    setupScrollAnimations();
+    setupCardMouseTracking();
+    setupEkoAssistant();
+    setupEventListeners();
+    userCheckInterval = setInterval(checkUserLogin, 2000);
+  });
+
+  window.addEventListener('beforeunload', function() { if (userCheckInterval) clearInterval(userCheckInterval); if (window.ekoInterval) clearInterval(window.ekoInterval); if (updateCheckInterval) clearInterval(updateCheckInterval); if (broadcastChannel) broadcastChannel.close(); });
+  window.addEventListener('resize', function() { clearTimeout(window.footerParticlesTimeout); window.footerParticlesTimeout = setTimeout(createFooterParticles, 200); });
+
+  window.openUserModal = openUserModal;
+  window.closeUserModal = closeUserModal;
+  window.showAppPopup = showAppPopup;
+  window.closePopup = closePopup;
+  window.logoutUser = logoutUser;
+  window.confirmLogout = confirmLogout;
+  window.showNotification = showNotification;
+</script>
+
+</body>
+</html>

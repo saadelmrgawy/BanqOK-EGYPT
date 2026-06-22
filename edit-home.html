@@ -1,0 +1,2955 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم BANQOK - تعديل الصفحة الرئيسية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+:root {
+  --primary-color: #10b981;
+  --primary-hover: #059669;
+  --accent-color: #3b82f6;
+  --accent-hover: #2563eb;
+  --light-green: #d1fae5;
+  --text-color: #1f2937;
+  --light-text: #6b7280;
+  --bg-color: #f9fafb;
+  --card-bg: #ffffff;
+  --border-radius: 16px;
+  --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 15px 35px rgba(16, 185, 129, 0.15);
+}
+
+body {
+  margin: 0;
+  font-family: 'Cairo', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  overflow-x: hidden;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* شريط التنقل العلوي */
+.admin-header {
+  background: white;
+  padding: 20px 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  margin-bottom: 30px;
+}
+
+.admin-logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.admin-logo img {
+  height: 40px;
+  max-width: 100%;
+}
+
+.admin-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.admin-actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.admin-btn {
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 1rem;
+  text-align: center;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.admin-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+}
+
+.admin-btn.secondary {
+  background: white;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.admin-btn.secondary:hover {
+  background: var(--light-green);
+}
+
+.admin-btn.danger {
+  background: #ef4444;
+  color: white;
+}
+
+.admin-btn.danger:hover {
+  background: #dc2626;
+}
+
+/* الشريط الجانبي */
+.admin-container {
+  display: flex;
+  min-height: calc(100vh - 90px);
+  gap: 30px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.admin-sidebar {
+  width: 280px;
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 20px 0;
+  box-shadow: var(--shadow);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+  flex-shrink: 0;
+}
+
+.admin-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.admin-nav-item {
+  padding: 18px 25px;
+  border-right: 4px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  margin: 5px 0;
+  min-height: 56px;
+  box-sizing: border-box;
+}
+
+.admin-nav-item:hover {
+  background: var(--light-green);
+  border-right-color: var(--primary-color);
+  padding-right: 30px;
+}
+
+.admin-nav-item.active {
+  background: var(--light-green);
+  border-right-color: var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* المحتوى الرئيسي */
+.admin-content {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.section-panel {
+  display: none;
+}
+
+.section-panel.active {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: var(--text-color);
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--light-green);
+}
+
+.form-group {
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #e5e7eb;
+  border-radius: var(--border-radius);
+  font-family: 'Cairo', sans-serif;
+  font-size: 1rem;
+  transition: all 0.3s;
+  box-sizing: border-box;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+textarea.form-control {
+  min-height: 140px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.image-upload {
+  border: 2px dashed var(--primary-color);
+  border-radius: var(--border-radius);
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #f8fafc;
+  position: relative;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.image-upload:hover {
+  border-color: var(--primary-hover);
+  background: var(--light-green);
+  transform: translateY(-2px);
+}
+
+.image-upload i {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.image-upload p {
+  margin: 5px 0;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.image-upload small {
+  display: block;
+  color: var(--light-text);
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 150px;
+  border-radius: 8px;
+  margin: 15px auto;
+  display: block;
+  border: 2px solid #e5e7eb;
+  padding: 5px;
+  background: white;
+  object-fit: contain;
+}
+
+/* جدول البنوك */
+.banks-table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 20px 0;
+  border-radius: var(--border-radius);
+  border: 1px solid #e5e7eb;
+}
+
+.banks-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.banks-table th,
+.banks-table td {
+  padding: 12px 15px;
+  text-align: right;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.banks-table th {
+  background-color: var(--light-green);
+  color: var(--text-color);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.banks-table tr:hover {
+  background-color: #f8fafc;
+}
+
+.bank-logo-small {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.color-preview {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  display: inline-block;
+  border: 1px solid #e5e7eb;
+  vertical-align: middle;
+  margin-left: 10px;
+}
+
+/* رسائل النظام */
+.message {
+  padding: 18px 24px;
+  border-radius: var(--border-radius);
+  margin-bottom: 25px;
+  display: none;
+  font-weight: 600;
+  border-left: 5px solid;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.message.success {
+  background: #d1fae5;
+  color: #065f46;
+  border-left-color: #10b981;
+  display: block;
+}
+
+.message.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-left-color: #ef4444;
+  display: block;
+}
+
+.message.info {
+  background: #dbeafe;
+  color: #1e40af;
+  border-left-color: #3b82f6;
+  display: block;
+}
+
+/* تصميم كروت العروض */
+.points-card {
+  border: 2px solid #e5e7eb;
+  padding: 25px;
+  border-radius: var(--border-radius);
+  margin-bottom: 25px;
+  background: #f8fafc;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.points-card.popular {
+  border-color: #f59e0b;
+}
+
+.popular-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #f59e0b;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 1;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+/* تصميم رسائل إيكو */
+.eko-message-card {
+  border: 1px solid #e5e7eb;
+  padding: 25px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  background: #f8fafc;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.eko-message-card:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow);
+}
+
+.eko-message-card textarea {
+  font-family: 'Cairo', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* تصميم تجارب العملاء */
+.testimonial-card {
+  border: 1px solid #e5e7eb;
+  padding: 25px;
+  border-radius: var(--border-radius);
+  margin-bottom: 25px;
+  background: #f8fafc;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #e5e7eb;
+  cursor: pointer;
+  padding: 5px;
+  transition: all 0.2s;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.star-btn.active {
+  color: #fbbf24;
+}
+
+.star-btn:hover {
+  transform: scale(1.2);
+}
+
+/* مودال كبير */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 1001;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: white;
+  padding: 40px;
+  border-radius: var(--border-radius);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-sizing: border-box;
+  margin: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--text-color);
+  flex: 1;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  cursor: pointer;
+  color: var(--light-text);
+  padding: 0;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.modal-close:hover {
+  color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+/* تصميم متجاوب */
+@media (max-width: 1200px) {
+  .admin-container {
+    padding: 0 15px;
+  }
+  
+  .admin-sidebar {
+    width: 250px;
+  }
+  
+  .modal-content {
+    max-width: 800px;
+    padding: 35px;
+  }
+}
+
+@media (max-width: 992px) {
+  .admin-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .admin-sidebar {
+    width: 100%;
+    position: static;
+    margin-bottom: 20px;
+    padding: 0;
+  }
+  
+  .admin-nav {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .admin-nav-item {
+    flex-direction: column;
+    min-width: 120px;
+    text-align: center;
+    padding: 15px;
+    border-right: none;
+    border-bottom: 4px solid transparent;
+    gap: 8px;
+    margin: 0;
+  }
+  
+  .admin-nav-item:hover,
+  .admin-nav-item.active {
+    border-right-color: transparent;
+    border-bottom-color: var(--primary-color);
+    padding-right: 15px;
+    padding-bottom: 20px;
+  }
+  
+  .grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .modal-content {
+    max-width: 700px;
+    padding: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-header {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .admin-logo {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .admin-logo img {
+    height: 35px;
+  }
+  
+  .admin-title {
+    font-size: 1.3rem;
+  }
+  
+  .admin-actions {
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .admin-btn {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    min-height: 40px;
+    flex: 1;
+    min-width: 140px;
+  }
+  
+  .admin-content {
+    padding: 25px 20px;
+    margin-bottom: 20px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 25px;
+    padding-bottom: 12px;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-control {
+    padding: 12px 15px;
+    font-size: 0.95rem;
+  }
+  
+  textarea.form-control {
+    min-height: 120px;
+  }
+  
+  .image-upload {
+    padding: 30px 15px;
+    min-height: 160px;
+  }
+  
+  .image-upload i {
+    font-size: 1.8rem;
+  }
+  
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .points-card,
+  .eko-message-card,
+  .testimonial-card {
+    padding: 20px;
+  }
+  
+  .banks-table-container {
+    margin: 15px 0;
+  }
+  
+  .banks-table th,
+  .banks-table td {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+  
+  .modal-content {
+    padding: 25px 20px;
+    max-width: 95%;
+    margin: 10px;
+    max-height: 85vh;
+  }
+  
+  .modal-title {
+    font-size: 1.5rem;
+  }
+  
+  .modal-close {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .admin-container {
+    padding: 0 10px;
+    gap: 15px;
+  }
+  
+  .admin-header {
+    padding: 15px;
+  }
+  
+  .admin-content {
+    padding: 20px 15px;
+    border-radius: 12px;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .admin-btn {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    min-width: 120px;
+  }
+  
+  .admin-nav-item {
+    min-width: 100px;
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .admin-nav-item i {
+    font-size: 1.1rem;
+  }
+  
+  .image-upload {
+    padding: 25px 15px;
+    min-height: 140px;
+  }
+  
+  .image-upload i {
+    font-size: 1.5rem;
+  }
+  
+  .image-preview {
+    max-width: 120px;
+    max-height: 120px;
+  }
+  
+  .banks-table th,
+  .banks-table td {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .bank-logo-small {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .color-preview {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .popular-badge {
+    font-size: 12px;
+    padding: 6px 15px;
+    top: -8px;
+    right: -8px;
+  }
+  
+  .star-btn {
+    font-size: 1.5rem;
+    min-width: 40px;
+    min-height: 40px;
+  }
+  
+  .modal-content {
+    padding: 20px 15px;
+    margin: 5px;
+  }
+  
+  .modal-title {
+    font-size: 1.3rem;
+  }
+  
+  .message {
+    padding: 15px 20px;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-title {
+    font-size: 1.2rem;
+  }
+  
+  .admin-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .admin-btn {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .admin-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .admin-nav-item {
+    min-width: 90px;
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+  
+  .form-control {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .grid-3 {
+    gap: 12px;
+  }
+  
+  .points-card,
+  .eko-message-card,
+  .testimonial-card {
+    padding: 18px;
+  }
+  
+  .testimonial-avatar-preview {
+    max-width: 80px !important;
+    margin-top: 10px;
+  }
+  
+  .modal-content {
+    padding: 18px 12px;
+  }
+}
+
+/* تحسينات للهواتف في الوضع الأفقي */
+@media (max-height: 600px) and (orientation: landscape) {
+  .admin-header {
+    padding: 10px 20px;
+    margin-bottom: 15px;
+  }
+  
+  .admin-container {
+    min-height: auto;
+  }
+  
+  .admin-content {
+    max-height: 70vh;
+    overflow-y: auto;
+    margin-bottom: 15px;
+  }
+  
+  .admin-sidebar {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  .admin-nav {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  
+  .modal-content {
+    max-height: 85vh;
+    padding: 25px 20px;
+  }
+}
+
+/* تحسينات للأجهزة التي تعمل باللمس */
+@media (hover: none) and (pointer: coarse) {
+  .admin-btn,
+  .admin-nav-item,
+  .star-btn,
+  .modal-close,
+  .image-upload {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .admin-btn:active,
+  .admin-nav-item:active {
+    transform: scale(0.98);
+  }
+  
+  .admin-btn:hover,
+  .admin-nav-item:hover {
+    transform: none;
+  }
+  
+  .admin-btn:active:hover {
+    transform: scale(0.98);
+  }
+  
+  .form-control {
+    font-size: 16px;
+  }
+  
+  select.form-control,
+  input[type="text"].form-control,
+  input[type="number"].form-control {
+    font-size: 16px;
+  }
+}
+
+.admin-nav-item,
+.admin-btn,
+.form-control,
+.image-upload {
+  will-change: transform;
+}
+
+.section-panel {
+  width: 100%;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .tools-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.search-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.search-container i {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--light-text);
+  font-size: 1.2rem;
+}
+
+#search-banks {
+  padding-right: 45px;
+}
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.table-actions .admin-btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  min-height: 36px;
+}
+
+@media (max-width: 576px) {
+  .table-actions {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .table-actions .admin-btn {
+    width: 100%;
+  }
+}
+
+.modal-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .modal-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modal-content,
+.admin-content,
+.banks-table-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-color) #f1f1f1;
+}
+
+.modal-content::-webkit-scrollbar,
+.admin-content::-webkit-scrollbar,
+.banks-table-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track,
+.admin-content::-webkit-scrollbar-track,
+.banks-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb,
+.admin-content::-webkit-scrollbar-thumb,
+.banks-table-container::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.points-card:last-child,
+.eko-message-card:last-child,
+.testimonial-card:last-child {
+  margin-bottom: 0;
+}
+
+/* زر تحديث الألوان */
+.refresh-color-btn {
+  margin-top: 5px;
+  width: 100%;
+  padding: 8px;
+  background: var(--light-green);
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.refresh-color-btn:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+/* تنسيق خيارات الألوان */
+.color-options {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.color-preset {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.color-preset:hover {
+  transform: scale(1.1);
+  border-color: var(--text-color);
+}
+
+.color-preset.selected {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--light-green);
+}
+
+/* تلميحات */
+.tooltip-hint {
+  background: #f3f4f6;
+  padding: 12px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  font-size: 0.9rem;
+  border-right: 4px solid var(--primary-color);
+}
+
+.tooltip-hint i {
+  color: var(--primary-color);
+  margin-left: 8px;
+}
+  </style>
+</head>
+<body>
+
+<!-- رأس لوحة التحكم -->
+<header class="admin-header">
+  <div class="admin-logo">
+    <img src="./ASSETS/BanqOk.png" alt="BANQOK Logo">
+    <h1 class="admin-title">لوحة تحكم BANQOK - تعديل الصفحة الرئيسية</h1>
+  </div>
+  
+  <div class="admin-actions">
+    <button class="admin-btn" id="save-all-btn">
+      <i class="bi bi-save"></i> حفظ جميع التعديلات
+    </button>
+    <button class="admin-btn secondary" id="preview-btn">
+      <i class="bi bi-eye"></i> معاينة الصفحة
+    </button>
+    <button class="admin-btn secondary" onclick="window.location.href = 'admin-dashboard.html'">
+      <i class="bi bi-arrow-right"></i> العودة للوحة التحكم
+    </button>
+  </div>
+</header>
+
+<!-- رسائل النظام -->
+<div class="message" id="message"></div>
+
+<!-- هيكل لوحة التحكم -->
+<div class="admin-container">
+  <!-- الشريط الجانبي -->
+  <nav class="admin-sidebar">
+    <ul class="admin-nav">
+      <li class="admin-nav-item active" data-section="stats">
+        <i class="bi bi-graph-up"></i>
+        قسم الإحصائيات
+      </li>
+      <li class="admin-nav-item" data-section="banks">
+        <i class="bi bi-bank"></i>
+        قسم البنوك
+      </li>
+      <li class="admin-nav-item" data-section="points">
+        <i class="bi bi-coin"></i>
+        عروض النقاط
+      </li>
+      <li class="admin-nav-item" data-section="eko">
+        <i class="bi bi-robot"></i>
+        رسائل إيكو
+      </li>
+      <li class="admin-nav-item" data-section="testimonials">
+        <i class="bi bi-chat-quote"></i>
+        تجارب العملاء
+      </li>
+      <li class="admin-nav-item" data-section="tools">
+        <i class="bi bi-tools"></i>
+        أدوات مساعدة
+      </li>
+    </ul>
+  </nav>
+  
+  <!-- المحتوى الرئيسي -->
+  <main class="admin-content">
+    
+    <!-- قسم الإحصائيات -->
+    <div class="section-panel active" id="stats-panel">
+      <h2 class="section-title">قسم الإحصائيات (أرقام بتتكلم عنّا)</h2>
+      
+      <div class="form-group">
+        <label class="form-label">عدد البنوك</label>
+        <input type="number" id="stats-banks" class="form-control" placeholder="30">
+        <small style="color: var(--light-text); display: block; margin-top: 5px;">عدد البنوك المعروضة في قسم مقارنة البنوك</small>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">عدد المستخدمين النشطين</label>
+        <input type="number" id="stats-users" class="form-control" placeholder="50000">
+        <small style="color: var(--light-text); display: block; margin-top: 5px;">عدد المستخدمين النشطين في الموقع</small>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">عدد العمليات التحليلية الناجحة</label>
+        <input type="number" id="stats-operations" class="form-control" placeholder="12500">
+        <small style="color: var(--light-text); display: block; margin-top: 5px;">عدد عمليات المقارنة التي تمت بنجاح</small>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">دقة التوصيات (%)</label>
+        <input type="number" id="stats-accuracy" class="form-control" placeholder="100" min="0" max="100">
+        <small style="color: var(--light-text); display: block; margin-top: 5px;">نسبة دقة التوصيات المقدمة للمستخدمين</small>
+      </div>
+      
+      <button class="admin-btn" id="save-stats-btn">
+        <i class="bi bi-save"></i> حفظ قسم الإحصائيات
+      </button>
+    </div>
+    
+    <!-- قسم البنوك - محسّن بالكامل -->
+    <div class="section-panel" id="banks-panel">
+      <h2 class="section-title">قسم البنوك</h2>
+      
+      <div class="tooltip-hint">
+        <i class="bi bi-info-circle"></i>
+        <strong>مهم:</strong> بعد تعديل ألوان البنوك، اضغط على زر <strong>"حفظ ألوان البنوك"</strong> لتطبيق التغييرات مباشرة على الصفحة الرئيسية.
+      </div>
+      
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+          <h3 style="margin: 0; color: var(--primary-color);">قائمة البنوك (<span id="banks-count">0</span> بنك)</h3>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="admin-btn secondary" id="add-bank-btn">
+              <i class="bi bi-plus-circle"></i> إضافة بنك جديد
+            </button>
+            <button class="admin-btn" id="save-bank-colors-btn" style="background: #8b5cf6;">
+              <i class="bi bi-palette"></i> حفظ ألوان البنوك
+            </button>
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+          <input type="text" id="search-banks" class="form-control" placeholder="ابحث عن بنك بالاسم أو الاختصار...">
+        </div>
+        
+        <div class="banks-table-container">
+          <table class="banks-table">
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>الاختصار</th>
+                <th>النوع</th>
+                <th>الشعار</th>
+                <th>اللون</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="banks-list">
+              <!-- سيتم تعبئتها بواسطة الجافاسكريبت -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 20px;">
+        <button class="admin-btn" id="save-banks-btn">
+          <i class="bi bi-save"></i> حفظ جميع بيانات البنوك
+        </button>
+      </div>
+    </div>
+    
+    <!-- قسم عروض النقاط -->
+    <div class="section-panel" id="points-panel">
+      <h2 class="section-title">عروض شراء النقاط</h2>
+      
+      <div class="form-group">
+        <h3 style="margin: 30px 0 20px; color: var(--primary-color);">كروت العروض</h3>
+        
+        <div id="points-cards-container">
+          <!-- سيتم تعبئتها بواسطة الجافاسكريبت -->
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+          <button class="admin-btn secondary" id="add-point-card-btn">
+            <i class="bi bi-plus-circle"></i> إضافة عرض جديد
+          </button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">عرض الترحيب للمستخدمين الجدد</label>
+        <textarea id="welcome-offer" class="form-control" placeholder="النقاط الهدية الترحيبية للمستخدمين الجدد..." rows="4"></textarea>
+        <small style="color: var(--light-text); display: block; margin-top: 5px;">سيظهر هذا النص في قسم العروض الخاصة</small>
+      </div>
+      
+      <button class="admin-btn" id="save-points-btn">
+        <i class="bi bi-save"></i> حفظ قسم العروض
+      </button>
+    </div>
+    
+    <!-- قسم رسائل إيكو - تم حذف صور إيكو بالكامل -->
+    <div class="section-panel" id="eko-panel">
+      <h2 class="section-title">رسائل إيكو</h2>
+      
+      <div class="form-group">
+        <h3 style="margin: 0 0 20px; color: var(--primary-color);">رسائل إيكو النصية</h3>
+        
+        <div id="eko-messages-container">
+          <!-- سيتم تعبئتها بواسطة الجافاسكريبت -->
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+          <button class="admin-btn secondary" id="add-eko-message-btn">
+            <i class="bi bi-plus-circle"></i> إضافة رسالة جديدة
+          </button>
+        </div>
+      </div>
+      
+      <button class="admin-btn" id="save-eko-btn">
+        <i class="bi bi-save"></i> حفظ رسائل إيكو
+      </button>
+    </div>
+    
+    <!-- قسم تجارب العملاء -->
+    <div class="section-panel" id="testimonials-panel">
+      <h2 class="section-title">قسم تجارب العملاء</h2>
+      
+      <div class="form-group">
+        <div id="testimonials-container">
+          <!-- سيتم تعبئتها بواسطة الجافاسكريبت -->
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+          <button class="admin-btn secondary" id="add-testimonial-btn">
+            <i class="bi bi-plus-circle"></i> إضافة تجربة جديدة
+          </button>
+        </div>
+      </div>
+      
+      <button class="admin-btn" id="save-testimonials-btn">
+        <i class="bi bi-save"></i> حفظ قسم التجارب
+      </button>
+    </div>
+    
+    <!-- قسم الأدوات المساعدة -->
+    <div class="section-panel" id="tools-panel">
+      <h2 class="section-title">أدوات مساعدة</h2>
+      
+      <div class="form-group">
+        <h3 style="margin: 20px 0; color: var(--primary-color);">إدارة البيانات</h3>
+        
+        <div class="tools-grid">
+          <div class="points-card">
+            <h4><i class="bi bi-download" style="color: var(--primary-color);"></i> تصدير البيانات</h4>
+            <p>قم بتحميل نسخة احتياطية من جميع بيانات الصفحة الرئيسية</p>
+            <button class="admin-btn secondary" id="export-data-btn" style="width: 100%; margin-top: 10px;">
+              <i class="bi bi-download"></i> تصدير البيانات
+            </button>
+          </div>
+          
+          <div class="points-card">
+            <h4><i class="bi bi-upload" style="color: var(--primary-color);"></i> استيراد البيانات</h4>
+            <p>قم باستيراد بيانات سابقة للصفحة الرئيسية</p>
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+            <button class="admin-btn secondary" id="import-data-btn" style="width: 100%; margin-top: 10px;">
+              <i class="bi bi-upload"></i> استيراد البيانات
+            </button>
+          </div>
+          
+          <div class="points-card">
+            <h4><i class="bi bi-palette" style="color: var(--primary-color);"></i> إعادة ضبط الألوان</h4>
+            <p>إعادة تعيين ألوان البنوك إلى القيم الافتراضية</p>
+            <button class="admin-btn secondary" id="reset-colors-btn" style="width: 100%; margin-top: 10px; background: #f59e0b; color: white;">
+              <i class="bi bi-palette"></i> إعادة ضبط الألوان
+            </button>
+          </div>
+          
+          <div class="points-card">
+            <h4><i class="bi bi-arrow-clockwise" style="color: var(--primary-color);"></i> إعادة التعيين</h4>
+            <p>إعادة تعيين جميع البيانات إلى القيم الافتراضية</p>
+            <button class="admin-btn danger" id="reset-data-btn" style="width: 100%; margin-top: 10px;">
+              <i class="bi bi-arrow-clockwise"></i> إعادة التعيين
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <h3 style="margin: 30px 0 20px; color: var(--primary-color);">معلومات النظام</h3>
+        
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+              <strong>آخر تحديث:</strong>
+              <div id="last-update">غير معروف</div>
+            </div>
+            <div>
+              <strong>حجم البيانات:</strong>
+              <div id="data-size">0 كيلوبايت</div>
+            </div>
+            <div>
+              <strong>عدد البنوك:</strong>
+              <div id="system-banks-count">0</div>
+            </div>
+            <div>
+              <strong>عدد العروض:</strong>
+              <div id="system-points-count">0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </main>
+</div>
+
+<!-- مودال إضافة/تعديل بنك - محسّن -->
+<div class="modal-overlay" id="bank-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="bank-modal-title">إضافة بنك جديد</h3>
+      <button class="modal-close" id="close-bank-modal">×</button>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">اسم البنك</label>
+      <input type="text" id="modal-bank-name" class="form-control" placeholder="البنك الأهلي المصري – NBE">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">الاختصار</label>
+      <input type="text" id="modal-bank-abbr" class="form-control" placeholder="NBE">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">نوع البنك</label>
+      <select id="modal-bank-type" class="form-control">
+        <option value="بنك حكومي">بنك حكومي</option>
+        <option value="بنك خاص">بنك خاص</option>
+        <option value="بنك تجاري">بنك تجاري</option>
+        <option value="بنك إسلامي">بنك إسلامي</option>
+        <option value="بنك دولي">بنك دولي</option>
+        <option value="بنك استثماري">بنك استثماري</option>
+        <option value="بنك عقاري">بنك عقاري</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">شعار البنك</label>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
+        <input type="text" id="modal-bank-logo" class="form-control" placeholder="رابط الشعار" style="flex: 1;">
+        <button class="admin-btn secondary" id="upload-bank-logo-btn" style="white-space: nowrap;">
+          <i class="bi bi-upload"></i> رفع صورة
+        </button>
+      </div>
+      <img id="modal-bank-logo-preview" class="image-preview" style="max-width: 100px; display: none;">
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">لون البنك (للتأثير عند التمرير)</label>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap;">
+        <input type="color" id="modal-bank-color" value="#10b981" style="width: 60px; height: 40px;">
+        <input type="text" id="modal-bank-color-text" class="form-control" value="#10b981" placeholder="#RRGGBB" style="flex: 1;">
+      </div>
+      
+      <div class="color-options">
+        <div class="color-preset" style="background: #14532d;" data-color="#14532d" data-rgb="20,83,45"></div>
+        <div class="color-preset" style="background: #1e40af;" data-color="#1e40af" data-rgb="30,64,175"></div>
+        <div class="color-preset" style="background: #1e3a8a;" data-color="#1e3a8a" data-rgb="30,58,138"></div>
+        <div class="color-preset" style="background: #ea580c;" data-color="#ea580c" data-rgb="234,88,12"></div>
+        <div class="color-preset" style="background: #0369a1;" data-color="#0369a1" data-rgb="3,105,161"></div>
+        <div class="color-preset" style="background: #10b981;" data-color="#10b981" data-rgb="16,185,129"></div>
+        <div class="color-preset" style="background: #dc2626;" data-color="#dc2626" data-rgb="220,38,38"></div>
+        <div class="color-preset" style="background: #8b5cf6;" data-color="#8b5cf6" data-rgb="139,92,246"></div>
+      </div>
+      <small style="color: var(--light-text); display: block; margin-top: 5px;">اختر لوناً من القائمة أو استخدم منتقي الألوان. سيتم تطبيق هذا اللون عند تمرير الماوس على كارت البنك.</small>
+    </div>
+    
+    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
+      <button class="admin-btn secondary" id="cancel-bank-modal">إلغاء</button>
+      <button class="admin-btn" id="save-bank-modal">حفظ البنك</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// البيانات الافتراضية - متوافقة مع الصفحة الرئيسية
+// تم حذف صور إيكو بالكامل
+// ============================================
+const defaultData = {
+  stats: {
+    banks: 31,
+    users: 50000,
+    operations: 12500,
+    accuracy: 100
+  },
+  banks: [
+    { name: "الأهلي المصري – NBE", abbr: "NBE", type: "بنك حكومي", logo: "./ASSETS/banks/NBE.jpg", color: "#14532d", colorRgb: "20,83,45" },
+    { name: "مصر – BM", abbr: "BM", type: "بنك حكومي", logo: "./ASSETS/banks/BM.PNG", color: "#1e40af", colorRgb: "30,64,175" },
+    { name: "التجاري الدولي – CIB", abbr: "CIB", type: "بنك خاص", logo: "./ASSETS/banks/CIB.png", color: "#1e3a8a", colorRgb: "30,58,138" },
+    { name: "القاهرة – BDC", abbr: "BDC", type: "بنك حكومي", logo: "./ASSETS/banks/BDC.png", color: "#ea580c", colorRgb: "234,88,12" },
+    { name: "قناة السويس – SCB", abbr: "SCB", type: "بنك تجاري", logo: "./ASSETS/banks/SCB.jpg", color: "#0369a1", colorRgb: "3,105,161" },
+    { name: "التعمير والإسكان – HDB", abbr: "HDB", type: "بنك حكومي", logo: "./ASSETS/banks/HDB.png", color: "#1e3a8a", colorRgb: "30,58,138" },
+    { name: "الإسكندرية – AlexBank", abbr: "AlexBank", type: "بنك تجاري", logo: "./ASSETS/banks/ALEX.png", color: "#1d4ed8", colorRgb: "29,78,216" },
+    { name: "الزراعي المصري – ABE", abbr: "ABE", type: "بنك حكومي", logo: "./ASSETS/banks/ABE.jpg", color: "#166534", colorRgb: "22,101,52" },
+    { name: "تنمية الصادرات – EBank", abbr: "EBank", type: "بنك حكومي", logo: "./ASSETS/banks/EBE.jpg", color: "#0ea5e9", colorRgb: "14,165,233" },
+    { name: "العربي الإفريقي – AAIB", abbr: "AAIB", type: "بنك دولي", logo: "./ASSETS/banks/AAIB.png", color: "#3b82f6", colorRgb: "59,130,246" },
+    { name: "العربي الدولي – AIB", abbr: "AIB", type: "بنك دولي", logo: "./ASSETS/banks/AIB.png", color: "#2563eb", colorRgb: "37,99,235" },
+    { name: "المصري الخليجي – EG Bank", abbr: "EG Bank", type: "بنك تجاري", logo: "./ASSETS/banks/EG.png", color: "#60a5fa", colorRgb: "96,165,250" },
+    { name: "الصناعي – IDB", abbr: "IDB", type: "بنك استثماري", logo: "./ASSETS/banks/IDB.png", color: "#fbbf24", colorRgb: "251,191,36" },
+    { name: "العقاري المصري العربي – REDB", abbr: "REDB", type: "بنك عقاري", logo: "./ASSETS/banks/REDB.png", color: "#10b981", colorRgb: "16,185,129" },
+    { name: "الواحد المتحد – TUB", abbr: "TUB", type: "بنك تجاري", logo: "./ASSETS/banks/TUB.jpg", color: "#059669", colorRgb: "5,150,105" },
+    { name: "إتش إس بي سي – HSBC", abbr: "HSBC", type: "بنك دولي", logo: "./ASSETS/banks/HSBC.png", color: "#1e40af", colorRgb: "30,64,175" },
+    { name: "الإمارات دبي الوطني – ENBD", abbr: "ENBD", type: "بنك دولي", logo: "./ASSETS/banks/ENBD.png", color: "#f97316", colorRgb: "249,115,22" },
+    { name: "أبوظبي الإسلامي – ADIB", abbr: "ADIB", type: "بنك إسلامي", logo: "./ASSETS/banks/ADIB.png", color: "#1e3a8a", colorRgb: "30,58,138" },
+    { name: "أبوظبي التجاري – ADCB", abbr: "ADCB", type: "بنك تجاري", logo: "./ASSETS/banks/ADCB.png", color: "#14532d", colorRgb: "20,83,45" },
+    { name: "أبوظبي الأول – FAB", abbr: "FAB", type: "بنك دولي", logo: "./ASSETS/banks/FAB.png", color: "#b91c1c", colorRgb: "185,28,28" },
+    { name: "المشرق – Mashreq", abbr: "Mashreq", type: "بنك دولي", logo: "./ASSETS/banks/mashreq.jpg", color: "#0ea5e9", colorRgb: "14,165,233" },
+    { name: "الأهلي الكويتي – ABK", abbr: "ABK", type: "بنك دولي", logo: "./ASSETS/banks/ABK.png", color: "#16a34a", colorRgb: "22,163,74" },
+    { name: "الوطني الكويتي – NBK", abbr: "NBK", type: "بنك دولي", logo: "./ASSETS/banks/NBK.jpg", color: "#166534", colorRgb: "22,101,52" },
+    { name: "قطر الوطني – QNB", abbr: "QNB", type: "بنك دولي", logo: "./ASSETS/banks/QNB.jpg", color: "#1e40af", colorRgb: "30,64,175" },
+    { name: "سايب – SAIB", abbr: "SAIB", type: "بنك دولي", logo: "./ASSETS/banks/SAIB.jpg", color: "#dc2626", colorRgb: "220,38,38" },
+    { name: "كريدي أجريكول – CAE", abbr: "CAE", type: "بنك دولي", logo: "./ASSETS/banks/كريدي اجريكول.jpg", color: "#15803d", colorRgb: "21,128,61" },
+    { name: "بيت التمويل الكويتي – KFH", abbr: "KFH", type: "بنك إسلامي", logo: "./ASSETS/banks/KFH.jpeg", color: "#1e3a8a", colorRgb: "30,58,138" },
+    { name: "البركة – Al Baraka", abbr: "Al Baraka", type: "بنك إسلامي", logo: "./ASSETS/banks/ALBRAKA.png", color: "#2563eb", colorRgb: "37,99,235" },
+    { name: "البنك العربي – Arab Bank", abbr: "Arab Bank", type: "بنك دولي", logo: "./ASSETS/banks/Arab.png", color: "#b91c1c", colorRgb: "185,28,28" },
+    { name: "التجاري وفا – Attijariwafa", abbr: "Attijariwafa", type: "بنك دولي", logo: "./ASSETS/banks/التجاري-وفا.png", color: "#3b82f6", colorRgb: "59,130,246" }
+  ],
+  points: {
+    cards: [
+      { points: "٥٠", label: "نقطة", price: "٤٥ ج.م", popular: false, pointsValue: 50, priceValue: 45 },
+      { points: "١٠٠", label: "نقطة", price: "٨٠ ج.م", popular: true, pointsValue: 100, priceValue: 80 },
+      { points: "١٥٠", label: "نقطة", price: "١٢٠ ج.م", popular: false, pointsValue: 150, priceValue: 120 },
+      { points: "٢٠٠", label: "نقطة", price: "١٥٠ ج.م", popular: false, pointsValue: 200, priceValue: 150 }
+    ],
+    welcomeOffer: "سجل حسابك الآن واحصل على <strong>٥٠ نقطة مجانية</strong> هدية ترحيبية! ابدأ رحلتك المالية مع BANQOK واستمتع بتجربة مقارنة كاملة للبنوك."
+  },
+  eko: {
+    messages: [
+      "أهلاً! أنا إيكو، مساعدك في موقع BANQOK. هساعدك تقارن بين كل البنوك وتلاقي العرض المناسب ليك!",
+      "عايز تقارن بين عروض القروض؟ أقولك على أفضل 3 بنوك تناسب دخلك ومصاريفك!",
+      "محتار في اختيار البنك المناسب لوديعة؟ إيكو يقدر يقارنلك كل العروض ويرشحلك الأفضل!",
+      "أسعار الفوايد اتغيرت؟ مش مشكلة! بياناتنا بتتحدث يومياً علشان تضمنلك أفضل سعر!",
+      "محتاج قرض شخصي أو عقاري؟ قوللي على احتياجاتك وأنا هدلك على أفضل 3 عروض!",
+      "البنوك كلها بتقدم عروض كتير! إيكو هيخلصلك المقارنة في ثواني ويوفرلك وقتك!",
+      "مش عارف تختار بين البنوك المحلية والدولية؟ أقولك على المميزات والعيوب بتاعة كل واحد!"
+    ]
+  },
+  testimonials: [
+    { 
+      rating: 5, 
+      text: "موقع BanqOK جعل مقارنة البنوك أسهل شيء! كنت أحتاج قرضاً شخصياً ولم يكن لدي وقت لزيارة كل البنوك، الموقع وفر لي أفضل العروض من بين كل البنوك وأرشدني إلى الأفضل لي. وفرت لي الكثير!", 
+      author: "أحمد محمود", 
+      position: "مهندس برمجيات", 
+      city: "القاهرة", 
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg" 
+    },
+    { 
+      rating: 5, 
+      text: "هذا الموقع غير حياتي المالية! كنت أرغب في فتح حساب ودائع ولم أعرف كيف أختار البنك المناسب. BanqOK قارن لي بين كل البنوك ورشح لي أفضل 3 خيارات بناءً على احتياجاتي. توفير رائع للوقت والجهد!", 
+      author: "سارة خالد", 
+      position: "طبيبة", 
+      city: "الإسكندرية", 
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg" 
+    },
+    { 
+      rating: 4, 
+      text: "كنت محتار بين عروض قروض السيارات، BanqOK ساعدني في اختيار أفضل 3 عروض وفر لي أكثر من ١٥٠٠٠ جنيه على مدار فترة القرض. التحليلات كانت محايدة وشاملة لكل البنوك!", 
+      author: "مصطفى علي", 
+      position: "مهندس ميكانيكي", 
+      city: "الجيزة", 
+      avatar: "https://randomuser.me/api/portraits/men/67.jpg" 
+    }
+  ],
+  lastUpdated: new Date().toISOString()
+};
+
+// ============================================
+// المتغيرات العامة
+// ============================================
+let appData = JSON.parse(JSON.stringify(defaultData));
+let editingBankIndex = -1;
+let currentBankSearch = "";
+let broadcastChannel = null;
+
+// ============================================
+// تهيئة الصفحة
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🚀 تحميل لوحة تحكم BANQOK...');
+  
+  // تحميل البيانات المحفوظة
+  loadSavedData();
+  
+  // إعداد التنقل
+  setupNavigation();
+  
+  // إعداد الأزرار
+  setupButtons();
+  
+  // إعداد رفع الصور (فقط لشعار البنوك)
+  setupImageUploads();
+  
+  // تحميل البيانات في النماذج
+  loadDataIntoForms();
+  
+  // إنشاء العناصر الديناميكية
+  createDynamicElements();
+  
+  // إعداد مودال البنك
+  setupBankModal();
+  
+  // تحديث معلومات النظام
+  updateSystemInfo();
+  
+  // إعداد البحث
+  setupSearch();
+  
+  // تهيئة نظام المراقبة
+  initializeMonitoringSystem();
+  
+  console.log('✅ تم تحميل لوحة التحكم بنجاح');
+});
+
+// ============================================
+// دوال تحميل وحفظ البيانات
+// ============================================
+function loadSavedData() {
+  const savedData = localStorage.getItem('banqokHomeData');
+  if (savedData) {
+    try {
+      const parsed = JSON.parse(savedData);
+      appData = mergeDeep(JSON.parse(JSON.stringify(defaultData)), parsed);
+      console.log('✅ تم تحميل البيانات المحفوظة');
+    } catch(e) {
+      console.error('❌ خطأ في تحميل البيانات:', e);
+    }
+  }
+  
+  // تحميل رسائل إيكو بشكل منفصل
+  loadEkoMessagesFromStorage();
+}
+
+// دالة منفصلة لتحميل رسائل إيكو
+function loadEkoMessagesFromStorage() {
+  const ekoMessages = localStorage.getItem('banqok_eko_messages');
+  if (ekoMessages) {
+    try {
+      const messages = JSON.parse(ekoMessages);
+      if (Array.isArray(messages) && messages.length > 0) {
+        appData.eko.messages = messages;
+        console.log('✅ تم تحميل رسائل إيكو:', messages.length, 'رسالة');
+      }
+    } catch(e) {
+      console.error('❌ خطأ في تحميل رسائل إيكو:', e);
+    }
+  }
+}
+
+// دالة حفظ رسائل إيكو بشكل منفصل
+function saveEkoMessagesToStorage() {
+  if (!appData.eko || !appData.eko.messages) return false;
+  
+  try {
+    localStorage.setItem('banqok_eko_messages', JSON.stringify(appData.eko.messages));
+    console.log('✅ تم حفظ رسائل إيكو في التخزين');
+    return true;
+  } catch(e) {
+    console.error('❌ خطأ في حفظ رسائل إيكو:', e);
+    return false;
+  }
+}
+
+function mergeDeep(target, source) {
+  if (typeof target !== 'object' || typeof source !== 'object') return source;
+  
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      if (!target[key]) target[key] = {};
+      mergeDeep(target[key], source[key]);
+    } else if (Array.isArray(source[key])) {
+      target[key] = [...source[key]];
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+
+function saveData(showMessageNotification = false) {
+  try {
+    appData.lastUpdated = new Date().toISOString();
+    localStorage.setItem('banqokHomeData', JSON.stringify(appData));
+    
+    // حفظ رسائل إيكو بشكل منفصل
+    saveEkoMessagesToStorage();
+    
+    updateSystemInfo();
+    return true;
+  } catch(e) {
+    console.error('❌ خطأ في حفظ البيانات:', e);
+    return false;
+  }
+}
+
+// ============================================
+// دوال حفظ ألوان البنوك
+// ============================================
+function saveBankColors(showMessageNotification = false) {
+  try {
+    // تحديث ألوان البنوك من جدول العرض
+    collectBankColorsFromTable();
+    
+    // حفظ ألوان البنوك في localStorage منفصل للتأكد
+    const bankColorsData = {};
+    
+    appData.banks.forEach(bank => {
+      let rgbString = bank.colorRgb;
+      if (!rgbString && bank.color) {
+        rgbString = hexToRgbString(bank.color);
+      }
+      
+      bankColorsData[bank.abbr] = {
+        color: bank.color || '#10b981',
+        colorRgb: rgbString || '16,185,129'
+      };
+    });
+    
+    localStorage.setItem('banqok_bank_colors', JSON.stringify(bankColorsData));
+    
+    // حفظ كامل البيانات
+    saveData(false);
+    
+    // إرسال إشعار تحديث ألوان البنوك للصفحات الأخرى
+    sendBankColorsUpdate();
+    
+    return true;
+  } catch(e) {
+    console.error('❌ خطأ في حفظ ألوان البنوك:', e);
+    return false;
+  }
+}
+
+// تحويل hex إلى rgb string
+function hexToRgbString(hex) {
+  let r = 0, g = 0, b = 0;
+  
+  if (hex.length === 4) {
+    r = parseInt(hex[1] + hex[1], 16);
+    g = parseInt(hex[2] + hex[2], 16);
+    b = parseInt(hex[3] + hex[3], 16);
+  }
+  else if (hex.length === 7) {
+    r = parseInt(hex.substring(1, 3), 16);
+    g = parseInt(hex.substring(3, 5), 16);
+    b = parseInt(hex.substring(5, 7), 16);
+  }
+  
+  return `${r},${g},${b}`;
+}
+
+// جمع ألوان البنوك من الجدول
+function collectBankColorsFromTable() {
+  const colorInputs = document.querySelectorAll('.bank-color-input');
+  
+  colorInputs.forEach(input => {
+    const index = parseInt(input.dataset.index);
+    const color = input.value;
+    
+    if (!isNaN(index) && appData.banks[index] && color) {
+      appData.banks[index].color = color;
+      appData.banks[index].colorRgb = hexToRgbString(color);
+    }
+  });
+  
+  const colorPreviews = document.querySelectorAll('.bank-color-preview');
+  colorPreviews.forEach(preview => {
+    const index = parseInt(preview.dataset.index);
+    const color = preview.value || preview.dataset.color;
+    
+    if (!isNaN(index) && appData.banks[index] && color) {
+      appData.banks[index].color = color;
+      appData.banks[index].colorRgb = hexToRgbString(color);
+    }
+  });
+}
+
+// إرسال تحديث ألوان البنوك
+function sendBankColorsUpdate() {
+  console.log('📤 إرسال تحديث ألوان البنوك...');
+  
+  localStorage.setItem('banqok_update_trigger', JSON.stringify({
+    type: 'bankColorsUpdated',
+    timestamp: new Date().toISOString(),
+    section: 'banks',
+    source: 'admin_panel'
+  }));
+  
+  if ('BroadcastChannel' in window) {
+    try {
+      const channel = new BroadcastChannel('banqok_updates_channel');
+      channel.postMessage({
+        type: 'bankColorsUpdated',
+        section: 'banks',
+        timestamp: new Date().toISOString(),
+        source: 'admin_panel'
+      });
+      setTimeout(() => channel.close(), 100);
+    } catch(e) {
+      console.error('خطأ في الإرسال عبر BroadcastChannel:', e);
+    }
+  }
+  
+  try {
+    window.parent.postMessage({
+      type: 'bankColorsUpdated',
+      section: 'banks',
+      timestamp: new Date().toISOString(),
+      source: 'admin_panel'
+    }, '*');
+  } catch(e) {}
+  
+  console.log('✅ تم إرسال تحديث ألوان البنوك');
+}
+
+// ============================================
+// دوال إعداد الواجهة
+// ============================================
+function setupNavigation() {
+  const navItems = document.querySelectorAll('.admin-nav-item');
+  navItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const section = this.dataset.section;
+      
+      navItems.forEach(nav => nav.classList.remove('active'));
+      document.querySelectorAll('.section-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+      
+      this.classList.add('active');
+      document.getElementById(`${section}-panel`).classList.add('active');
+    });
+  });
+}
+
+function setupButtons() {
+  // زر حفظ الكل
+  document.getElementById('save-all-btn').addEventListener('click', saveAllData);
+  
+  // أزرار الحفظ لكل قسم
+  document.getElementById('save-stats-btn').addEventListener('click', saveStats);
+  document.getElementById('save-banks-btn').addEventListener('click', saveBanks);
+  document.getElementById('save-points-btn').addEventListener('click', savePoints);
+  document.getElementById('save-eko-btn').addEventListener('click', saveEko);
+  document.getElementById('save-testimonials-btn').addEventListener('click', saveTestimonials);
+  
+  // زر حفظ ألوان البنوك
+  document.getElementById('save-bank-colors-btn').addEventListener('click', function() {
+    if (saveBankColors()) {
+      showMessage('✅ تم حفظ ألوان البنوك بنجاح', 'success');
+    }
+  });
+  
+  // زر معاينة الصفحة
+  document.getElementById('preview-btn').addEventListener('click', function() {
+    window.open('index.html', '_blank');
+  });
+  
+  // زر إضافة بنك
+  document.getElementById('add-bank-btn').addEventListener('click', openAddBankModal);
+  
+  // زر إضافة عرض نقاط
+  document.getElementById('add-point-card-btn').addEventListener('click', addPointCard);
+  
+  // زر إضافة رسالة إيكو
+  document.getElementById('add-eko-message-btn').addEventListener('click', addEkoMessage);
+  
+  // زر إضافة تجربة
+  document.getElementById('add-testimonial-btn').addEventListener('click', addTestimonial);
+  
+  // أزرار الأدوات
+  document.getElementById('export-data-btn').addEventListener('click', exportData);
+  document.getElementById('import-data-btn').addEventListener('click', () => {
+    document.getElementById('import-file').click();
+  });
+  document.getElementById('import-file').addEventListener('change', importData);
+  document.getElementById('reset-data-btn').addEventListener('click', resetData);
+  document.getElementById('reset-colors-btn').addEventListener('click', resetBankColors);
+}
+
+// ============================================
+// دوال إنشاء وعرض البنوك
+// ============================================
+function createBankList() {
+  const container = document.getElementById('banks-list');
+  const countElement = document.getElementById('banks-count');
+  if (!container || !appData.banks) return;
+  
+  container.innerHTML = '';
+  
+  let banksToShow = appData.banks;
+  if (currentBankSearch.trim() !== '') {
+    const searchTerm = currentBankSearch.toLowerCase();
+    banksToShow = appData.banks.filter(bank => 
+      (bank.name && bank.name.toLowerCase().includes(searchTerm)) || 
+      (bank.abbr && bank.abbr.toLowerCase().includes(searchTerm)) ||
+      (bank.type && bank.type.toLowerCase().includes(searchTerm))
+    );
+  }
+  
+  if (countElement) {
+    countElement.textContent = banksToShow.length;
+  }
+  
+  if (banksToShow.length === 0) {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td colspan="6" style="text-align: center; padding: 40px;">
+        <i class="bi bi-search" style="font-size: 2rem; color: var(--light-text); margin-bottom: 10px; display: block;"></i>
+        <p style="color: var(--light-text);">لا توجد نتائج للبحث</p>
+      </td>
+    `;
+    container.appendChild(row);
+    return;
+  }
+  
+  banksToShow.forEach((bank, displayIndex) => {
+    const realIndex = appData.banks.findIndex(b => b.abbr === bank.abbr && b.name === bank.name);
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td><strong>${bank.name || 'بدون اسم'}</strong></td>
+      <td><span style="background: var(--light-green); padding: 5px 10px; border-radius: 20px;">${bank.abbr || 'بدون اختصار'}</span></td>
+      <td>${bank.type || 'غير محدد'}</td>
+      <td>
+        ${bank.logo ? `<img src="${bank.logo}" class="bank-logo-small" alt="${bank.name || 'بنك'}" 
+              onerror="this.src='./ASSETS/banks/default.png'">` : 
+              '<span style="color: var(--light-text);">لا يوجد</span>'}
+      </td>
+      <td>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <div class="color-preview" style="background-color: ${bank.color || '#10b981'};"></div>
+          <input type="color" class="bank-color-input" data-index="${realIndex}" value="${bank.color || '#10b981'}" style="width: 50px; height: 30px; border-radius: 4px; border: 1px solid #e5e7eb;">
+          <input type="text" class="bank-color-preview form-control" data-index="${realIndex}" value="${bank.color || '#10b981'}" style="width: 90px; font-size: 0.8rem; padding: 5px;">
+        </div>
+      </td>
+      <td>
+        <div class="table-actions">
+          <button class="admin-btn secondary edit-bank-btn" data-index="${realIndex}" style="padding: 5px 10px;">
+            <i class="bi bi-pencil"></i> تعديل
+          </button>
+          <button class="admin-btn danger delete-bank-btn" data-index="${realIndex}" style="padding: 5px 10px;">
+            <i class="bi bi-trash"></i> حذف
+          </button>
+        </div>
+      </td>
+    `;
+    container.appendChild(row);
+  });
+  
+  container.querySelectorAll('.edit-bank-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.dataset.index);
+      editBank(index);
+    });
+  });
+  
+  container.querySelectorAll('.delete-bank-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.dataset.index);
+      if (confirm(`هل تريد حذف البنك "${appData.banks[index].name}"؟`)) {
+        appData.banks.splice(index, 1);
+        createBankList();
+        showMessage('✅ تم حذف البنك بنجاح', 'success');
+      }
+    });
+  });
+  
+  container.querySelectorAll('.bank-color-input').forEach(input => {
+    input.addEventListener('change', function() {
+      const index = parseInt(this.dataset.index);
+      const colorValue = this.value;
+      
+      const textInput = document.querySelector(`.bank-color-preview[data-index="${index}"]`);
+      const preview = document.querySelector(`.bank-color-preview[data-index="${index}"]`).previousElementSibling?.previousElementSibling;
+      
+      if (textInput) {
+        textInput.value = colorValue;
+      }
+      if (preview) {
+        preview.style.backgroundColor = colorValue;
+      }
+      
+      if (appData.banks[index]) {
+        appData.banks[index].color = colorValue;
+        appData.banks[index].colorRgb = hexToRgbString(colorValue);
+      }
+    });
+  });
+  
+  container.querySelectorAll('.bank-color-preview').forEach(input => {
+    input.addEventListener('change', function() {
+      const index = parseInt(this.dataset.index);
+      let colorValue = this.value;
+      
+      if (!colorValue.match(/^#[0-9A-F]{6}$/i)) {
+        colorValue = '#10b981';
+        this.value = colorValue;
+      }
+      
+      const colorInput = document.querySelector(`.bank-color-input[data-index="${index}"]`);
+      const preview = document.querySelector(`.bank-color-preview[data-index="${index}"]`).previousElementSibling?.previousElementSibling;
+      
+      if (colorInput) {
+        colorInput.value = colorValue;
+      }
+      if (preview) {
+        preview.style.backgroundColor = colorValue;
+      }
+      
+      if (appData.banks[index]) {
+        appData.banks[index].color = colorValue;
+        appData.banks[index].colorRgb = hexToRgbString(colorValue);
+      }
+    });
+  });
+}
+
+function openAddBankModal() {
+  editingBankIndex = -1;
+  document.getElementById('bank-modal-title').textContent = 'إضافة بنك جديد';
+  document.getElementById('modal-bank-name').value = '';
+  document.getElementById('modal-bank-abbr').value = '';
+  document.getElementById('modal-bank-type').value = 'بنك حكومي';
+  document.getElementById('modal-bank-logo').value = '';
+  document.getElementById('modal-bank-color').value = '#10b981';
+  document.getElementById('modal-bank-color-text').value = '#10b981';
+  
+  const preview = document.getElementById('modal-bank-logo-preview');
+  preview.style.display = 'none';
+  preview.src = '';
+  
+  document.getElementById('bank-modal').style.display = 'flex';
+}
+
+function editBank(index) {
+  editingBankIndex = index;
+  const bank = appData.banks[index];
+  
+  document.getElementById('bank-modal-title').textContent = 'تعديل البنك';
+  document.getElementById('modal-bank-name').value = bank.name || '';
+  document.getElementById('modal-bank-abbr').value = bank.abbr || '';
+  document.getElementById('modal-bank-type').value = bank.type || 'بنك حكومي';
+  document.getElementById('modal-bank-logo').value = bank.logo || '';
+  document.getElementById('modal-bank-color').value = bank.color || '#10b981';
+  document.getElementById('modal-bank-color-text').value = bank.color || '#10b981';
+  
+  const preview = document.getElementById('modal-bank-logo-preview');
+  if (bank.logo) {
+    preview.src = bank.logo;
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+    preview.src = '';
+  }
+  
+  document.getElementById('bank-modal').style.display = 'flex';
+}
+
+function setupBankModal() {
+  const modal = document.getElementById('bank-modal');
+  
+  document.getElementById('close-bank-modal').addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+  
+  document.getElementById('cancel-bank-modal').addEventListener('click', function() {
+    modal.style.display = 'none';
+  });
+  
+  const colorInput = document.getElementById('modal-bank-color');
+  const colorText = document.getElementById('modal-bank-color-text');
+  
+  colorInput.addEventListener('input', function() {
+    colorText.value = this.value;
+  });
+  
+  colorText.addEventListener('input', function() {
+    if (this.value.match(/^#[0-9A-F]{6}$/i)) {
+      colorInput.value = this.value;
+    }
+  });
+  
+  document.querySelectorAll('.color-preset').forEach(preset => {
+    preset.addEventListener('click', function() {
+      const color = this.dataset.color;
+      
+      colorInput.value = color;
+      colorText.value = color;
+      
+      document.querySelectorAll('.color-preset').forEach(p => p.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+  
+  document.getElementById('save-bank-modal').addEventListener('click', function() {
+    const name = document.getElementById('modal-bank-name').value.trim();
+    const abbr = document.getElementById('modal-bank-abbr').value.trim();
+    const type = document.getElementById('modal-bank-type').value;
+    const logo = document.getElementById('modal-bank-logo').value.trim();
+    const color = document.getElementById('modal-bank-color').value;
+    const colorRgb = hexToRgbString(color);
+    
+    if (!name) {
+      showMessage('❌ يرجى إدخال اسم البنك', 'error');
+      return;
+    }
+    
+    if (!abbr) {
+      showMessage('❌ يرجى إدخال اختصار البنك', 'error');
+      return;
+    }
+    
+    if (editingBankIndex === -1) {
+      const existingBank = appData.banks.find(bank => bank.abbr === abbr);
+      if (existingBank) {
+        showMessage('❌ هذا الاختصار مستخدم بالفعل لبنك آخر', 'error');
+        return;
+      }
+    }
+    
+    const bankData = {
+      name: name,
+      abbr: abbr,
+      type: type || 'بنك تجاري',
+      logo: logo || './ASSETS/banks/default.png',
+      color: color,
+      colorRgb: colorRgb
+    };
+    
+    if (editingBankIndex === -1) {
+      appData.banks.push(bankData);
+      showMessage('✅ تم إضافة البنك بنجاح', 'success');
+    } else {
+      appData.banks[editingBankIndex] = bankData;
+      showMessage('✅ تم تعديل البنك بنجاح', 'success');
+    }
+    
+    createBankList();
+    modal.style.display = 'none';
+  });
+  
+  modal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      modal.style.display = 'none';
+    }
+  });
+}
+
+// ============================================
+// دوال إعداد رفع الصور - فقط لشعار البنك
+// ============================================
+function setupImageUploads() {
+  // زر رفع صورة البنك فقط (تم حذف صور إيكو)
+  const uploadBankLogoBtn = document.getElementById('upload-bank-logo-btn');
+  if (uploadBankLogoBtn) {
+    uploadBankLogoBtn.addEventListener('click', function() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+          if (!validTypes.includes(file.type)) {
+            showMessage('❌ صيغة الملف غير مدعومة', 'error');
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('modal-bank-logo').value = e.target.result;
+            const preview = document.getElementById('modal-bank-logo-preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+      input.click();
+    });
+  }
+}
+
+function loadDataIntoForms() {
+  if (appData.stats) {
+    document.getElementById('stats-banks').value = appData.stats.banks || 31;
+    document.getElementById('stats-users').value = appData.stats.users || 50000;
+    document.getElementById('stats-operations').value = appData.stats.operations || 12500;
+    document.getElementById('stats-accuracy').value = appData.stats.accuracy || 100;
+  }
+  
+  if (appData.points) {
+    document.getElementById('welcome-offer').value = appData.points.welcomeOffer || '';
+  }
+  
+  // تم إزالة تحميل صور إيكو بالكامل
+}
+
+function createDynamicElements() {
+  createBankList();
+  createPointCards();
+  createEkoMessages();
+  createTestimonials();
+}
+
+function createPointCards() {
+  const container = document.getElementById('points-cards-container');
+  if (!container || !appData.points?.cards) return;
+  
+  container.innerHTML = '';
+  
+  appData.points.cards.forEach((card, index) => {
+    const div = document.createElement('div');
+    div.className = `points-card ${card.popular ? 'popular' : ''}`;
+    
+    if (card.popular) {
+      div.innerHTML += `<div class="popular-badge">الأكثر مبيعاً</div>`;
+    }
+    
+    div.innerHTML += `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <h4 style="margin: 0; color: var(--primary-color);">عرض ${index + 1}</h4>
+        <div>
+          <label style="margin-left: 10px; display: inline-flex; align-items: center; gap: 5px;">
+            <input type="checkbox" class="point-popular" data-index="${index}" ${card.popular ? 'checked' : ''}>
+            الأكثر مبيعاً
+          </label>
+          <button class="admin-btn secondary delete-point-btn" data-index="${index}" style="padding: 5px 10px;">
+            <i class="bi bi-trash"></i> حذف
+          </button>
+        </div>
+      </div>
+      
+      <div class="grid-3">
+        <div>
+          <label class="form-label">عدد النقاط</label>
+          <input type="text" class="form-control point-number" value="${card.points || ''}" data-index="${index}">
+        </div>
+        <div>
+          <label class="form-label">تسمية النقاط</label>
+          <input type="text" class="form-control point-label" value="${card.label || ''}" data-index="${index}">
+        </div>
+        <div>
+          <label class="form-label">السعر</label>
+          <input type="text" class="form-control point-price" value="${card.price || ''}" data-index="${index}">
+        </div>
+      </div>
+    `;
+    
+    container.appendChild(div);
+  });
+  
+  container.querySelectorAll('.delete-point-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.dataset.index);
+      if (appData.points.cards.length > 1) {
+        appData.points.cards.splice(index, 1);
+        createPointCards();
+        showMessage('✅ تم حذف العرض بنجاح', 'success');
+      } else {
+        showMessage('❌ يجب أن يكون هناك عرض واحد على الأقل', 'error');
+      }
+    });
+  });
+}
+
+function addPointCard() {
+  if (!appData.points) appData.points = { cards: [] };
+  if (!appData.points.cards) appData.points.cards = [];
+  
+  appData.points.cards.push({
+    points: "٥٠",
+    label: "نقطة",
+    price: "٤٥ ج.م",
+    popular: false,
+    pointsValue: 50,
+    priceValue: 45
+  });
+  
+  createPointCards();
+  showMessage('✅ تم إضافة عرض جديد بنجاح', 'success');
+}
+
+// ============================================
+// دوال رسائل إيكو - معدلة: رسائل فقط بدون صور
+// ============================================
+function createEkoMessages() {
+  const container = document.getElementById('eko-messages-container');
+  if (!container || !appData.eko?.messages) return;
+  
+  container.innerHTML = '';
+  
+  appData.eko.messages.forEach((message, index) => {
+    const div = document.createElement('div');
+    div.className = 'eko-message-card';
+    
+    div.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+        <h4 style="margin: 0; color: var(--primary-color);">رسالة ${index + 1}</h4>
+        <button class="admin-btn secondary delete-eko-message-btn" data-index="${index}" style="padding: 5px 10px;">
+          <i class="bi bi-trash"></i> حذف
+        </button>
+      </div>
+      <textarea class="form-control eko-message" data-index="${index}" rows="3">${message || ''}</textarea>
+    `;
+    
+    container.appendChild(div);
+  });
+  
+  container.querySelectorAll('.delete-eko-message-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = parseInt(this.dataset.index);
+      if (appData.eko.messages.length > 1) {
+        appData.eko.messages.splice(index, 1);
+        createEkoMessages();
+        
+        // حفظ فوري لرسائل إيكو
+        saveEkoMessagesToStorage();
+        
+        // إرسال تحديث للصفحة الرئيسية
+        sendEkoUpdate();
+        
+        showMessage('✅ تم حذف الرسالة بنجاح', 'success');
+      } else {
+        showMessage('❌ يجب أن تكون هناك رسالة واحدة على الأقل', 'error');
+      }
+    });
+  });
+  
+  // إضافة مستمع لتغيير النصوص
+  container.querySelectorAll('.eko-message').forEach(textarea => {
+    textarea.addEventListener('input', function() {
+      const index = parseInt(this.dataset.index);
+      appData.eko.messages[index] = this.value;
+    });
+  });
+}
+
+function addEkoMessage() {
+  if (!appData.eko) appData.eko = { messages: [] };
+  if (!appData.eko.messages) appData.eko.messages = [];
+  
+  appData.eko.messages.push("رسالة جديدة من إيكو");
+  createEkoMessages();
+  showMessage('✅ تم إضافة رسالة جديدة بنجاح', 'success');
+}
+
+// دالة إرسال تحديث إيكو (للرسائل فقط)
+function sendEkoUpdate() {
+  localStorage.setItem('banqok_update_trigger', JSON.stringify({
+    type: 'ekoUpdated',
+    timestamp: new Date().toISOString(),
+    section: 'eko',
+    source: 'admin_panel'
+  }));
+  
+  if ('BroadcastChannel' in window) {
+    try {
+      const channel = new BroadcastChannel('banqok_updates_channel');
+      channel.postMessage({
+        type: 'ekoUpdated',
+        section: 'eko',
+        timestamp: new Date().toISOString(),
+        source: 'admin_panel'
+      });
+      setTimeout(() => channel.close(), 100);
+    } catch(e) {
+      console.error('خطأ في الإرسال عبر BroadcastChannel:', e);
+    }
+  }
+}
+
+function createTestimonials() {
+  const container = document.getElementById('testimonials-container');
+  if (!container || !appData.testimonials) return;
+  
+  container.innerHTML = '';
+  
+  appData.testimonials.forEach((testimonial, index) => {
+    const div = document.createElement('div');
+    div.className = 'testimonial-card';
+    
+    div.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+        <h4 style="margin: 0; color: var(--primary-color);">تجربة ${index + 1}</h4>
+        <button class="admin-btn secondary delete-testimonial-btn" data-index="${index}" style="padding: 5px 10px;">
+          <i class="bi bi-trash"></i> حذف
+        </button>
+      </div>
+      
+      <div style="margin-bottom: 15px;">
+        <label class="form-label">التقييم</label>
+        <div class="rating-stars" data-index="${index}">
+          ${[1,2,3,4,5].map(star => `
+            <button type="button" class="star-btn ${star <= testimonial.rating ? 'active' : ''}" 
+                    data-rating="${star}" data-index="${index}">
+              <i class="bi ${star <= testimonial.rating ? 'bi-star-fill' : 'bi-star'}"></i>
+            </button>
+          `).join('')}
+        </div>
+        <input type="hidden" class="testimonial-rating" value="${testimonial.rating}" data-index="${index}">
+      </div>
+      
+      <div style="margin-bottom: 15px;">
+        <label class="form-label">الرأي</label>
+        <textarea class="form-control testimonial-text" data-index="${index}" rows="3">${testimonial.text || ''}</textarea>
+      </div>
+      
+      <div class="grid-3">
+        <div>
+          <label class="form-label">اسم الشخص</label>
+          <input type="text" class="form-control testimonial-author" value="${testimonial.author || ''}" data-index="${index}">
+        </div>
+        <div>
+          <label class="form-label">المسمى الوظيفي</label>
+          <input type="text" class="form-control testimonial-position" value="${testimonial.position || ''}" data-index="${index}">
+        </div>
+        <div>
+          <label class="form-label">المحافظة</label>
+          <input type="text" class="form-control testimonial-city" value="${testimonial.city || ''}" data-index="${index}">
+        </div>
+      </div>
+      
+      <div style="margin-top: 15px;">
+        <label class="form-label">صورة الشخص</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" class="form-control testimonial-avatar" value="${testimonial.avatar || ''}" data-index="${index}" placeholder="رابط الصورة">
+          <button class="admin-btn secondary upload-testimonial-avatar" data-index="${index}" style="padding: 5px 10px;">
+            <i class="bi bi-upload"></i> رفع
+          </button>
+        </div>
+        ${testimonial.avatar ? `<img src="${testimonial.avatar}" class="testimonial-avatar-preview" style="max-width: 80px; margin-top: 10px; border-radius: 50%;">` : ''}
+      </div>
+    `;
+    
+    container.appendChild(div);
+    
+    div.querySelectorAll('.star-btn').forEach(star => {
+      star.addEventListener('click', function() {
+        const rating = parseInt(this.dataset.rating);
+        const index = parseInt(this.dataset.index);
+        
+        div.querySelectorAll('.star-btn').forEach((s, i) => {
+          if (i < rating) {
+            s.classList.add('active');
+            s.querySelector('i').className = 'bi bi-star-fill';
+          } else {
+            s.classList.remove('active');
+            s.querySelector('i').className = 'bi bi-star';
+          }
+        });
+        
+        div.querySelector('.testimonial-rating').value = rating;
+        
+        if (appData.testimonials[index]) {
+          appData.testimonials[index].rating = rating;
+        }
+      });
+    });
+    
+    const uploadBtn = div.querySelector('.upload-testimonial-avatar');
+    if (uploadBtn) {
+      uploadBtn.addEventListener('click', function() {
+        const index = this.dataset.index;
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+              showMessage('❌ صيغة الملف غير مدعومة', 'error');
+              return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              div.querySelector('.testimonial-avatar').value = e.target.result;
+              
+              let img = div.querySelector('.testimonial-avatar-preview');
+              if (!img) {
+                img = document.createElement('img');
+                img.className = 'testimonial-avatar-preview';
+                img.style.maxWidth = '80px';
+                img.style.marginTop = '10px';
+                img.style.borderRadius = '50%';
+                div.querySelector('.testimonial-avatar').parentNode.parentNode.appendChild(img);
+              }
+              img.src = e.target.result;
+              
+              if (appData.testimonials[index]) {
+                appData.testimonials[index].avatar = e.target.result;
+              }
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        input.click();
+      });
+    }
+    
+    const deleteBtn = div.querySelector('.delete-testimonial-btn');
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', function() {
+        const index = parseInt(this.dataset.index);
+        if (appData.testimonials.length > 1) {
+          appData.testimonials.splice(index, 1);
+          createTestimonials();
+          showMessage('✅ تم حذف التجربة بنجاح', 'success');
+        } else {
+          showMessage('❌ يجب أن تكون هناك تجربة واحدة على الأقل', 'error');
+        }
+      });
+    }
+  });
+}
+
+function addTestimonial() {
+  if (!appData.testimonials) appData.testimonials = [];
+  
+  appData.testimonials.push({
+    rating: 5,
+    text: "تجربة جديدة",
+    author: "مستخدم جديد",
+    position: "مستخدم",
+    city: "المدينة",
+    avatar: ""
+  });
+  
+  createTestimonials();
+  showMessage('✅ تم إضافة تجربة جديدة بنجاح', 'success');
+}
+
+// ============================================
+// دوال حفظ البيانات - معدلة لحفظ إيكو (الرسائل فقط)
+// ============================================
+function saveStats() {
+  if (!appData.stats) appData.stats = {};
+  
+  appData.stats.banks = parseInt(document.getElementById('stats-banks').value) || 31;
+  appData.stats.users = parseInt(document.getElementById('stats-users').value) || 50000;
+  appData.stats.operations = parseInt(document.getElementById('stats-operations').value) || 12500;
+  appData.stats.accuracy = parseInt(document.getElementById('stats-accuracy').value) || 100;
+  
+  if (saveData()) {
+    sendUpdateToAllPages('statsUpdated', appData.stats, 'stats');
+    showMessage('✅ تم حفظ قسم الإحصائيات بنجاح', 'success');
+  }
+}
+
+function saveBanks() {
+  collectBankColorsFromTable();
+  
+  if (saveData()) {
+    const bankColorsData = {};
+    appData.banks.forEach(bank => {
+      bankColorsData[bank.abbr] = {
+        color: bank.color || '#10b981',
+        colorRgb: bank.colorRgb || hexToRgbString(bank.color || '#10b981')
+      };
+    });
+    localStorage.setItem('banqok_bank_colors', JSON.stringify(bankColorsData));
+    
+    sendUpdateToAllPages('banksUpdated', appData.banks, 'banks');
+    showMessage('✅ تم حفظ بيانات البنوك بنجاح', 'success');
+  }
+}
+
+function savePoints() {
+  if (!appData.points) appData.points = { cards: [], welcomeOffer: '' };
+  
+  appData.points.welcomeOffer = document.getElementById('welcome-offer').value;
+  
+  const cards = [];
+  document.querySelectorAll('.point-number').forEach((input, index) => {
+    const labelInput = document.querySelector(`.point-label[data-index="${index}"]`);
+    const priceInput = document.querySelector(`.point-price[data-index="${index}"]`);
+    const popularCheckbox = document.querySelector(`.point-popular[data-index="${index}"]`);
+    
+    if (input && labelInput && priceInput && popularCheckbox) {
+      const pointsText = input.value;
+      const priceText = priceInput.value;
+      const pointsValue = extractPointsValue(pointsText);
+      const priceValue = extractPriceValue(priceText);
+      
+      cards.push({
+        points: pointsText,
+        label: labelInput.value,
+        price: priceText,
+        popular: popularCheckbox.checked,
+        pointsValue: pointsValue,
+        priceValue: priceValue
+      });
+    }
+  });
+  
+  appData.points.cards = cards;
+  
+  if (saveData()) {
+    savePointsToLocalStorage();
+    sendUpdateToAllPages('pointsUpdated', appData.points, 'points');
+    showMessage('✅ تم حفظ قسم العروض بنجاح', 'success');
+  }
+}
+
+function savePointsToLocalStorage() {
+  try {
+    localStorage.setItem('banqok_points_data', JSON.stringify({
+      cards: appData.points.cards,
+      welcomeOffer: appData.points.welcomeOffer,
+      lastUpdated: new Date().toISOString()
+    }));
+    localStorage.setItem('pointsLastUpdateTimestamp', new Date().getTime().toString());
+  } catch(e) {
+    console.error('خطأ في حفظ عروض النقاط:', e);
+  }
+}
+
+function extractPointsValue(pointsText) {
+  if (!pointsText) return 0;
+  
+  const arabicToEnglish = {
+    '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+    '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+  };
+  
+  let normalizedText = pointsText;
+  Object.keys(arabicToEnglish).forEach(arabic => {
+    normalizedText = normalizedText.replace(new RegExp(arabic, 'g'), arabicToEnglish[arabic]);
+  });
+  
+  const matches = normalizedText.match(/\d+/g);
+  return matches ? parseInt(matches.join('')) : 0;
+}
+
+function extractPriceValue(priceText) {
+  if (!priceText) return 0;
+  
+  const arabicToEnglish = {
+    '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+    '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+  };
+  
+  let normalizedText = priceText;
+  Object.keys(arabicToEnglish).forEach(arabic => {
+    normalizedText = normalizedText.replace(new RegExp(arabic, 'g'), arabicToEnglish[arabic]);
+  });
+  
+  const matches = normalizedText.match(/\d+/g);
+  return matches ? parseInt(matches.join('')) : 0;
+}
+
+// ============================================
+// دالة حفظ إيكو - معدلة: حفظ رسائل إيكو فقط
+// ============================================
+function saveEko() {
+  if (!appData.eko) appData.eko = { messages: [] };
+  
+  // جمع رسائل إيكو من المدخلات
+  const messages = [];
+  document.querySelectorAll('.eko-message').forEach(input => {
+    if (input.value) messages.push(input.value);
+  });
+  
+  appData.eko.messages = messages;
+  
+  // حفظ رسائل إيكو في localStorage منفصل
+  saveEkoMessagesToStorage();
+  
+  // حفظ البيانات الكاملة
+  if (saveData()) {
+    // إرسال تحديث للصفحة الرئيسية
+    sendUpdateToAllPages('ekoUpdated', appData.eko, 'eko');
+    showMessage('✅ تم حفظ رسائل إيكو بنجاح', 'success');
+  }
+}
+
+function saveTestimonials() {
+  if (!appData.testimonials) appData.testimonials = [];
+  
+  const testimonials = [];
+  document.querySelectorAll('.testimonial-text').forEach((input, index) => {
+    const ratingInput = document.querySelector(`.testimonial-rating[data-index="${index}"]`);
+    const authorInput = document.querySelector(`.testimonial-author[data-index="${index}"]`);
+    const positionInput = document.querySelector(`.testimonial-position[data-index="${index}"]`);
+    const cityInput = document.querySelector(`.testimonial-city[data-index="${index}"]`);
+    const avatarInput = document.querySelector(`.testimonial-avatar[data-index="${index}"]`);
+    
+    if (input && ratingInput && authorInput && positionInput && cityInput && avatarInput) {
+      testimonials.push({
+        rating: parseInt(ratingInput.value) || 5,
+        text: input.value,
+        author: authorInput.value,
+        position: positionInput.value,
+        city: cityInput.value,
+        avatar: avatarInput.value
+      });
+    }
+  });
+  
+  appData.testimonials = testimonials;
+  
+  if (saveData()) {
+    sendUpdateToAllPages('testimonialsUpdated', appData.testimonials, 'testimonials');
+    showMessage('✅ تم حفظ قسم التجارب بنجاح', 'success');
+  }
+}
+
+function saveAllData() {
+  saveStats();
+  saveBanks();
+  savePoints();
+  saveEko();
+  saveTestimonials();
+  saveBankColors();
+  
+  showMessage('✅ تم حفظ جميع التعديلات بنجاح', 'success');
+  sendUpdateToAllPages('contentUpdated', appData, 'all');
+}
+
+// ============================================
+// دوال الأدوات المساعدة
+// ============================================
+function exportData() {
+  try {
+    const dataStr = JSON.stringify(appData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = `banqok-home-data-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    showMessage('✅ تم تصدير البيانات بنجاح', 'success');
+  } catch(e) {
+    console.error('خطأ في تصدير البيانات:', e);
+    showMessage('❌ حدث خطأ في تصدير البيانات', 'error');
+  }
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      
+      if (!importedData.stats || !importedData.banks || !Array.isArray(importedData.banks)) {
+        throw new Error('ملف غير صالح');
+      }
+      
+      if (confirm('هل تريد استبدال البيانات الحالية بالبيانات المستوردة؟')) {
+        appData = mergeDeep(JSON.parse(JSON.stringify(defaultData)), importedData);
+        appData.lastUpdated = new Date().toISOString();
+        
+        loadDataIntoForms();
+        createDynamicElements();
+        updateSystemInfo();
+        saveData(false);
+        
+        // حفظ رسائل إيكو بشكل منفصل
+        if (appData.eko && appData.eko.messages) {
+          saveEkoMessagesToStorage();
+        }
+        
+        // حفظ ألوان البنوك
+        saveBankColors(false);
+        
+        showMessage('✅ تم استيراد البيانات بنجاح', 'success');
+        sendUpdateToAllPages('contentUpdated', appData, 'all');
+      }
+    } catch(error) {
+      console.error('خطأ في استيراد البيانات:', error);
+      showMessage('❌ ملف غير صالح أو تالف', 'error');
+    }
+  };
+  
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function resetData() {
+  if (confirm('هل أنت متأكد من إعادة تعيين جميع البيانات إلى القيم الافتراضية؟')) {
+    appData = JSON.parse(JSON.stringify(defaultData));
+    
+    loadDataIntoForms();
+    createDynamicElements();
+    updateSystemInfo();
+    saveData(false);
+    
+    // حفظ رسائل إيكو الافتراضية
+    if (appData.eko && appData.eko.messages) {
+      saveEkoMessagesToStorage();
+    }
+    
+    // إعادة تعيين ألوان البنوك
+    resetBankColors();
+    
+    showMessage('✅ تم إعادة تعيين البيانات بنجاح', 'success');
+    sendUpdateToAllPages('contentUpdated', appData, 'all');
+  }
+}
+
+function resetBankColors() {
+  if (confirm('هل تريد إعادة تعيين ألوان البنوك إلى القيم الافتراضية؟')) {
+    defaultData.banks.forEach((defaultBank, index) => {
+      if (appData.banks[index]) {
+        appData.banks[index].color = defaultBank.color;
+        appData.banks[index].colorRgb = defaultBank.colorRgb;
+      }
+    });
+    
+    saveBankColors(false);
+    createBankList();
+    
+    showMessage('✅ تم إعادة تعيين ألوان البنوك', 'success');
+  }
+}
+
+// ============================================
+// نظام المراقبة والتحديث المباشر
+// ============================================
+function initializeMonitoringSystem() {
+  console.log('📡 تهيئة نظام مراقبة التحديثات...');
+  
+  if ('BroadcastChannel' in window) {
+    try {
+      broadcastChannel = new BroadcastChannel('banqok_updates_channel');
+      broadcastChannel.onmessage = function(event) {
+        if (event.data && event.data.source === 'index_page') {
+          console.log('📩 استقبال تحديث من الصفحة الرئيسية:', event.data.type);
+        }
+      };
+    } catch(e) {
+      console.error('خطأ في إنشاء قناة البث:', e);
+    }
+  }
+}
+
+function sendUpdateToAllPages(type, data, section = null) {
+  console.log(`📤 إرسال تحديث ${type}...`);
+  
+  localStorage.setItem('banqok_update_trigger', JSON.stringify({
+    type: type,
+    timestamp: new Date().toISOString(),
+    section: section,
+    source: 'admin_panel'
+  }));
+  
+  if ('BroadcastChannel' in window) {
+    try {
+      const channel = new BroadcastChannel('banqok_updates_channel');
+      channel.postMessage({
+        type: type,
+        section: section,
+        timestamp: new Date().toISOString(),
+        source: 'admin_panel'
+      });
+      setTimeout(() => channel.close(), 100);
+    } catch(e) {
+      console.error('خطأ في الإرسال عبر BroadcastChannel:', e);
+    }
+  }
+  
+  try {
+    window.parent.postMessage({
+      type: type,
+      section: section,
+      timestamp: new Date().toISOString(),
+      source: 'admin_panel'
+    }, '*');
+  } catch(e) {}
+  
+  localStorage.setItem('banqok_last_update', new Date().toISOString());
+}
+
+// ============================================
+// دوال مساعدة
+// ============================================
+function setupSearch() {
+  const searchInput = document.getElementById('search-banks');
+  if (searchInput) {
+    searchInput.addEventListener('input', function() {
+      currentBankSearch = this.value;
+      createBankList();
+    });
+  }
+}
+
+function updateSystemInfo() {
+  const lastUpdateElement = document.getElementById('last-update');
+  if (lastUpdateElement && appData.lastUpdated) {
+    const date = new Date(appData.lastUpdated);
+    lastUpdateElement.textContent = date.toLocaleString('ar-EG');
+  }
+  
+  const dataSizeElement = document.getElementById('data-size');
+  if (dataSizeElement) {
+    const dataString = JSON.stringify(appData);
+    const sizeInKB = (dataString.length / 1024).toFixed(2);
+    dataSizeElement.textContent = `${sizeInKB} كيلوبايت`;
+  }
+  
+  const banksCountElement = document.getElementById('system-banks-count');
+  if (banksCountElement && appData.banks) {
+    banksCountElement.textContent = appData.banks.length;
+  }
+  
+  const pointsCountElement = document.getElementById('system-points-count');
+  if (pointsCountElement && appData.points?.cards) {
+    pointsCountElement.textContent = appData.points.cards.length;
+  }
+}
+
+// دالة عرض الرسائل
+function showMessage(text, type) {
+  const messageElement = document.getElementById('message');
+  if (!messageElement) return;
+  
+  messageElement.textContent = text;
+  messageElement.className = `message ${type}`;
+  messageElement.style.display = 'block';
+  
+  setTimeout(() => {
+    messageElement.style.display = 'none';
+  }, 5000);
+}
+
+window.addEventListener('beforeunload', function() {
+  if (broadcastChannel) {
+    broadcastChannel.close();
+  }
+});
+</script>
+</body>
+</html>

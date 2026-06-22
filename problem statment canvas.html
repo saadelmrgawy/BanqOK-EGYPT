@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+  <title>BanqOK | عرض المشروع · بنك أوك</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --accent: #3b82f6;
+      --accent-dark: #2563eb;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --radius-sm: 12px;
+      --radius: 20px;
+      --radius-lg: 28px;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.10);
+      --shadow-glow: 0 15px 40px rgba(16, 185, 129, 0.18);
+      --transition: 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+      --transition-slow: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.7;
+      direction: rtl;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    /* خلفية الجسيمات العامة (لكامل الصفحة) */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    /* خلفية الجسيمات المكثفة خلف قسم Problem Statement Canvas فقط */
+    .problem-canvas-enhanced-bg {
+      position: relative;
+      isolation: isolate;
+      background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+    }
+    .problem-canvas-enhanced-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(circle at 25% 40%, rgba(16, 185, 129, 0.08) 2px, transparent 2px),
+                        radial-gradient(circle at 75% 85%, rgba(59,130,246,0.08) 2px, transparent 2px);
+      background-size: 45px 45px, 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* طبقة إضافية لتعزيز ظهور الجسيمات خلف هذا القسم باستخدام canvas منفصل ديناميكي */
+    .problem-particle-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+      background: transparent;
+    }
+    .problem-particle-overlay canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      opacity: 0.7;
+    }
+    .section-block.problem-canvas-enhanced-bg .section-inner,
+    .section-block.problem-canvas-enhanced-bg .problem-master-container,
+    .section-block.problem-canvas-enhanced-bg .section-header,
+    .section-block.problem-canvas-enhanced-bg .highlight-card {
+      position: relative;
+      z-index: 5;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    @keyframes borderGlow {
+      0%, 100% { border-color: rgba(16, 185, 129, 0.3); box-shadow: 0 0 20px rgba(16, 185, 129, 0.08); }
+      50% { border-color: rgba(16, 185, 129, 0.7); box-shadow: 0 0 35px rgba(16, 185, 129, 0.2); }
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transition: all 0.8s ease;
+    }
+    .animate-fade-up { transform: translateY(35px); }
+    .animate-fade-down { transform: translateY(-35px); }
+    .animate-fade-right { transform: translateX(-35px); }
+    .animate-fade-left { transform: translateX(35px); }
+    .animate-on-scroll.visible { opacity: 1; transform: translate(0, 0); }
+
+    .loading-screen {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 9999; transition: opacity 0.5s ease;
+    }
+    .loading-screen.hidden { opacity: 0; pointer-events: none; }
+    .loading-eko {
+      width: clamp(80px, 15vw, 110px);
+      margin-bottom: 18px;
+      filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .loading-text {
+      color: white; font-size: clamp(1rem, 4vw, 1.2rem); font-weight: 600;
+      text-align: center; margin-bottom: 14px;
+    }
+    .loading-bar {
+      width: min(260px, 70%); height: 6px; background: rgba(255,255,255,0.2);
+      border-radius: 10px; overflow: hidden;
+    }
+    .loading-progress {
+      height: 100%; width: 0%; background: white; border-radius: 10px;
+      animation: loadingProgress 2.5s ease-in-out forwards;
+    }
+    @keyframes loadingProgress { 0% { width: 0%; } 100% { width: 100%; } }
+
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 5%;
+      background: transparent;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      flex-wrap: wrap;
+    }
+    .nav-logo img { height: 58px; width: auto; transition: transform var(--transition); }
+    .nav-logo img:hover { transform: scale(1.04); }
+    .nav-partner-logos { display: flex; align-items: center; gap: 20px; }
+    .nav-partner-logos img { height: 52px; width: auto; object-fit: contain; transition: transform var(--transition); }
+    .nav-partner-logos img:hover { transform: scale(1.05); }
+
+    @media (max-width: 680px) {
+      .nav-bar { gap: 12px; padding: 12px 5%; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); }
+      .nav-partner-logos img { height: 42px; }
+      .nav-logo img { height: 48px; }
+    }
+
+    .section-block {
+      padding: clamp(50px, 7vw, 90px) 5%;
+      position: relative;
+      overflow: hidden;
+    }
+    .section-block.alt-bg { background: #ffffff; }
+    .section-block.gradient-bg { background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%); }
+    .section-block.dark-bg {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #e2e8f0;
+    }
+    .section-block.accent-bg {
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      color: white;
+      background-size: 200% 200%;
+      animation: gradientShift 8s ease infinite;
+    }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-header {
+      text-align: center;
+      margin-bottom: clamp(35px, 5vw, 55px);
+    }
+    .section-tag {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--primary);
+      padding: 7px 18px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+    .section-title {
+      font-size: clamp(1.7rem, 5.5vw, 2.4rem);
+      font-weight: 900;
+      margin-bottom: 14px;
+      line-height: 1.25;
+    }
+    .section-title .highlight { color: var(--primary); }
+    .section-subtitle {
+      font-size: clamp(1rem, 3vw, 1.15rem);
+      color: var(--text-light);
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(30px, 5vw, 55px);
+      align-items: center;
+    }
+    .col-image img {
+      max-width: 90%;
+      max-height: 480px;
+      width: auto;
+      border-radius: var(--radius-lg);
+      animation: float 6s ease-in-out infinite;
+      filter: drop-shadow(0 18px 30px rgba(0,0,0,0.12));
+      transition: transform 0.3s ease;
+    }
+    .col-image img:hover { transform: scale(1.02); }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: clamp(18px, 3vw, 28px);
+    }
+
+    .info-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: clamp(22px, 4vw, 32px) clamp(18px, 3vw, 24px);
+      box-shadow: var(--shadow);
+      transition: all var(--transition-slow);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.04);
+      text-align: right;
+    }
+    .info-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transform: scaleX(0);
+      transition: transform var(--transition);
+      transform-origin: right;
+    }
+    .info-card:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-glow);
+    }
+    .info-card:hover::before { transform: scaleX(1); }
+    .info-card .card-icon {
+      width: 55px;
+      height: 55px;
+      border-radius: 16px;
+      background: rgba(16, 185, 129, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 1.5rem;
+      color: var(--primary);
+      transition: all var(--transition);
+    }
+    .info-card:hover .card-icon {
+      background: var(--primary);
+      color: white;
+      transform: scale(1.08);
+    }
+    .info-card h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+    .info-card p {
+      font-size: 0.95rem;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+    .info-card ul {
+      padding-right: 20px;
+      margin-top: 8px;
+    }
+    .info-card li {
+      color: var(--text-light);
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    /* Problem Canvas Sub-sections Styling */
+    .problem-master-container {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .problem-stage {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .problem-stage:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-glow);
+    }
+    .stage-header {
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 2px solid rgba(0,0,0,0.05);
+    }
+    .stage-icon {
+      width: 54px;
+      height: 54px;
+      background: rgba(16,185,129,0.12);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+    .stage-title {
+      flex: 1;
+    }
+    .stage-title h3 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin: 0;
+      color: var(--text);
+    }
+    .stage-title p {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin: 5px 0 0;
+    }
+    .stage-badge {
+      background: #f3f4f6;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      color: var(--primary-dark);
+    }
+    .stage-content {
+      padding: 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+    .sub-card {
+      background: #fefefe;
+      border-radius: 20px;
+      padding: 18px 20px;
+      transition: 0.2s;
+      border-right: 3px solid var(--primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .sub-card h4 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #111827;
+    }
+    .sub-card h4 i {
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+    .sub-card p, .sub-card li {
+      font-size: 0.9rem;
+      color: #4b5563;
+      line-height: 1.65;
+    }
+    .stat-highlight {
+      font-weight: 800;
+      color: var(--primary-dark);
+      background: #e6f9f0;
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+    }
+    hr {
+      margin: 12px 0;
+      border-color: #e5e7eb;
+    }
+    @media (max-width: 680px) {
+      .stage-header { flex-direction: column; align-items: flex-start; }
+      .stage-content { padding: 20px; }
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 13px 30px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      font-family: 'Cairo', sans-serif;
+      transition: all var(--transition);
+      text-align: center;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 6px 20px rgba(16,185,129,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-4px);
+    }
+    .btn-white {
+      background: white;
+      color: var(--primary);
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .btn-white:hover { transform: translateY(-4px); }
+    .btn-lg {
+      padding: 16px 38px;
+      font-size: 1.1rem;
+    }
+    .source-ref {
+      display: inline-block;
+      font-size: 0.7rem;
+      color: #6b7280;
+      background: #f3f4f6;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+    .footer-simple {
+      background: #0f172a;
+      color: #94a3b8;
+      text-align: center;
+      padding: 30px 5% 22px;
+      font-size: 0.85rem;
+      border-top: 3px solid var(--primary);
+    }
+    .footer-simple .footer-logo-sm { height: 48px; margin-bottom: 8px; filter: brightness(0) invert(1); }
+    .eko-floating {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 99;
+      cursor: pointer;
+      animation: float 4s ease-in-out infinite;
+    }
+    .eko-floating img { width: 70px; filter: drop-shadow(0 6px 16px rgba(0,0,0,0.2)); }
+    .eko-tooltip {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      background: white;
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      width: 220px;
+      text-align: right;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition);
+      margin-bottom: 10px;
+    }
+    .eko-floating.active .eko-tooltip { opacity: 1; visibility: visible; }
+    @media (max-width: 480px) {
+      .eko-floating img { width: 58px; }
+    }
+
+    .highlight-card {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(5px);
+      border-radius: var(--radius-lg);
+      padding: 30px 28px;
+      border: 1px solid rgba(16,185,129,0.3);
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+</head>
+<body>
+<div class="loading-screen" id="loading-screen">
+  <img src="./ASSETS/EQO/loading.png" alt="إيكو" class="loading-eko">
+  <div class="loading-text">EQO بيجهز العرض...</div>
+  <div class="loading-bar"><div class="loading-progress"></div></div>
+</div>
+
+<nav class="nav-bar">
+  <a href="index.html" class="nav-logo"><img src="./ASSETS/BanqOk.png" alt="BanqOK"></a>
+  <div class="nav-partner-logos">
+    <img src="./ASSETS/criativa.png" alt="Creativa">
+    <img src="./ASSETS/itida.png" alt="ITIDA">
+  </div>
+</nav>
+
+<!-- ========== PROBLEM STATEMENT CANVAS - مع خلفية جسيمات ظاهرة بقوة ========== -->
+<section class="section-block problem-canvas-enhanced-bg" id="problem-canvas">
+  <!-- قماش إضافي خاص بالجسيمات في هذا القسم فقط (يظهر بكثافة أعلى) -->
+  <div class="problem-particle-overlay" id="problem-particle-canvas-container"></div>
+  <div class="section-inner">
+    <div class="section-header animate-on-scroll animate-fade-down">
+      <div class="section-tag">تحليل المشكلة</div>
+      <h2 class="section-title">Problem <span class="highlight">Statement Canvas</span></h2>
+      <p class="section-subtitle">فهم عميق لجذور المشكلة وحجم التأثير – لتقديم حل دقيق ومؤثر من خلال سبع مراحل تحليلية متكاملة</p>
+    </div>
+
+    <div class="problem-master-container animate-on-scroll animate-fade-up">
+      
+      <!-- المرحلة 1: السياق (Context) -->
+      <div class="problem-stage">
+        <div class="stage-header" style="background:#f8fafc;">
+          <div class="stage-icon"><i class="bi bi-globe2"></i></div>
+          <div class="stage-title"><h3>السياق العام</h3><p>خلفية السوق والبيئة التشغيلية</p></div>
+          <div class="stage-badge">المرحلة 1/7</div>
+        </div>
+        <div class="stage-content">
+          <div class="sub-card"><h4><i class="bi bi-building"></i> المشهد المصرفي المصري</h4><p>يشهد القطاع المصرفي المصري نمواً رقمياً متسارعاً بدعم من البنك المركزي ومبادرة الشمول المالي، حيث بلغ عدد البنوك العاملة 31 بنكاً حكومياً وخاصاً وإسلامياً. يتنافسون عبر عشرات المنتجات المالية المعقدة.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-bar-chart"></i> فجوة المعلومات</h4><p>يعاني المواطن العادي من عدم تماثل المعلومات مع البنوك؛ حيث يصعب مقارنة أسعار الفائدة، الرسوم الإدارية، فترات السماح، والمرونة. غياب جهة محايدة وموحدة للمقارنة يخلق حالة من العشوائية في اتخاذ القرار.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-clock-history"></i> الوقت المهدر</h4><p>وفقاً لدراسات سلوكية، يقضي المستخدم العادي ما بين 15 إلى 30 ساعة في البحث اليدوي عبر مواقع البنوك وزيارة الفروع للحصول على عرض واضح، مما يثقل كاهل الأفراد ويقلل الإنتاجية.</p></div>
+        </div>
+      </div>
+
+      <!-- المرحلة 2: المشكلة الأساسية -->
+      <div class="problem-stage">
+        <div class="stage-header" style="background:#fefce8;">
+          <div class="stage-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+          <div class="stage-title"><h3>المشكلة الجوهرية</h3><p>أسباب تعقيد الاختيار المالي</p></div>
+          <div class="stage-badge">المرحلة 2/7</div>
+        </div>
+        <div class="stage-content">
+          <div class="sub-card"><h4><i class="bi bi-file-text"></i> اختلاف معايير العرض</h4><p>كل بنك يعرض منتجاته بأسلوب مختلف: نسبة عائمة، هامش ربح، إدارة عمولة، مصاريف إدارية، تأمين إجباري، مصاريف فتح ملف — هذه الفروق تجعل المقارنة شبه مستحيلة يدوياً.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-graph-up"></i> غياب الحلول التقنية</h4><p>لا توجد منصة محلية متخصصة تجمع البيانات بشكل لحظي ومحايد، وتقوم بتحليلها وفقاً لاحتياجات المستخدم (الدخل، مدة القرض، الهدف من الوديعة).</p></div>
+          <div class="sub-card"><h4><i class="bi bi-calculator"></i> التكلفة الخفية للقروض</h4><p>ما يزيد عن 38% من العملاء يكتشفون رسوماً إضافية أو شروطاً غير متوقعة بعد التعاقد، مما يؤدي إلى ندم وتوتر مالي (مصدر: هيئة الرقابة المالية 2024).</p></div>
+        </div>
+      </div>
+
+      <!-- المرحلة 3: البدائل الحالية -->
+      <div class="problem-stage">
+        <div class="stage-header" style="background:#eef2ff;">
+          <div class="stage-icon"><i class="bi bi-diagram-3"></i></div>
+          <div class="stage-title"><h3>البدائل الحالية</h3><p>ما الذي يفعله المستخدمون اليوم؟</p></div>
+          <div class="stage-badge">المرحلة 3/7</div>
+        </div>
+        <div class="stage-content">
+          <div class="sub-card"><h4><i class="bi bi-bank2"></i> البنك الواحد</h4><p>اللجوء إلى بنك العلاقة (حساب المرتب) والاكتفاء بعرضه فقط دون مقارنة، مما قد يفوّت على العميل عروضاً أفضل بنسبة فائدة تصل إلى 2% سنوياً.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-google"></i> البحث اليدوي عبر الإنترنت</h4><p>استخدام محركات البحث ومواقع البنوك المتفرقة، عملية شاقة وتستغرق أياماً وغالباً ما تحتوي معلومات غير محدثة أو ناقصة.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-people"></i> تجارب الأصدقاء</h4><p>الاعتماد على توصيات شخصية غير موضوعية، والتي لا تأخذ في الاعتبار الوضع المالي الفريد للفرد، وتؤدي إلى قرارات غير محسوبة.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-cash-stack"></i> مستشار مالي مدفوع</h4><p>خيار متاح لكنه مكلف (متوسط 2000 جنيهاً للاستشارة) وغير متاح لشريحة كبيرة من المجتمع.</p></div>
+        </div>
+      </div>
+
+      <!-- المرحلة 4: العملاء المستهدفون -->
+      <div class="problem-stage">
+        <div class="stage-header" style="background:#f0fdf4;">
+          <div class="stage-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="stage-title"><h3>العملاء المتأثرون</h3><p>من يعاني من المشكلة بشدة؟</p></div>
+          <div class="stage-badge">المرحلة 4/7</div>
+        </div>
+        <div class="stage-content">
+          <div class="sub-card"><h4><i class="bi bi-mortarboard"></i> الشباب حديثو التخرج</h4><p>يبدأون حياتهم المهنية ويحتاجون قروضاً شخصية أو شراء سيارة، قلة الخبرة المصرفية تجعلهم عرضة لشروط غير ملائمة.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-house-heart"></i> المقبلون على الزواج</h4><p>يحتاجون تمويلات عقارية أو قروض عائلية، وغالباً ما يتعجلون القرار ويقعون في فخ أعلى الفوائد.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-briefcase"></i> أصحاب المشاريع الصغيرة</h4><p>يبحثون عن تمويل المشروعات الصغيرة والمتوسطة، تختلف شروط البنوك بشكل كبير وتحتاج لمعرفة دقيقة.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-person-walking"></i> كبار السن وذوو الدخل المحدود</h4><p>يريدون أفضل عائد ادخاري آمن. تعدد الأوعية الادخارية والودائع الثابتة يربكهم ويحرمهم من عوائد أفضل قد تصل إلى +3% سنوياً.</p></div>
+        </div>
+      </div>
+
+      <!-- المرحلة 5: التأثير العاطفي والنفسي -->
+      <div class="problem-stage">
+        <div class="stage-header" style="background:#fff7ed;">
+          <div class="stage-icon"><i class="bi bi-emoji-frown"></i></div>
+          <div class="stage-title"><h3>التأثير العاطفي</h3><p>الأبعاد النفسية لتعقيد الاختيار</p></div>
+          <div class="stage-badge">المرحلة 5/7</div>
+        </div>
+        <div class="stage-content">
+          <div class="sub-card"><h4><i class="bi bi-emoji-angry"></i> القلق والتوتر</h4><p>الخوف من عدم القدرة على السداد بسبب سوء فهم الفوائد أو الجداول غير الواضحة، مما يؤثر على الصحة النفسية.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-emoji-frown"></i> الندم والإحباط</h4><p>بعد اكتشاف وجود عرض أفضل في بنك آخر بعد توقيع العقد، يشعر العميل بالغبن وعدم العدالة.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-cloud-fog2"></i> الإرهاق الذهني</h4><p>كثرة الأرقام والنسب واختلاف الصيغ المصرفية تؤدي إلى إجهاد اتخاذ القرار، مما يدفع الكثيرين إلى تجنب المنتجات المصرفية المفيدة.</p></div>
+        </div>
+      </div>
+
+      <!-- المرحلة 6: الأثر القابل للقياس -->
+      <div class="problem-stage">
+        <div class="stage-header" style="background:#e8f1ff;">
+          <div class="stage-icon"><i class="bi bi-bar-chart-steps"></i></div>
+          <div class="stage-title"><h3>الأثر الاقتصادي القابل للقياس</h3><p>تكلفة عدم وجود حل</p></div>
+          <div class="stage-badge">المرحلة 6/7</div>
+        </div>
+        <div class="stage-content">
+          <div class="sub-card"><h4><i class="bi bi-calculator-fill"></i> فجوة الفائدة 1%</h4><p>فرق 1% في سعر فائدة قرض عقاري بقيمة مليون جنيه على 20 سنة يؤدي إلى تكلفة إضافية تتجاوز 200 ألف جنيه. المقارنة الصحيحة توفر مبالغ ضخمة.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-hourglass-split"></i> ضياع الوقت</h4><p>في المتوسط 20 ساعة لكل عملية بحث عن قرض أو وديعة، تُضرب في ملايين العملاء سنوياً = خسارة إنتاجية بملايين الساعات.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-percent"></i> الندم على القرار</h4><p>أكثر من 42% من المقترضين يعبرون عن ندمهم لاختيار منتج غير مناسب بسبب نقص المعلومات، مما يقلل الثقة في القطاع المصرفي.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-tree"></i> كفاءة السوق</h4><p>في الأسواق التي توفر أدوات مقارنة شفافة، ترتفع نسبة المقارنة من 20% إلى 85%، مما يحفز البنوك على تحسين عروضها.</p></div>
+        </div>
+      </div>
+
+      <!-- المرحلة 7: عيوب البدائل الحالية -->
+      <div class="problem-stage">
+        <div class="stage-header" style="background:#fee2e2;">
+          <div class="stage-icon"><i class="bi bi-x-octagon-fill"></i></div>
+          <div class="stage-title"><h3>عيوب الحلول المتاحة الآن</h3><p>لماذا لا تفي البدائل بالغرض؟</p></div>
+          <div class="stage-badge">المرحلة 7/7</div>
+        </div>
+        <div class="stage-content">
+          <div class="sub-card"><h4><i class="bi bi-building"></i> الاعتماد على بنك واحد</h4><p>غير محايد، يعرض منتجات بنكه فقط وقد تكون غير الأفضل في السوق، وموظف البنك قد لا يقدم المشورة الكاملة.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-search"></i> البحث اليدوي</h4><p>شاق، غير موحد، وبعض المعلومات تكون قديمة أو غير دقيقة، ويتطلب مستوى عالٍ من الثقافة المالية.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-chat-dots"></i> توصيات الأصدقاء</h4><p>ذاتية، قد تنبع من تجربة مختلفة تماماً عن احتياجات المستخدم الحالي، كما أنها لا تعكس كل السوق.</p></div>
+          <div class="sub-card"><h4><i class="bi bi-wallet2"></i> المستشار المالي المدفوع</h4><p>مكلف للشريحة المتوسطة، وغير متاح في كل المناطق، بالإضافة إلى احتمال تضارب المصالح.</p></div>
+        </div>
+      </div>
+    </div>
+    <!-- خاتمة تحليلية -->
+    <div class="highlight-card animate-on-scroll animate-fade-up" style="margin-top: 40px; text-align:center;">
+      <i class="bi bi-lightbulb" style="font-size: 2rem; color: var(--primary);"></i>
+      <h3 style="margin: 12px 0;">الخلاصة: فرصة حقيقية للابتكار</h3>
+      <p>من خلال تحليل Problem Statement Canvas نجد أن السوق المصري بحاجة ماسة لمنصة BanqOK التي تدمج البيانات وتقدم توصيات ذكية محايدة، مما يعزز الشمول المالي ويوفر الوقت والمال للمستخدمين.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer-simple"><img src="./ASSETS/BanqOk.png" alt="BanqOK" class="footer-logo-sm"><p>© 2026 BanqOK. جميع الحقوق محفوظة. | بالتعاون مع <strong style="color:#10b981;">Creativa & ITIDA</strong></p></footer>
+<div class="eko-floating" id="eko-floating"><div class="eko-tooltip" id="eko-tooltip">أهلاً! أنا إيكو، اسألني عن المشروع.</div><img src="./ASSETS/EQO/TRUST.png" alt="إيكو"></div>
+<canvas id="particle-canvas"></canvas>
+
+<script>
+  (function() {
+    // loading screen
+    setTimeout(function() { var ls = document.getElementById('loading-screen'); if(ls){ ls.classList.add('hidden'); setTimeout(function(){ if(ls) ls.style.display='none'; },500); } }, 2200);
+    
+    // Intersection Observer
+    var animatedElements = document.querySelectorAll('.animate-on-scroll');
+    var observer = new IntersectionObserver(function(entries) { entries.forEach(function(entry){ if(entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.08 });
+    animatedElements.forEach(function(el){ observer.observe(el); });
+    
+    // Eko floating
+    var eko = document.getElementById('eko-floating');
+    var tooltip = document.getElementById('eko-tooltip');
+    var msgs = ['مرحباً! أنا إيكو، استكشف أقسام تحليل المشكلة بالأسفل.', 'الاستبيان ينتظر رأيك – ساعدنا نطور BanqOK!', 'قسم Problem Canvas مقسم لسبع مراحل متكاملة.', 'لو عندك استفسار، أنا موجود.'];
+    function showMsg(m){ if(tooltip){ tooltip.textContent=m; if(eko) eko.classList.add('active'); setTimeout(function(){ if(eko) eko.classList.remove('active'); },7000); } }
+    if(eko) eko.addEventListener('click',function(){ showMsg(msgs[Math.floor(Math.random()*msgs.length)]); });
+    setTimeout(function(){ showMsg(msgs[0]); },4000);
+    setInterval(function(){ showMsg(msgs[Math.floor(Math.random()*msgs.length)]); },40000);
+    
+    // smooth scroll anchors
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click',function(e){ var t = document.querySelector(this.getAttribute('href')); if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth'}); } }); });
+    
+    // ======== خلفية الجسيمات العامة (لكامل الصفحة) ========
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [], animFrame;
+    function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    class Particle { constructor(){ this.reset(); } reset(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.vx=(Math.random()-0.5)*0.5; this.vy=(Math.random()-0.5)*0.5; this.radius=Math.random()*2.2+1; this.opacity=Math.random()*0.5+0.3; } update(){ this.x+=this.vx; this.y+=this.vy; if(this.x<0||this.x>canvas.width) this.vx*=-1; if(this.y<0||this.y>canvas.height) this.vy*=-1; this.x=Math.min(Math.max(0,this.x),canvas.width); this.y=Math.min(Math.max(0,this.y),canvas.height); } draw(ctx){ ctx.beginPath(); ctx.arc(this.x,this.y,this.radius,0,Math.PI*2); ctx.fillStyle=`rgba(16,185,129,${this.opacity*0.7})`; ctx.fill(); } }
+    function initParticles(c=100){ particles=[]; for(let i=0;i<c;i++) particles.push(new Particle()); }
+    function connect(ctx){ let maxDist=150; for(let i=0;i<particles.length;i++){ for(let j=i+1;j<particles.length;j++){ let dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, dist=Math.hypot(dx,dy); if(dist<maxDist){ ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); let inten=0.25*(1-dist/maxDist); ctx.strokeStyle=`rgba(16,185,129,${inten})`; ctx.lineWidth=0.7; ctx.stroke(); } } } }
+    function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{ p.update(); p.draw(ctx); }); connect(ctx); animFrame=requestAnimationFrame(animate); }
+    window.addEventListener('resize',()=>{ resizeCanvas(); initParticles(110); });
+    resizeCanvas(); initParticles(110); animate();
+    window.addEventListener('beforeunload',()=>{ if(animFrame) cancelAnimationFrame(animFrame); });
+    
+    // ======== خلفية جسيمات مخصصة ومضاعفة خلف قسم Problem Canvas (تظهر بشكل أوضح) ========
+    const problemSection = document.getElementById('problem-canvas');
+    const containerForSpecialCanvas = document.getElementById('problem-particle-canvas-container');
+    if(problemSection && containerForSpecialCanvas) {
+      let specialCanvas = document.createElement('canvas');
+      specialCanvas.style.position = 'absolute';
+      specialCanvas.style.top = '0';
+      specialCanvas.style.left = '0';
+      specialCanvas.style.width = '100%';
+      specialCanvas.style.height = '100%';
+      specialCanvas.style.display = 'block';
+      specialCanvas.style.pointerEvents = 'none';
+      containerForSpecialCanvas.appendChild(specialCanvas);
+      const specCtx = specialCanvas.getContext('2d');
+      let specParticles = [];
+      let specAnimFrame;
+      
+      function resizeSpecialCanvas() {
+        if(problemSection) {
+          const rect = problemSection.getBoundingClientRect();
+          specialCanvas.width = rect.width;
+          specialCanvas.height = rect.height;
+        } else {
+          specialCanvas.width = window.innerWidth;
+          specialCanvas.height = 400;
+        }
+        initSpecParticles(140);
+      }
+      
+      class SpecParticle {
+        constructor(width, height) { this.width = width; this.height = height; this.reset(); }
+        reset() { this.x = Math.random() * this.width; this.y = Math.random() * this.height; this.vx = (Math.random() - 0.5) * 0.8; this.vy = (Math.random() - 0.5) * 0.8; this.radius = Math.random() * 2.8 + 1.2; this.opacity = Math.random() * 0.6 + 0.4; }
+        update() { this.x += this.vx; this.y += this.vy; if(this.x < 0 || this.x > this.width) this.vx *= -1; if(this.y < 0 || this.y > this.height) this.vy *= -1; this.x = Math.min(Math.max(0, this.x), this.width); this.y = Math.min(Math.max(0, this.y), this.height); }
+        draw(ctx) { ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2); ctx.fillStyle = `rgba(16, 185, 129, ${this.opacity * 0.85})`; ctx.fill(); }
+      }
+      
+      function initSpecParticles(count) {
+        specParticles = [];
+        let w = specialCanvas.width || window.innerWidth;
+        let h = specialCanvas.height || 500;
+        for(let i=0; i<count; i++) { let p = new SpecParticle(w, h); specParticles.push(p); }
+      }
+      
+      function connectSpec(ctx) {
+        let maxDist = 160;
+        for(let i=0; i<specParticles.length; i++) {
+          for(let j=i+1; j<specParticles.length; j++) {
+            let dx = specParticles[i].x - specParticles[j].x, dy = specParticles[i].y - specParticles[j].y, dist = Math.hypot(dx, dy);
+            if(dist < maxDist) {
+              ctx.beginPath(); ctx.moveTo(specParticles[i].x, specParticles[i].y); ctx.lineTo(specParticles[j].x, specParticles[j].y);
+              let intensity = 0.35 * (1 - dist / maxDist);
+              ctx.strokeStyle = `rgba(16, 185, 129, ${intensity})`;
+              ctx.lineWidth = 0.9;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+      
+      function animateSpecial() {
+        if(!specCtx) return;
+        specCtx.clearRect(0, 0, specialCanvas.width, specialCanvas.height);
+        for(let p of specParticles) { p.update(); p.draw(specCtx); }
+        connectSpec(specCtx);
+        specAnimFrame = requestAnimationFrame(animateSpecial);
+      }
+      
+      window.addEventListener('resize', () => {
+        if(problemSection && containerForSpecialCanvas) {
+          const rect = problemSection.getBoundingClientRect();
+          specialCanvas.width = rect.width;
+          specialCanvas.height = rect.height;
+          initSpecParticles(140);
+        }
+      });
+      
+      const resizeObserver = new ResizeObserver(() => {
+        if(problemSection) {
+          const rect = problemSection.getBoundingClientRect();
+          specialCanvas.width = rect.width;
+          specialCanvas.height = rect.height;
+          initSpecParticles(140);
+        }
+      });
+      if(problemSection) resizeObserver.observe(problemSection);
+      resizeSpecialCanvas();
+      animateSpecial();
+      window.addEventListener('beforeunload', () => { if(specAnimFrame) cancelAnimationFrame(specAnimFrame); });
+    }
+  })();
+</script>
+</body>
+</html>

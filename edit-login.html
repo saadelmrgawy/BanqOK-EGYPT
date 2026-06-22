@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BanqOK - لوحة تحكم المسؤول</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    /* استيراد نفس التنسيقات من الصفحة السابقة */
+    :root {
+      --primary-color: #10b981;
+      --primary-hover: #059669;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --light-green: #d1fae5;
+      --text-color: #1f2937;
+      --light-text: #6b7280;
+      --bg-color: #f9fafb;
+      --card-bg: #ffffff;
+      --border-radius: 16px;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 15px 35px rgba(16, 185, 129, 0.15);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* شريط التنقل العلوي */
+    .admin-header {
+      background: white;
+      padding: 20px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .admin-logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .admin-logo img {
+      height: 40px;
+      max-width: 100%;
+    }
+
+    .admin-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin: 0;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .admin-btn {
+      padding: 12px 24px;
+      border-radius: var(--border-radius);
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      transition: all 0.3s;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+    }
+
+    .admin-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .admin-btn.secondary {
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+
+    .admin-btn.secondary:hover {
+      background: var(--light-green);
+    }
+
+    .admin-btn.danger {
+      background: #ef4444;
+    }
+
+    .admin-btn.danger:hover {
+      background: #dc2626;
+    }
+
+    .admin-btn.warning {
+      background: #f59e0b;
+    }
+    .admin-btn.warning:hover {
+      background: #d97706;
+    }
+
+    /* الشريط الجانبي */
+    .admin-container {
+      display: flex;
+      min-height: calc(100vh - 90px);
+      gap: 30px;
+      padding: 0 20px;
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .admin-sidebar {
+      width: 280px;
+      background: white;
+      border-radius: var(--border-radius);
+      padding: 20px 0;
+      box-shadow: var(--shadow);
+      height: fit-content;
+      position: sticky;
+      top: 100px;
+      flex-shrink: 0;
+    }
+
+    .admin-nav {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .admin-nav-item {
+      padding: 18px 25px;
+      border-right: 4px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      margin: 5px 0;
+      min-height: 56px;
+    }
+
+    .admin-nav-item:hover {
+      background: var(--light-green);
+      border-right-color: var(--primary-color);
+      padding-right: 30px;
+    }
+
+    .admin-nav-item.active {
+      background: var(--light-green);
+      border-right-color: var(--primary-color);
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    /* المحتوى الرئيسي */
+    .admin-content {
+      flex: 1;
+      padding: 30px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+
+    .section-panel {
+      display: none;
+    }
+
+    .section-panel.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: var(--text-color);
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--light-green);
+    }
+
+    .subsection-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 30px 0 20px;
+      color: var(--primary-color);
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .form-control, .form-select {
+      width: 100%;
+      padding: 12px 18px;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--border-radius);
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      transition: all 0.3s;
+      box-sizing: border-box;
+      background-color: white;
+    }
+
+    .form-control:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* بطاقات الرسائل */
+    .message-card {
+      border: 2px solid #e5e7eb;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      background: #f8fafc;
+      position: relative;
+    }
+
+    .message-card:hover {
+      border-color: var(--primary-color);
+      box-shadow: var(--shadow);
+    }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .message-title {
+      margin: 0;
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* شبكة 3 أعمدة */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    /* رسالة النظام */
+    .message {
+      padding: 18px 24px;
+      border-radius: var(--border-radius);
+      margin-bottom: 25px;
+      display: none;
+      font-weight: 600;
+      border-right: 5px solid;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .message.success {
+      background: #d1fae5;
+      color: #065f46;
+      border-right-color: #10b981;
+      display: block;
+    }
+
+    .message.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border-right-color: #ef4444;
+      display: block;
+    }
+
+    .message.info {
+      background: #dbeafe;
+      color: #1e40af;
+      border-right-color: #3b82f6;
+      display: block;
+    }
+
+    /* تلميحات */
+    .tooltip-hint {
+      background: #f3f4f6;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      font-size: 0.9rem;
+      border-right: 4px solid var(--primary-color);
+    }
+
+    .tooltip-hint i {
+      color: var(--primary-color);
+      margin-left: 8px;
+    }
+
+    /* علامات تبويب */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      border-bottom: 2px solid #e5e7eb;
+      padding-bottom: 10px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      color: var(--light-text);
+      cursor: pointer;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary-color);
+      background: var(--light-green);
+    }
+
+    .tab-btn.active {
+      color: var(--primary-color);
+      border-bottom: 3px solid var(--primary-color);
+      background: var(--light-green);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    /* بطاقة مستخدم للإدارة */
+    .user-management-card {
+        background: #f8fafc;
+        border: 2px solid #e5e7eb;
+        border-radius: var(--border-radius);
+        padding: 20px;
+    }
+    .user-search {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    .user-search .form-control {
+        flex: 1;
+    }
+    .selected-user-info {
+        background: var(--light-green);
+        padding: 15px;
+        border-radius: var(--border-radius);
+        margin: 20px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .user-badge {
+        background: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    .user-badge.active { color: #10b981; border: 1px solid #10b981; }
+    .user-badge.blocked { color: #ef4444; border: 1px solid #ef4444; }
+    .user-badge.inactive { color: #f59e0b; border: 1px solid #f59e0b; }
+
+
+    /* متجاوب */
+    @media (max-width: 992px) {
+      .admin-container { flex-direction: column; }
+      .admin-sidebar {
+        width: 100%;
+        position: static;
+      }
+      .admin-nav {
+        display: flex;
+        overflow-x: auto;
+        padding: 10px;
+        gap: 10px;
+      }
+      .admin-nav-item {
+        flex-direction: column;
+        min-width: 140px;
+        text-align: center;
+        padding: 15px;
+        border-right: none;
+        border-bottom: 4px solid transparent;
+      }
+      .admin-nav-item.active { border-bottom-color: var(--primary-color); }
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .admin-header { flex-direction: column; text-align: center; }
+      .admin-logo { flex-direction: column; }
+      .admin-actions { width: 100%; justify-content: center; }
+      .admin-btn { flex: 1; min-width: 140px; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- رأس لوحة التحكم -->
+  <header class="admin-header">
+    <div class="admin-logo">
+      <img src="./ASSETS/BanqOk.png" alt="BANQOK Logo" onerror="this.src='https://via.placeholder.com/150x50?text=BanqOK'">
+      <h1 class="admin-title">لوحة تحكم المسؤول</h1>
+    </div>
+    <div class="admin-actions">
+      <button class="admin-btn" id="save-all-btn"><i class="bi bi-save"></i> حفظ جميع التعديلات</button>
+      <button class="admin-btn secondary" onclick="window.location.href='admin-dashboard.html'"><i class="bi bi-arrow-right"></i> العودة الرئيسية</button>
+    </div>
+  </header>
+
+  <!-- رسائل النظام -->
+  <div class="message" id="message"></div>
+
+  <!-- المحتوى الرئيسي -->
+  <div class="admin-container">
+    <!-- الشريط الجانبي -->
+    <nav class="admin-sidebar">
+      <ul class="admin-nav">
+        <li class="admin-nav-item active" data-section="eko-messages">
+          <i class="bi bi-robot"></i> تعديل رسائل إيكو
+        </li>
+        <li class="admin-nav-item" data-section="admin-notifications">
+          <i class="bi bi-megaphone"></i> إشعارات المسؤول وإدارة النقاط
+        </li>
+      </ul>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="admin-content">
+      <!-- قسم تعديل رسائل إيكو (مدمج) -->
+      <div class="section-panel active" id="eko-messages-panel">
+        <h2 class="section-title">تعديل رسائل إيكو</h2>
+        <div class="tooltip-hint">
+          <i class="bi bi-info-circle"></i> هذه هي جميع الرسائل التي تظهر من شخصية "إيكو" في صفحة تسجيل الدخول.
+        </div>
+
+        <!-- علامات تبويب لأنواع رسائل إيكو -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="general-eko">عامة (النقر على إيكو)</button>
+          <button class="tab-btn" data-tab="hover-eko">تمرير الماوس</button>
+          <button class="tab-btn" data-tab="focus-eko">تركيز على الحقول</button>
+          <button class="tab-btn" data-tab="mobile-eko">رسائل الجوال</button>
+        </div>
+
+        <!-- محتوى التبويبات -->
+        <div class="tab-content active" id="general-eko-tab">
+          <div class="form-group">
+            <label class="form-label">رسائل إيكو العامة</label>
+            <div id="general-eko-messages-container"></div>
+            <button class="admin-btn secondary" id="add-general-eko-message"><i class="bi bi-plus-circle"></i> إضافة رسالة عامة</button>
+          </div>
+        </div>
+        <div class="tab-content" id="hover-eko-tab">
+          <div class="form-group">
+            <label class="form-label">رسائل التمرير (عند المرور بالماوس على العناصر)</label>
+            <div id="hover-eko-messages-container"></div>
+            <button class="admin-btn secondary" id="add-hover-eko-message"><i class="bi bi-plus-circle"></i> إضافة رسالة تمرير</button>
+          </div>
+        </div>
+        <div class="tab-content" id="focus-eko-tab">
+          <div class="form-group">
+            <label class="form-label">رسائل التركيز (عند النقر داخل الحقول)</label>
+            <div id="focus-eko-messages-container"></div>
+            <button class="admin-btn secondary" id="add-focus-eko-message"><i class="bi bi-plus-circle"></i> إضافة رسالة تركيز</button>
+          </div>
+        </div>
+        <div class="tab-content" id="mobile-eko-tab">
+          <div class="form-group">
+            <label class="form-label">رسائل إيكو للجوال (تظهر بشكل دوري)</label>
+            <div id="mobile-eko-messages-container"></div>
+            <button class="admin-btn secondary" id="add-mobile-eko-message"><i class="bi bi-plus-circle"></i> إضافة رسالة جوال</button>
+          </div>
+        </div>
+        <button class="admin-btn" id="save-eko-messages-btn"><i class="bi bi-save"></i> حفظ رسائل إيكو</button>
+      </div>
+
+      <!-- قسم إشعارات المسؤول وإدارة النقاط (مدمج) -->
+      <div class="section-panel" id="admin-notifications-panel">
+        <h2 class="section-title">إشعارات المسؤول وإدارة النقاط</h2>
+
+        <!-- قسم تعديل رسالة النقاط الترحيبية -->
+        <div class="user-management-card" style="margin-bottom: 30px;">
+          <h3 class="subsection-title" style="margin-top: 0;">💬 تعديل نص النقاط الترحيبية</h3>
+          <div class="form-group">
+            <label class="form-label">نص الإشعار الذي يظهر للمستخدم عند حصوله على نقاط ترحيبية</label>
+            <textarea id="welcome-points-message" class="form-control" rows="3">مبروك! حصلت على {points} نقطة ترحيبية هدية من BanqOK لكونك مستخدم جديد!</textarea>
+            <small style="color: var(--light-text);">يمكنك استخدام المتغير <code>{points}</code> لاستبداله بعدد النقاط الفعلي.</small>
+          </div>
+        </div>
+
+        <!-- أدوات إدارة النقاط والإشعارات -->
+        <div class="grid-2" style="align-items: start;">
+          <!-- عمود الإرسال الفردي -->
+          <div class="user-management-card">
+            <h3 class="subsection-title" style="margin-top: 0;">👤 إرسال فردي</h3>
+            <div class="user-search">
+              <input type="text" id="single-user-email" class="form-control" placeholder="البريد الإلكتروني للمستخدم">
+              <button class="admin-btn secondary" id="search-user-btn"><i class="bi bi-search"></i> بحث</button>
+            </div>
+            <div id="selected-user-info" style="display: none;" class="selected-user-info"></div>
+
+            <div class="form-group">
+              <label class="form-label">نوع العملية</label>
+              <select id="single-action-type" class="form-select">
+                <option value="addPoints">➕ إضافة نقاط</option>
+                <option value="removePoints">➖ خصم نقاط</option>
+                <option value="sendNotification">📢 إرسال إشعار فقط</option>
+              </select>
+            </div>
+            <div class="form-group" id="single-points-amount-group">
+              <label class="form-label" id="points-amount-label">عدد النقاط</label>
+              <input type="number" id="single-points-amount" class="form-control" value="10" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">نوع الإشعار (إذا تم إرسال واحد)</label>
+              <select id="single-notification-type" class="form-select">
+                <option value="success">✅ نجاح</option>
+                <option value="info">ℹ️ معلومات</option>
+                <option value="warning">⚠️ تحذير</option>
+                <option value="error">❌ خطأ</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">نص الإشعار أو سبب النقاط</label>
+              <textarea id="single-message-text" class="form-control" rows="2" placeholder="أدخل نص الإشعار..."></textarea>
+            </div>
+            <button class="admin-btn" style="width: 100%;" id="execute-single-action">تنفيذ</button>
+          </div>
+
+          <!-- عمود الإرسال الجماعي -->
+          <div class="user-management-card">
+            <h3 class="subsection-title" style="margin-top: 0;">👥 إرسال جماعي</h3>
+            <div class="form-group">
+              <label class="form-label">نوع العملية</label>
+              <select id="bulk-action-type" class="form-select">
+                <option value="addPointsToAll">➕ إضافة نقاط للجميع</option>
+                <option value="addPointsToFiltered">➕ إضافة نقاط لمجموعة محددة</option>
+                <option value="sendNotificationToAll">📢 إرسال إشعار للجميع</option>
+                <option value="sendNotificationToFiltered">📢 إرسال إشعار لمجموعة محددة</option>
+              </select>
+            </div>
+            <div class="form-group" id="bulk-filter-group" style="display: none;">
+              <label class="form-label">تصفية حسب الحالة</label>
+              <select id="bulk-user-filter" class="form-select">
+                <option value="all">جميع المستخدمين</option>
+                <option value="active">نشط فقط</option>
+                <option value="blocked">محظور فقط</option>
+                <option value="inactive">غير نشط فقط</option>
+              </select>
+            </div>
+            <div class="form-group" id="bulk-points-amount-group">
+              <label class="form-label">عدد النقاط</label>
+              <input type="number" id="bulk-points-amount" class="form-control" value="10" min="1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">نوع الإشعار</label>
+              <select id="bulk-notification-type" class="form-select">
+                <option value="success">✅ نجاح</option>
+                <option value="info">ℹ️ معلومات</option>
+                <option value="warning">⚠️ تحذير</option>
+                <option value="error">❌ خطأ</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">نص الإشعار أو سبب النقاط</label>
+              <textarea id="bulk-message-text" class="form-control" rows="2" placeholder="أدخل نص الإشعار... (يمكن استخدام {points})"></textarea>
+            </div>
+            <button class="admin-btn warning" style="width: 100%;" id="execute-bulk-action">تنفيذ العملية الجماعية</button>
+          </div>
+        </div>
+        <button class="admin-btn" id="save-notifications-settings-btn" style="margin-top: 20px;"><i class="bi bi-save"></i> حفظ إعدادات الإشعارات</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ============================================
+    // البيانات الافتراضية
+    // ============================================
+    const defaultLoginData = {
+      ekoMessages: {
+        general: [
+          "أنا إيكو! هساعدك في كل خطوة، متقلقش!",
+          "إنت كده هتسجل وتحصل على أفضل عروض البنوك في مصر!",
+          "نسيت كلمة السر؟ متقلقش! هنستخدم البريد والرقم القومي علشان نعوضك!"
+        ],
+        hover: [
+          "هنا هتكتب البريد الإلكتروني بتاعك يا صديقي",
+          "هنا هتكتب كلمة السر السرية بتاعتك",
+          "إضغط هنا علشان تدخل لحسابك"
+        ],
+        focus: [
+          "هنا هتكتب البريد الإلكتروني بتاعك، علشان نعرف نتواصل معاك",
+          "هنا هتكتب كلمة السر بتاعتك، علشان نتأكد إنك صاحب الحساب",
+          "أكتب المعلومات المطلوبة هنا علشان تكمل عملية التسجيل"
+        ],
+        mobile: [
+          "أهلاً يا صديقي! أنا إيكو، مساعدك في موقع BanqOK.",
+          "عايز تسجل حساب جديد؟ أنا هساعدك في كل الخطوات!",
+          "BanqOK هيقدملك كل عروض البنوك في مكان واحد!"
+        ]
+      },
+      notifications: {
+        welcomePointsMessage: "مبروك! حصلت على {points} نقطة ترحيبية هدية من BanqOK لكونك مستخدم جديد!"
+      }
+    };
+
+    // ============================================
+    // المتغيرات العامة
+    // ============================================
+    let appData = JSON.parse(JSON.stringify(defaultLoginData));
+    let db = null;
+    let selectedUserForAction = null;
+    const DB_NAME = 'db-banqok';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'users';
+
+    // ============================================
+    // تهيئة الصفحة وقاعدة البيانات
+    // ============================================
+    document.addEventListener('DOMContentLoaded', async function() {
+      console.log('🚀 تحميل لوحة تحكم المسؤول...');
+      loadSavedData();
+      setupNavigation();
+      setupTabs();
+      loadAllData();
+      setupButtons();
+      await initDatabase();
+      console.log('✅ تم تحميل لوحة التحكم بنجاح');
+    });
+
+    // ============================================
+    // دوال تحميل وحفظ البيانات
+    // ============================================
+    function loadSavedData() {
+      const savedData = localStorage.getItem('banqokLoginSettings');
+      if (savedData) {
+        try {
+          const parsed = JSON.parse(savedData);
+          appData = mergeDeep(JSON.parse(JSON.stringify(defaultLoginData)), parsed);
+        } catch(e) { console.error('خطأ في تحميل البيانات:', e); }
+      }
+    }
+
+    function mergeDeep(target, source) {
+      if (typeof target !== 'object' || typeof source !== 'object') return source;
+      for (const key in source) {
+        if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+          if (!target[key]) target[key] = {};
+          mergeDeep(target[key], source[key]);
+        } else if (Array.isArray(source[key])) {
+          target[key] = [...source[key]];
+        } else {
+          target[key] = source[key];
+        }
+      }
+      return target;
+    }
+
+    function saveData(showNotification = true) {
+      try {
+        localStorage.setItem('banqokLoginSettings', JSON.stringify(appData));
+        localStorage.setItem('banqok_login_update', JSON.stringify({
+          type: 'loginSettingsUpdated', timestamp: new Date().toISOString(), source: 'admin_panel'
+        }));
+        if (showNotification) showMessage('✅ تم حفظ البيانات بنجاح', 'success');
+        return true;
+      } catch(e) {
+        if (showNotification) showMessage('❌ حدث خطأ في حفظ البيانات', 'error');
+        return false;
+      }
+    }
+
+    // ============================================
+    // دوال إعداد الواجهة
+    // ============================================
+    function setupNavigation() {
+      document.querySelectorAll('.admin-nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+          document.querySelectorAll('.admin-nav-item').forEach(nav => nav.classList.remove('active'));
+          document.querySelectorAll('.section-panel').forEach(panel => panel.classList.remove('active'));
+          this.classList.add('active');
+          document.getElementById(`${this.dataset.section}-panel`).classList.add('active');
+        });
+      });
+    }
+
+    function setupTabs() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const parent = this.closest('.section-panel');
+          parent.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
+          parent.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+          this.classList.add('active');
+          parent.querySelector(`#${this.dataset.tab}-tab`).classList.add('active');
+        });
+      });
+    }
+
+    function setupButtons() {
+      document.getElementById('save-all-btn').addEventListener('click', saveAllData);
+      
+      // أزرار إيكو
+      document.getElementById('add-general-eko-message').addEventListener('click', () => addEkoMessage('general'));
+      document.getElementById('add-hover-eko-message').addEventListener('click', () => addEkoMessage('hover'));
+      document.getElementById('add-focus-eko-message').addEventListener('click', () => addEkoMessage('focus'));
+      document.getElementById('add-mobile-eko-message').addEventListener('click', () => addEkoMessage('mobile'));
+      document.getElementById('save-eko-messages-btn').addEventListener('click', saveEkoMessages);
+
+      // أزرار الإشعارات
+      document.getElementById('save-notifications-settings-btn').addEventListener('click', saveNotificationsSettings);
+      document.getElementById('search-user-btn').addEventListener('click', searchUser);
+      document.getElementById('execute-single-action').addEventListener('click', executeSingleAction);
+      document.getElementById('execute-bulk-action').addEventListener('click', executeBulkAction);
+
+      // إظهار وإخفاء حقول القوائم الجماعية
+      document.getElementById('bulk-action-type').addEventListener('change', toggleBulkFields);
+    }
+
+    function loadAllData() {
+      loadEkoMessages();
+      loadNotificationsSettings();
+    }
+
+    // ============================================
+    // دوال رسائل إيكو (مطابقة تقريباً للسابق)
+    // ============================================
+    function loadEkoMessages() {
+      loadEkoMessagesByType('general', 'general-eko-messages-container');
+      loadEkoMessagesByType('hover', 'hover-eko-messages-container');
+      loadEkoMessagesByType('focus', 'focus-eko-messages-container');
+      loadEkoMessagesByType('mobile', 'mobile-eko-messages-container');
+    }
+
+    function loadEkoMessagesByType(type, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = '';
+      const messages = appData.ekoMessages[type] || [];
+      messages.forEach((message, index) => {
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.innerHTML = `
+          <div class="message-header">
+            <h4 class="message-title">رسالة ${index + 1}</h4>
+            <div class="message-actions">
+              <button class="admin-btn secondary delete-message-btn" data-type="${type}" data-index="${index}" style="padding: 5px 10px;"><i class="bi bi-trash"></i> حذف</button>
+            </div>
+          </div>
+          <textarea class="form-control eko-message-input" data-type="${type}" data-index="${index}" rows="2">${message}</textarea>
+        `;
+        container.appendChild(card);
+      });
+      // Add listeners
+      container.querySelectorAll('.delete-message-btn').forEach(btn => {
+        btn.addEventListener('click', function() { deleteEkoMessage(this.dataset.type, parseInt(this.dataset.index)); });
+      });
+      container.querySelectorAll('.eko-message-input').forEach(input => {
+        input.addEventListener('input', function() {
+          appData.ekoMessages[this.dataset.type][parseInt(this.dataset.index)] = this.value;
+        });
+      });
+    }
+
+    function addEkoMessage(type) {
+      if (!appData.ekoMessages[type]) appData.ekoMessages[type] = [];
+      appData.ekoMessages[type].push(`رسالة ${type} جديدة`);
+      loadEkoMessagesByType(type, `${type}-eko-messages-container`);
+      showMessage('✅ تم إضافة رسالة جديدة', 'success');
+    }
+
+    function deleteEkoMessage(type, index) {
+      if (appData.ekoMessages[type].length > 1) {
+        appData.ekoMessages[type].splice(index, 1);
+        loadEkoMessagesByType(type, `${type}-eko-messages-container`);
+        showMessage('✅ تم حذف الرسالة', 'success');
+      } else {
+        showMessage('❌ يجب أن تكون هناك رسالة واحدة على الأقل', 'error');
+      }
+    }
+
+    function saveEkoMessages() { saveData(true); }
+
+    // ============================================
+    // دوال إعدادات الإشعارات
+    // ============================================
+    function loadNotificationsSettings() {
+      document.getElementById('welcome-points-message').value = appData.notifications.welcomePointsMessage || defaultLoginData.notifications.welcomePointsMessage;
+    }
+
+    function saveNotificationsSettings() {
+      appData.notifications.welcomePointsMessage = document.getElementById('welcome-points-message').value;
+      saveData(true);
+    }
+
+    // ============================================
+    // دوال قاعدة البيانات وإدارة المستخدمين
+    // ============================================
+    function initDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = (event) => {
+          db = event.target.result;
+          console.log('قاعدة البيانات جاهزة');
+          resolve(db);
+        };
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: 'email' });
+          }
+        };
+      });
+    }
+
+    function searchUser() {
+      const email = document.getElementById('single-user-email').value.trim();
+      if (!email) { showMessage('الرجاء إدخال بريد إلكتروني', 'error'); return; }
+      if (!db) { showMessage('قاعدة البيانات غير جاهزة', 'error'); return; }
+
+      const transaction = db.transaction([STORE_NAME], 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.get(email);
+
+      request.onsuccess = (event) => {
+        const user = event.target.result;
+        if (user && !user.isAdmin) {
+          selectedUserForAction = user;
+          const infoDiv = document.getElementById('selected-user-info');
+          infoDiv.style.display = 'flex';
+          infoDiv.innerHTML = `
+            <span><strong>${user.firstName} ${user.lastName}</strong> (${user.email})</span>
+            <span class="user-badge ${user.status || 'active'}">${user.status || 'active'}</span>
+            <span>النقاط: ${user.points || 0}</span>
+          `;
+        } else {
+          showMessage('لم يتم العثور على مستخدم بهذا البريد', 'error');
+          selectedUserForAction = null;
+          document.getElementById('selected-user-info').style.display = 'none';
+        }
+      };
+      request.onerror = () => showMessage('خطأ في البحث عن المستخدم', 'error');
+    }
+
+    function toggleBulkFields() {
+      const action = document.getElementById('bulk-action-type').value;
+      const filterGroup = document.getElementById('bulk-filter-group');
+      const pointsGroup = document.getElementById('bulk-points-amount-group');
+      if (action.includes('Filtered')) {
+        filterGroup.style.display = 'block';
+      } else {
+        filterGroup.style.display = 'none';
+      }
+      if (action.includes('Points')) {
+        pointsGroup.style.display = 'block';
+      } else {
+        pointsGroup.style.display = 'none';
+      }
+    }
+
+    function executeSingleAction() {
+      if (!selectedUserForAction) { showMessage('الرجاء البحث عن مستخدم أولاً', 'error'); return; }
+      const actionType = document.getElementById('single-action-type').value;
+      const points = parseInt(document.getElementById('single-points-amount').value) || 0;
+      const notifType = document.getElementById('single-notification-type').value;
+      const message = document.getElementById('single-message-text').value.trim() || (actionType === 'addPoints' ? `تم إضافة ${points} نقطة إلى حسابك.` : actionType === 'removePoints' ? `تم خصم ${points} نقطة من حسابك.` : 'إشعار من المسؤول');
+
+      if ((actionType === 'addPoints' || actionType === 'removePoints') && points <= 0) {
+        showMessage('الرجاء إدخال عدد نقاط صحيح', 'error'); return;
+      }
+
+      if (!db) { showMessage('قاعدة البيانات غير جاهزة', 'error'); return; }
+
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      const user = { ...selectedUserForAction };
+
+      if (actionType === 'addPoints') {
+        user.points = (user.points || 0) + points;
+        store.put(user);
+        sendNotificationToUser(user.email, `✅ ${message}`, notifType);
+        showMessage(`تم إضافة ${points} نقطة إلى ${user.email}`, 'success');
+      } else if (actionType === 'removePoints') {
+        user.points = Math.max(0, (user.points || 0) - points);
+        store.put(user);
+        sendNotificationToUser(user.email, `⚠️ ${message}`, 'warning');
+        showMessage(`تم خصم ${points} نقطة من ${user.email}`, 'success');
+      } else {
+        sendNotificationToUser(user.email, message, notifType);
+        showMessage(`تم إرسال الإشعار إلى ${user.email}`, 'success');
+      }
+    }
+
+    function executeBulkAction() {
+      const action = document.getElementById('bulk-action-type').value;
+      const filter = document.getElementById('bulk-user-filter').value;
+      const points = parseInt(document.getElementById('bulk-points-amount').value) || 0;
+      const notifType = document.getElementById('bulk-notification-type').value;
+      let message = document.getElementById('bulk-message-text').value.trim();
+      
+      if (!db) { showMessage('قاعدة البيانات غير جاهزة', 'error'); return; }
+
+      const transaction = db.transaction([STORE_NAME], 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.getAll();
+
+      request.onsuccess = (event) => {
+        let users = event.target.result.filter(u => !u.isAdmin);
+        
+        // تطبيق الفلتر
+        if (filter !== 'all') {
+          users = users.filter(u => u.status === filter);
+        }
+
+        if (users.length === 0) { showMessage('لا يوجد مستخدمين مطابقين', 'error'); return; }
+
+        if (action === 'addPointsToAll' || action === 'addPointsToFiltered') {
+          if (points <= 0) { showMessage('أدخل عدد نقاط صحيح', 'error'); return; }
+          const finalMessage = message.replace('{points}', points);
+          users.forEach(user => addPointsToUser(user.email, points, finalMessage, notifType));
+          showMessage(`تمت إضافة ${points} نقطة لـ ${users.length} مستخدم`, 'success');
+        } else {
+          const finalMessage = message || 'إشعار من المسؤول';
+          users.forEach(user => sendNotificationToUser(user.email, finalMessage, notifType));
+          showMessage(`تم إرسال الإشعار لـ ${users.length} مستخدم`, 'success');
+        }
+      };
+    }
+
+    function addPointsToUser(email, points, message, notifType) {
+      if (!db) return;
+      const tx = db.transaction([STORE_NAME], 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const request = store.get(email);
+      request.onsuccess = (e) => {
+        const user = e.target.result;
+        if (user && !user.isAdmin) {
+          user.points = (user.points || 0) + points;
+          store.put(user);
+          sendNotificationToUser(email, message, notifType);
+        }
+      };
+    }
+
+    function sendNotificationToUser(email, message, type = 'info') {
+      // هنا يتم إنشاء إشعار في localStorage للمستخدم
+      const notificationKey = `banqok_notifications_${email}`;
+      const notifications = JSON.parse(localStorage.getItem(notificationKey) || '[]');
+      notifications.unshift({
+        id: Date.now() + Math.random(),
+        title: type === 'success' ? 'إضافة نقاط' : type === 'warning' ? 'خصم نقاط' : 'إشعار من المسؤول',
+        message: message,
+        type: type,
+        read: false,
+        date: new Date().toISOString()
+      });
+      localStorage.setItem(notificationKey, JSON.stringify(notifications.slice(0, 50)));
+    }
+
+    // ============================================
+    // دوال مساعدة
+    // ============================================
+    function saveAllData() {
+      saveEkoMessages();
+      saveNotificationsSettings();
+      showMessage('✅ تم حفظ جميع التعديلات', 'success');
+    }
+
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = `message ${type}`;
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 4000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,5498 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BanqOK - لوحة التحكم</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    /* ========== الأنميشنات والهوفر كما في الصفحة الرئيسية ========== */
+    :root {
+      --primary-color: #10b981;
+      --primary-hover: #059669;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --light-green: #d1fae5;
+      --text-color: #1f2937;
+      --light-text: #6b7280;
+      --bg-color: #f9fafb;
+      --card-bg: #ffffff;
+      --border-radius-sm: 12px;
+      --border-radius-md: 16px;
+      --border-radius-lg: 24px;
+      --shadow-sm: 0 5px 15px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 20px 40px rgba(16, 185, 129, 0.15);
+      --transition-fast: 0.2s ease;
+      --transition-normal: 0.3s ease;
+      --transition-slow: 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      --danger-color: #ef4444;
+      --warning-color: #fbbf24;
+    }
+
+    /* أنيميشنات عامة */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInRight { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeInLeft { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes slideInDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes shine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* تأثير الجسيمات */
+    @keyframes floatParticle {
+      0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); opacity: 0.1; }
+      20% { opacity: 0.3; transform: translate(20px, -40px) rotate(120deg) scale(1.1); }
+      40% { opacity: 0.5; transform: translate(-30px, -80px) rotate(240deg) scale(1.2); }
+      60% { opacity: 0.7; transform: translate(40px, -120px) rotate(360deg) scale(1.3); }
+      80% { opacity: 0.4; transform: translate(-20px, -160px) rotate(480deg) scale(1.1); }
+    }
+    @keyframes floatParticleHorizontal {
+      0%, 100% { transform: translateX(0) rotate(0deg) scale(1); opacity: 0.1; }
+      25% { opacity: 0.3; transform: translateX(80px) rotate(180deg) scale(1.2); }
+      50% { opacity: 0.5; transform: translateX(-60px) rotate(360deg) scale(1.3); }
+      75% { opacity: 0.2; transform: translateX(40px) rotate(540deg) scale(1.1); }
+    }
+    @keyframes particleSparkle {
+      0%, 100% { opacity: 0.1; transform: scale(0.8); }
+      50% { opacity: 0.7; transform: scale(1.3); }
+    }
+    @keyframes particleOrbit {
+      0% { transform: rotate(0deg) translateX(20px) rotate(0deg); opacity: 0.2; }
+      100% { transform: rotate(360deg) translateX(20px) rotate(-360deg); opacity: 0.2; }
+    }
+
+    /* تأثير الـ shine للبطاقات والأزرار */
+    .point-card::after,
+    .service-card::after,
+    .bank-card::after,
+    .payment-method::after,
+    .store-btn::after,
+    .primary-btn::after,
+    .secondary-btn::after,
+    .refresh-btn::after,
+    .export-btn::after,
+    .delete-all-btn::after,
+    .purchase-btn::after,
+    .notifications-nav-btn::after,
+    .user-avatar-btn::after,
+    .delete-notification-btn::after,
+    .delete-all-notifications-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      transition: left 0.6s ease;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .point-card:hover::after,
+    .service-card:hover::after,
+    .bank-card:hover::after,
+    .payment-method:hover::after,
+    .store-btn:hover::after,
+    .primary-btn:hover::after,
+    .secondary-btn:hover::after,
+    .refresh-btn:hover::after,
+    .export-btn:hover::after,
+    .delete-all-btn:hover::after,
+    .purchase-btn:hover::after,
+    .notifications-nav-btn:hover::after,
+    .user-avatar-btn:hover::after,
+    .delete-notification-btn:hover::after,
+    .delete-all-notifications-btn:hover::after {
+      left: 150%;
+    }
+
+    /* تأثير رفع البطاقة وظل أقوى */
+    .point-card,
+    .service-card,
+    .bank-card,
+    .payment-method,
+    .stat-card,
+    .feature-card {
+      transition: transform var(--transition-slow), box-shadow var(--transition-slow), border-color var(--transition-slow);
+    }
+
+    .point-card:hover,
+    .service-card:hover,
+    .bank-card:hover,
+    .payment-method:hover,
+    .stat-card:hover,
+    .feature-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* تأثيرات عامة للعناصر */
+    .welcome-section {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+      transition: background 0.3s ease;
+    }
+
+    .electronic-wallet {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #0d8b63 100%);
+      transition: background 0.3s ease;
+    }
+
+    /* أزرار ذات تأثير shine */
+    .primary-btn, .secondary-btn, .refresh-btn, .export-btn, .delete-all-btn, .purchase-btn, .notifications-nav-btn, .user-avatar-btn, .delete-notification-btn, .delete-all-notifications-btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* شاشة التحميل */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    .loading-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-eko {
+      width: clamp(90px, 20vw, 140px);
+      height: auto;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .loading-text {
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 15px;
+      font-family: 'Cairo', sans-serif;
+    }
+    .loading-bar {
+      width: 250px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .loading-progress {
+      height: 100%;
+      width: 0%;
+      background: white;
+      border-radius: 10px;
+      animation: loading 2s ease-in-out forwards;
+    }
+    @keyframes loading {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    /* شريط التنقل */
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 5%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s ease;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.1);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    .logo-section {
+      display: flex;
+      align-items: center;
+    }
+    .logo-section img {
+      height: 55px;
+      width: auto;
+      transition: transform 0.3s;
+    }
+    .logo-section img:hover {
+      transform: scale(1.05);
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .notifications-nav-btn {
+      padding: 10px 20px;
+      border-radius: var(--border-radius-md);
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 600;
+      font-family: 'Cairo', sans-serif;
+      text-decoration: none;
+      position: relative;
+      overflow: visible;
+    }
+    .notifications-nav-btn:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+    }
+    .notifications-badge {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      background: var(--danger-color, #ef4444);
+      color: white;
+      border-radius: 50%;
+      min-width: 22px;
+      height: 22px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      animation: pulse 1.5s infinite;
+      box-shadow: 0 2px 5px rgba(239, 68, 68, 0.3);
+      border: 2px solid white;
+      padding: 0 4px;
+      z-index: 101;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .refresh-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      font-size: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .refresh-btn:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: rotate(90deg);
+    }
+    .refresh-btn.spinning {
+      animation: spin 0.5s linear infinite;
+    }
+    .user-avatar-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-color);
+      background: white;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      padding: 0;
+      position: relative;
+    }
+    .user-avatar-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+      background: var(--light-green);
+    }
+    .user-avatar-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .user-avatar-btn i {
+      font-size: 1.5rem;
+      color: var(--primary-color);
+    }
+
+    /* مودال المستخدم */
+    .user-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      animation: fadeIn 0.3s ease;
+    }
+    .user-modal.active {
+      display: flex;
+    }
+    .user-modal-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      max-width: 400px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      text-align: right;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 0.4s ease;
+    }
+    .user-modal-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--light-text);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+    .user-modal-close:hover {
+      background: #f3f4f6;
+      color: var(--text-color);
+    }
+    .user-modal-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      margin-bottom: 20px;
+    }
+    .user-modal-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-color);
+      flex-shrink: 0;
+    }
+    .user-modal-info h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: var(--text-color);
+    }
+    .user-modal-info p {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+      color: var(--light-text);
+    }
+    .user-modal-divider {
+      height: 1px;
+      background: #eee;
+      margin: 15px 0;
+    }
+    .user-modal-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      color: var(--text-color);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.3s;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .user-modal-item:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: translateX(-5px);
+    }
+    .user-modal-item i {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* مودال تأكيد تسجيل الخروج */
+    .logout-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1005;
+      animation: fadeIn 0.3s ease;
+    }
+    .logout-modal.active {
+      display: flex;
+    }
+    .logout-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: fadeInUp 0.4s ease;
+    }
+    .logout-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: var(--danger-color, #ef4444);
+    }
+    .logout-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--text-color);
+    }
+    .logout-message {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      color: var(--light-text);
+    }
+    .logout-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    /* مودال عدم كفاية الرصيد */
+    .insufficient-points-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1006;
+      animation: fadeIn 0.3s ease;
+    }
+    .insufficient-points-modal.active {
+      display: flex;
+    }
+    .insufficient-points-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: fadeInUp 0.4s ease;
+    }
+    .insufficient-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: var(--warning-color, #fbbf24);
+    }
+    .insufficient-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--text-color);
+    }
+    .insufficient-message {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      color: var(--light-text);
+    }
+    .insufficient-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    /* المحتوى الرئيسي */
+    .main-container {
+      flex: 1;
+      padding: 20px 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ترحيب المستخدم */
+    .welcome-section {
+      color: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+      animation: fadeInUp 0.5s ease;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .welcome-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      transform: skewX(-15deg) translateX(-100%);
+      transition: transform 0.6s ease;
+      z-index: -1;
+    }
+    .welcome-section:hover::before {
+      transform: skewX(-15deg) translateX(100%);
+    }
+    .welcome-section .welcome-text,
+    .welcome-section .welcome-eko {
+      position: relative;
+      z-index: 2;
+    }
+    .welcome-text h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .welcome-text p {
+      margin: 10px 0 0;
+      opacity: 0.9;
+      font-size: 1.1rem;
+    }
+    .welcome-eko {
+      width: 200px;
+      animation: float 4s ease-in-out infinite;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.2));
+    }
+
+    /* محفظة النقاط */
+    .wallet-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      animation: slideInRight 0.6s ease;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title i {
+      color: var(--primary-color);
+    }
+    .electronic-wallet {
+      background: linear-gradient(135deg, #10b981 0%, #0d8b63 100%);
+      color: white;
+      border-radius: var(--border-radius-lg);
+      padding: 25px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .electronic-wallet::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 150%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      z-index: -1;
+    }
+    .wallet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      position: relative;
+      z-index: 2;
+    }
+    .wallet-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+    .wallet-logo i {
+      font-size: 1.5rem;
+    }
+    .wallet-balance {
+      text-align: center;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+    }
+    .wallet-balance .balance-label {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+    .wallet-balance .balance-value {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .wallet-balance .currency {
+      font-size: 1.5rem;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+    .last-update {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-top: 15px;
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+    }
+
+    /* شراء النقاط */
+    .purchase-points {
+      background: var(--bg-color);
+      border-radius: var(--border-radius-lg);
+      padding: 25px;
+      margin-bottom: 30px;
+    }
+    .purchase-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+    .points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .point-card {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-slow);
+      cursor: pointer;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .point-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 5px;
+      background: var(--primary-color);
+      transition: height 0.3s ease, opacity 0.3s ease;
+      z-index: -1;
+    }
+    .point-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-color);
+    }
+    .point-card.selected {
+      background: var(--light-green);
+      border-color: var(--primary-color);
+    }
+    .point-card.popular {
+      border-color: var(--warning-color, #fbbf24);
+    }
+    .point-card.popular::before {
+      background: var(--warning-color, #fbbf24);
+    }
+    .point-card.popular.selected {
+      background: #fef3c7;
+    }
+    .popular-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--warning-color, #fbbf24);
+      color: #78350f;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      z-index: 3;
+    }
+    .point-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--light-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      color: var(--primary-color);
+      font-size: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+    .point-card:hover .point-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .point-card.popular .point-icon {
+      background: #fef3c7;
+      color: var(--warning-color, #fbbf24);
+    }
+    .point-amount {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 5px;
+      color: var(--primary-color);
+    }
+    .point-card.popular .point-amount {
+      color: var(--warning-color, #fbbf24);
+    }
+    .point-price {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--text-color);
+    }
+    .point-details {
+      font-size: 0.9rem;
+      color: var(--light-text);
+    }
+    .point-bonus {
+      font-size: 0.85rem;
+      color: var(--warning-color, #fbbf24);
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    /* الشحن الحر */
+    .custom-charge {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 25px;
+      margin-top: 20px;
+      box-shadow: var(--shadow-md);
+    }
+    .custom-charge-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .custom-charge-title i {
+      color: var(--primary-color);
+    }
+    .custom-input-container {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    #custom-points-input {
+      width: 100%;
+      padding: 15px;
+      padding-left: 80px;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--border-radius-md);
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.3s;
+    }
+    #custom-points-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    .input-suffix {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--primary-color);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .custom-calc-result {
+      background: var(--light-green);
+      padding: 15px;
+      border-radius: var(--border-radius-md);
+      text-align: center;
+      margin-top: 15px;
+      display: none;
+    }
+    .custom-calc-result.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    .custom-calc-result h5 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: var(--primary-color);
+    }
+    .custom-calc-details {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .custom-total-points {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    .custom-total-price {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    .custom-point-price {
+      font-size: 0.9rem;
+      color: var(--light-text);
+    }
+
+    /* حقل برومو كود */
+    .promo-code-container {
+      margin: 20px 0;
+    }
+    .promo-code-input-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    #promo-code-input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 2px solid #e5e7eb;
+      border-radius: var(--border-radius-md);
+      font-size: 1rem;
+      font-family: 'Cairo', sans-serif;
+    }
+    #promo-code-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    #apply-promo-btn {
+      padding: 12px 20px;
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    #apply-promo-btn:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+    }
+    .promo-result {
+      background: #fef3c7;
+      padding: 10px 15px;
+      border-radius: var(--border-radius-md);
+      margin-top: 10px;
+      display: none;
+    }
+    .promo-result.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    .promo-success {
+      background: var(--light-green);
+      color: var(--primary-color);
+    }
+    .promo-error {
+      background: #fee2e2;
+      color: var(--danger-color, #ef4444);
+    }
+
+    /* طرق الدفع */
+    .payment-methods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 25px 0;
+    }
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: white;
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+      flex: 1;
+      min-width: 150px;
+      position: relative;
+      overflow: hidden;
+    }
+    .payment-method:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--primary-color);
+    }
+    .payment-method.selected {
+      border-color: var(--primary-color);
+      background: var(--light-green);
+    }
+    .payment-icon {
+      font-size: 1.5rem;
+    }
+    .payment-method.vodafone .payment-icon {
+      color: #dc2626;
+    }
+    .payment-method.orange .payment-icon {
+      color: #ea580c;
+    }
+    .payment-method.fawry .payment-icon {
+      color: #fbbf24;
+    }
+    .payment-method.instapay .payment-icon {
+      color: #a855f7;
+    }
+    .payment-method.wepay .payment-icon {
+      color: #7c3aed;
+    }
+    .payment-method.eand .payment-icon {
+      color: #dc2626;
+    }
+    .payment-name {
+      font-weight: 600;
+    }
+    .payment-details {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 25px;
+      margin-bottom: 25px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    .payment-details.active {
+      display: block;
+    }
+    .payment-details h4 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: var(--text-color);
+    }
+    .payment-info {
+      background: var(--bg-color);
+      padding: 20px;
+      border-radius: var(--border-radius-md);
+      margin-bottom: 20px;
+    }
+    .payment-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .payment-steps li {
+      padding: 10px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .payment-steps li:last-child {
+      border-bottom: none;
+    }
+    .payment-steps .step-number {
+      background: var(--primary-color);
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .purchase-btn {
+      width: 100%;
+      padding: 16px;
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      border-radius: var(--border-radius-md);
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+    .purchase-btn:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+    }
+    .purchase-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      border-color: var(--light-text);
+      color: var(--light-text);
+    }
+
+    /* الخدمات المتاحة */
+    .services-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      animation: slideInLeft 0.6s ease;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+    .service-card {
+      background: var(--bg-color);
+      border-radius: var(--border-radius-lg);
+      padding: 25px;
+      text-align: right;
+      transition: all 0.3s;
+      border-right: 5px solid;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-hover);
+    }
+    .service-card.loan {
+      border-color: var(--accent-color);
+    }
+    .service-card.deposit {
+      border-color: var(--warning-color, #fbbf24);
+    }
+    .service-icon {
+      width: 70px;
+      height: 70px;
+      background: var(--light-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      transition: transform 0.3s ease;
+    }
+    .service-card:hover .service-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .service-card.loan .service-icon {
+      background: #dbeafe;
+      color: var(--accent-color);
+    }
+    .service-card.deposit .service-icon {
+      background: #fef3c7;
+      color: var(--warning-color, #fbbf24);
+    }
+    .service-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+    .service-description {
+      font-size: 1rem;
+      color: var(--light-text);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .cost-calculation {
+      background: white;
+      padding: 15px;
+      border-radius: var(--border-radius-md);
+      margin-bottom: 20px;
+    }
+    .cost-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .cost-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    .service-features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px;
+    }
+    .service-features li {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .service-features i {
+      color: var(--primary-color);
+      font-size: 0.9rem;
+    }
+    .service-btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background: white;
+      color: var(--primary-color);
+      text-decoration: none;
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      transition: all 0.3s;
+      border: 2px solid var(--primary-color);
+      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      background: var(--light-green);
+      color: var(--primary-color);
+    }
+    .service-card.loan .service-btn {
+      border-color: var(--accent-color);
+      color: var(--accent-color);
+    }
+    .service-card.loan .service-btn:hover {
+      background: #dbeafe;
+      color: var(--accent-color);
+    }
+    .service-card.deposit .service-btn {
+      border-color: var(--warning-color, #fbbf24);
+      color: var(--warning-color, #fbbf24);
+    }
+    .service-card.deposit .service-btn:hover {
+      background: #fef3c7;
+      color: var(--warning-color, #fbbf24);
+    }
+
+    /* سجل العمليات */
+    .transactions-section {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-md);
+      animation: fadeInUp 0.7s ease;
+    }
+    .transactions-table-container {
+      overflow-x: auto;
+    }
+    .transactions-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      min-width: 600px;
+    }
+    .transactions-table th {
+      background: var(--bg-color);
+      padding: 15px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--text-color);
+      border-bottom: 2px solid #eee;
+      position: sticky;
+      top: 0;
+    }
+    .transactions-table td {
+      padding: 15px;
+      text-align: right;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
+    }
+    .transaction-type {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .transaction-type.credit {
+      background: var(--light-green);
+      color: var(--primary-color);
+    }
+    .transaction-type.debit {
+      background: #fee2e2;
+      color: var(--danger-color, #ef4444);
+    }
+    .transaction-type.pending {
+      background: #f3e8ff;
+      color: #8b5cf6;
+    }
+    .transaction-type.expired {
+      background: #e5e7eb;
+      color: var(--light-text);
+    }
+    .transaction-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .action-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+      background: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .action-btn::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      transition: left 0.4s ease;
+      pointer-events: none;
+    }
+    .action-btn:hover::after {
+      left: 150%;
+    }
+    .view-btn {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    .delete-btn {
+      border-color: var(--danger-color, #ef4444);
+      color: var(--danger-color, #ef4444);
+    }
+    .action-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .view-btn:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+    }
+    .delete-btn:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+    .no-transactions {
+      text-align: center;
+      padding: 50px;
+      color: var(--light-text);
+    }
+    .no-transactions i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #e5e7eb;
+    }
+    .export-btn {
+      padding: 12px 25px;
+      background: white;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .export-btn:hover {
+      background: var(--light-green);
+      color: var(--primary-color);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.2);
+    }
+    .delete-all-btn {
+      padding: 12px 25px;
+      background: white;
+      color: var(--danger-color, #ef4444);
+      border: 2px solid var(--danger-color, #ef4444);
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+    .delete-all-btn:hover {
+      background: #fee2e2;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(220, 38, 38, 0.2);
+    }
+
+    /* المودالات */
+    .confirm-modal, .details-modal, .notifications-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1002;
+      animation: fadeIn 0.3s ease;
+    }
+    .confirm-modal.active, .details-modal.active, .notifications-modal.active {
+      display: flex;
+    }
+    .confirm-content, .details-content, .notifications-content {
+      background: white;
+      border-radius: var(--border-radius-lg);
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      text-align: right;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: fadeInUp 0.4s ease;
+    }
+    .details-content {
+      max-width: 700px;
+    }
+    .notifications-content {
+      max-width: 450px;
+      padding: 20px;
+    }
+    .details-close, .notifications-close, .user-modal-close {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--light-text);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+    .details-close:hover, .notifications-close:hover, .user-modal-close:hover {
+      background: #f3f4f6;
+      color: var(--text-color);
+    }
+    .confirm-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      text-align: center;
+    }
+    .confirm-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: var(--text-color);
+      text-align: center;
+    }
+    .confirm-message {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      color: var(--light-text);
+      text-align: center;
+    }
+    .pending-notice {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border-right: 4px solid var(--warning-color, #fbbf24);
+    }
+    .confirm-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+    .modal-btn {
+      padding: 12px 25px;
+      border-radius: var(--border-radius-md);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+    }
+    .modal-btn.cancel {
+      background: white;
+      color: var(--light-text);
+      border: 2px solid #e5e7eb;
+    }
+    .modal-btn.cancel:hover {
+      background: #f3f4f6;
+    }
+    .modal-btn.confirm {
+      background: var(--primary-color);
+      color: white;
+    }
+    .modal-btn.confirm:hover {
+      background: var(--primary-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    /* تنسيقات مودال الإشعارات المحسنة */
+    .notifications-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #eee;
+    }
+    .notifications-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .notifications-title i {
+      color: var(--primary-color);
+    }
+    .notifications-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .delete-all-notifications-btn {
+      padding: 8px 15px;
+      background: white;
+      color: var(--danger-color);
+      border: 2px solid var(--danger-color);
+      border-radius: var(--border-radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Cairo', sans-serif;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+      overflow: hidden;
+    }
+    .delete-all-notifications-btn:hover {
+      background: #fee2e2;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(239, 68, 68, 0.2);
+    }
+    .notifications-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    .notification-item {
+      background: var(--bg-color);
+      border-radius: var(--border-radius-md);
+      padding: 15px;
+      position: relative;
+      transition: all 0.3s;
+      border-right: 4px solid var(--primary-color);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .notification-item.unread {
+      background: var(--light-green);
+      border-right-color: var(--primary-color);
+    }
+    .notification-item.read {
+      opacity: 0.8;
+      border-right-color: var(--light-text);
+    }
+    .notification-content {
+      flex: 1;
+    }
+    .notification-title {
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .notification-title i {
+      color: var(--primary-color);
+      font-size: 1rem;
+    }
+    .notification-message {
+      font-size: 0.9rem;
+      color: var(--light-text);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .notification-time {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .notification-time i {
+      font-size: 0.7rem;
+    }
+    .delete-notification-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: white;
+      color: var(--danger-color);
+      border: 2px solid var(--danger-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+      padding: 0;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .delete-notification-btn:hover {
+      background: #fee2e2;
+      transform: scale(1.1);
+    }
+    .no-notifications {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--light-text);
+    }
+    .no-notifications i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #e5e7eb;
+    }
+
+    /* إيكو المساعد */
+    .eko-assistant {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 99;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      animation: float 4s ease-in-out infinite;
+    }
+    .eko-assistant img {
+      width: 80px;
+      cursor: pointer;
+      transition: all 0.3s;
+      filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
+    }
+    .eko-assistant:hover img {
+      transform: scale(1.1);
+      animation: pulse 1s ease-in-out infinite;
+    }
+    .eko-tooltip {
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      background: white;
+      color: var(--text-color);
+      padding: 15px;
+      border-radius: 12px;
+      width: 300px;
+      max-width: 90vw;
+      text-align: right;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      border: 1px solid #e5e7eb;
+      z-index: 1000;
+      white-space: normal;
+      word-wrap: break-word;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      margin-bottom: 10px;
+    }
+    .eko-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 20px;
+      border-width: 8px;
+      border-style: solid;
+      border-color: white transparent transparent transparent;
+    }
+    .eko-assistant.active .eko-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* رسائل التنبيه */
+    .alert {
+      padding: 15px 20px;
+      border-radius: var(--border-radius-md);
+      margin-bottom: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeIn 0.5s ease;
+      display: none;
+    }
+    .alert-success {
+      background: var(--light-green);
+      color: var(--primary-color);
+      border-right: 5px solid var(--primary-color);
+    }
+    .alert-error {
+      background: #fee2e2;
+      color: var(--danger-color, #ef4444);
+      border-right: 5px solid var(--danger-color, #ef4444);
+    }
+    .alert-info {
+      background: #dbeafe;
+      color: var(--accent-color);
+      border-right: 5px solid var(--accent-color);
+    }
+
+    /* الفوتر */
+    .footer {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 30px 5% 15px;
+      position: relative;
+      overflow: hidden;
+      direction: rtl;
+      font-family: 'Cairo', sans-serif;
+      border-top: 5px solid linear-gradient(90deg, #10b981, #3b82f6);
+      box-shadow: 0 -20px 40px rgba(0,0,0,0.1);
+      margin-top: 30px;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #10b981, #3b82f6, #8b5cf6);
+      z-index: 10;
+    }
+    #footer-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 5;
+    }
+    .footer-col-main {
+      text-align: right;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 10px;
+    }
+    .footer-logo img {
+      height: 50px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      transition: transform 0.3s ease;
+    }
+    .footer-logo img:hover {
+      transform: scale(1.05);
+    }
+    .footer-about {
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+      color: #cbd5e1;
+      font-weight: 400;
+      max-width: 400px;
+    }
+    .footer-social {
+      margin-bottom: 15px;
+    }
+    .social-title {
+      font-size: 0.9rem;
+      color: white;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .social-icons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .footer-social-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      color: #e2e8f0;
+      font-size: 1rem;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    .footer-social-icon::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      transition: left 0.4s ease;
+      pointer-events: none;
+    }
+    .footer-social-icon:hover::after {
+      left: 150%;
+    }
+    .footer-social-icon:hover {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-6px) scale(1.1);
+      box-shadow: 0 10px 25px rgba(16,185,129,0.4);
+      border-color: transparent;
+    }
+    .footer-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid rgba(16,185,129,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-title i {
+      color: #10b981;
+      font-size: 1.1rem;
+    }
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .footer-links li {
+      margin-bottom: 8px;
+    }
+    .footer-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+      padding-right: 5px;
+    }
+    .footer-links a i {
+      font-size: 0.75rem;
+      color: #10b981;
+      transition: all 0.3s ease;
+    }
+    .footer-links a:hover {
+      color: white;
+      padding-right: 12px;
+    }
+    .footer-links a:hover i {
+      transform: translateX(-5px);
+    }
+    .footer-app-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .app-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      text-decoration: none;
+      color: white;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-badge::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+      transform: skewX(-25deg);
+      transition: left 0.6s ease;
+      pointer-events: none;
+    }
+    .app-badge:hover::after {
+      left: 150%;
+    }
+    .app-badge:hover {
+      background: rgba(16,185,129,0.2);
+      border-color: #10b981;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(16,185,129,0.2);
+    }
+    .app-badge i {
+      font-size: 1.5rem;
+      color: #10b981;
+    }
+    .app-badge-text {
+      display: flex;
+      flex-direction: column;
+    }
+    .app-badge-label {
+      font-size: 0.7rem;
+      opacity: 0.8;
+      color: #cbd5e1;
+    }
+    .app-badge-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: white;
+    }
+    .footer-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), rgba(16,185,129,0.5), rgba(255,255,255,0.2), transparent);
+      margin: 15px 0 15px;
+      grid-column: 1 / -1;
+    }
+    .footer-bottom {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .footer-copyright {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+    .copyright-text {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .separator {
+      color: #475569;
+      margin: 0 3px;
+    }
+    .legal-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .legal-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-size: 0.8rem;
+    }
+    .legal-links a:hover {
+      color: #10b981;
+      text-decoration: underline;
+    }
+    .dot {
+      color: #475569;
+      margin: 0 4px;
+    }
+    .footer-credits {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #64748b;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* البارتيكلز */
+    .particle {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+      opacity: 0;
+      font-size: 1.5rem;
+      will-change: transform, opacity;
+      text-shadow: 0 0 10px currentColor;
+    }
+    .welcome-particle {
+      animation: floatParticle 18s linear infinite, particleSparkle 3s ease-in-out infinite;
+      opacity: 0.2;
+    }
+    .footer-particle {
+      animation: floatParticleHorizontal 25s linear infinite, particleSparkle 4s ease-in-out infinite;
+      opacity: 0.15;
+    }
+    .wallet-particle {
+      animation: floatParticle 15s linear infinite, particleSparkle 2.5s ease-in-out infinite;
+      opacity: 0.25;
+    }
+    .points-particle {
+      animation: floatParticle 12s linear infinite, particleOrbit 20s linear infinite;
+      opacity: 0.3;
+    }
+
+    /* تنسيقات للطباعة */
+    @media print {
+      .nav-bar, .eko-assistant, .footer, .refresh-btn, .export-btn, .action-btn,
+      .service-btn, .purchase-btn, .modal-btn, .user-modal, .confirm-modal, .details-modal,
+      .notifications-modal {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt !important;
+      }
+      .main-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+      .welcome-section, .wallet-section, .purchase-points, .services-section, .transactions-section {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        margin-bottom: 20px !important;
+        page-break-inside: avoid !important;
+      }
+      .transactions-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+      }
+      .transactions-table th, .transactions-table td {
+        border: 1px solid #ddd !important;
+        padding: 8px !important;
+      }
+    }
+
+    /* التصميم المتجاوب */
+    @media (max-width: 1200px) {
+      .main-container { padding: 15px; }
+      .points-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 992px) {
+      .welcome-section { flex-direction: column; text-align: center; gap: 20px; }
+      .welcome-eko { width: 100px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .footer-content { grid-template-columns: 1fr 1fr; }
+      .footer-col-main { grid-column: 1 / -1; }
+      .points-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-bar { padding: 10px 15px; }
+      .logo-section img { height: 40px; }
+      .user-avatar-btn { width: 40px; height: 40px; }
+      .notifications-nav-btn span { display: none; }
+      .notifications-nav-btn { width: 40px; height: 40px; padding: 0; justify-content: center; }
+      .refresh-btn { width: 35px; height: 35px; font-size: 1rem; }
+      .welcome-text h1 { font-size: 1.5rem; }
+      .wallet-balance .balance-value { font-size: 2.5rem; }
+      .points-grid { grid-template-columns: 1fr; }
+      .payment-methods { flex-direction: column; }
+      .payment-method { min-width: 100%; }
+      .transactions-table { min-width: 100%; }
+      .transactions-table th, .transactions-table td { padding: 10px 8px; font-size: 0.9rem; }
+      .eko-assistant { bottom: 15px; right: 15px; }
+      .eko-assistant img { width: 60px; }
+      .eko-tooltip { width: 250px; font-size: 0.9rem; }
+      .footer { padding: 20px 15px 12px; text-align: center; }
+      .footer-content { grid-template-columns: 1fr; gap: 20px; }
+      .footer-col { text-align: center; }
+      .footer-logo { justify-content: center; }
+      .social-icons { justify-content: center; }
+      .footer-links a:hover { padding-right: 0; }
+      .footer-app-buttons { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .app-badge { min-height: 64px; justify-content: center; padding: 14px 16px; border-radius: 16px; }
+      .app-badge i { font-size: 1.9rem; }
+      .app-badge-name { font-size: 1rem; font-weight: 800; }
+      .app-badge-label { font-size: 0.75rem; font-weight: 600; }
+    }
+    @media (max-width: 576px) {
+      .section-title { font-size: 1.3rem; }
+      .wallet-balance .balance-value { font-size: 2rem; }
+      .point-amount { font-size: 1.5rem; }
+      .service-card { padding: 20px; }
+      .transactions-table th, .transactions-table td { padding: 8px 6px; font-size: 0.85rem; }
+      .details-footer { flex-direction: column; }
+      .eko-assistant img { width: 50px; }
+      .eko-tooltip { width: 200px; font-size: 0.85rem; }
+    }
+    @media (max-width: 480px) {
+      .nav-actions { gap: 8px; }
+      .eko-assistant img { width: 45px; }
+      .wallet-logo { font-size: 1rem; }
+      .wallet-logo i { font-size: 1.2rem; }
+      .app-badge { min-height: 60px; padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- شاشة التحميل -->
+  <div class="loading-screen" id="loading-screen">
+    <img src="./ASSETS/EQO/advising.png" alt="إيكو يتحمّل" class="loading-eko">
+    <div class="loading-text" id="loading-text">EQO بيجهّزلك لوحة التحكم...</div>
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
+    </div>
+  </div>
+
+  <!-- مودال تأكيد عملية الشراء -->
+  <div class="confirm-modal" id="confirm-modal">
+    <div class="confirm-content">
+      <div class="confirm-icon">
+        <i class="bi bi-cart-check"></i>
+      </div>
+      <h3 class="confirm-title" id="confirm-title">تأكيد عملية الشراء</h3>
+      <div class="pending-notice">
+        <i class="bi bi-clock-history"></i>
+        <strong>ملاحظة:</strong> ستتم إضافة النقاط بعد مراجعة عملية الدفع (خلال 30 دقيقة كحد أقصى)
+      </div>
+      <p class="confirm-message" id="confirm-message">هل أنت متأكد من شراء <span id="confirm-points">0</span> نقطة بمبلغ <span id="confirm-price">0</span> جنيه؟</p>
+      <div class="confirm-buttons">
+        <button class="modal-btn cancel" id="confirm-cancel">إلغاء</button>
+        <button class="modal-btn confirm" id="confirm-ok">تأكيد الشراء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال تأكيد حذف السجل -->
+  <div class="confirm-modal" id="delete-confirm-modal">
+    <div class="confirm-content">
+      <div class="confirm-icon" style="color: var(--danger-color);">
+        <i class="bi bi-trash"></i>
+      </div>
+      <h3 class="confirm-title">تأكيد حذف السجل</h3>
+      <p class="confirm-message">هل أنت متأكد من حذف سجل العمليات بالكامل؟ هذا الإجراء لا يمكن التراجع عنه وسيتم حذف جميع سجلات عملياتك.</p>
+      <div class="confirm-buttons">
+        <button class="modal-btn cancel" id="delete-cancel">إلغاء</button>
+        <button class="modal-btn confirm" id="delete-confirm" style="background-color: var(--danger-color);">نعم، احذف السجل</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال تأكيد حذف جميع الإشعارات -->
+  <div class="confirm-modal" id="delete-all-notifications-modal">
+    <div class="confirm-content">
+      <div class="confirm-icon" style="color: var(--danger-color);">
+        <i class="bi bi-bell-slash"></i>
+      </div>
+      <h3 class="confirm-title">تأكيد حذف جميع الإشعارات</h3>
+      <p class="confirm-message">هل أنت متأكد من حذف جميع الإشعارات؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+      <div class="confirm-buttons">
+        <button class="modal-btn cancel" id="delete-all-notifications-cancel">إلغاء</button>
+        <button class="modal-btn confirm" id="delete-all-notifications-confirm" style="background-color: var(--danger-color);">نعم، احذف الكل</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال عدم كفاية الرصيد -->
+  <div class="insufficient-points-modal" id="insufficient-points-modal">
+    <div class="insufficient-points-content">
+      <div class="insufficient-icon">
+        <i class="bi bi-wallet"></i>
+      </div>
+      <h3 class="insufficient-title">رصيد غير كافٍ</h3>
+      <p class="insufficient-message" id="insufficient-message">نقاطك غير كافية لاستخدام هذه الخدمة.</p>
+      <div class="insufficient-buttons">
+        <button class="modal-btn cancel" id="insufficient-cancel">إلغاء</button>
+        <button class="modal-btn confirm" id="insufficient-buy">شراء نقاط</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال تأكيد تسجيل الخروج -->
+  <div class="logout-modal" id="logout-confirm-modal">
+    <div class="logout-content">
+      <div class="logout-icon">
+        <i class="bi bi-box-arrow-left"></i>
+      </div>
+      <h3 class="logout-title">تأكيد تسجيل الخروج</h3>
+      <p class="logout-message">هل أنت متأكد من تسجيل الخروج؟</p>
+      <div class="logout-buttons">
+        <button class="modal-btn cancel" id="logout-cancel">إلغاء</button>
+        <button class="modal-btn confirm" id="logout-confirm" style="background-color: var(--danger-color);">نعم، سجل الخروج</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال تفاصيل العملية -->
+  <div class="details-modal" id="details-modal">
+    <div class="details-content">
+      <button class="details-close" id="details-close">×</button>
+      <div class="details-header">
+        <h3 class="details-title" id="details-title">تفاصيل العملية</h3>
+        <div class="transaction-type" id="details-type">إضافة</div>
+      </div>
+      <div class="details-body" id="details-body">
+        <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال الإشعارات المحسن -->
+  <div class="notifications-modal" id="notifications-modal">
+    <div class="notifications-content">
+      <button class="notifications-close" id="notifications-close">×</button>
+      <div class="notifications-header">
+        <h3 class="notifications-title">
+          <i class="bi bi-bell"></i>
+          الإشعارات
+        </h3>
+        <div class="notifications-actions">
+          <button class="delete-all-notifications-btn" id="delete-all-notifications-btn">
+            <i class="bi bi-trash"></i>
+            <span>حذف الكل</span>
+          </button>
+        </div>
+      </div>
+      <div class="notifications-list" id="notifications-list">
+        <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال المستخدم -->
+  <div class="user-modal" id="user-modal">
+    <div class="user-modal-content">
+      <button class="user-modal-close" id="user-modal-close">×</button>
+      <div class="user-modal-header">
+        <img src="./ASSETS/EQO/user.png" alt="صورة المستخدم" class="user-modal-avatar" id="user-modal-avatar">
+        <div class="user-modal-info">
+          <h3 id="user-modal-name">اسم المستخدم</h3>
+          <p id="user-modal-email">البريد الإلكتروني</p>
+        </div>
+      </div>
+      <div class="user-modal-divider"></div>
+      <a href="index.html" class="user-modal-item">
+        <i class="bi bi-house-door"></i>
+        الصفحة الرئيسية
+      </a>
+      <a href="settings.html" class="user-modal-item">
+        <i class="bi bi-gear"></i>
+        إعدادات الحساب
+      </a>
+      <div class="user-modal-divider"></div>
+      <a href="#" class="user-modal-item user-modal-logout" id="user-modal-logout">
+        <i class="bi bi-box-arrow-left"></i>
+        تسجيل الخروج
+      </a>
+    </div>
+  </div>
+
+  <!-- شريط التنقل -->
+  <div class="nav-bar">
+    <div class="logo-section">
+      <a href="index.html">
+        <img src="./ASSETS/BanqOk.png" alt="BanqOK">
+      </a>
+    </div>
+    
+    <div class="nav-actions" id="nav-actions">
+      <!-- يتم تعبئته بواسطة الجافاسكريبت -->
+    </div>
+  </div>
+
+  <!-- المحتوى الرئيسي -->
+  <div class="main-container">
+    <!-- رسائل التنبيه -->
+    <div class="alert alert-success" id="success-alert" style="display: none;">
+      <i class="bi bi-check-circle"></i>
+      <span id="success-message">تمت العملية بنجاح!</span>
+    </div>
+    
+    <div class="alert alert-error" id="error-alert" style="display: none;">
+      <i class="bi bi-x-circle"></i>
+      <span id="error-message">حدث خطأ أثناء تنفيذ العملية!</span>
+    </div>
+    
+    <div class="alert alert-info" id="info-alert" style="display: none;">
+      <i class="bi bi-info-circle"></i>
+      <span id="info-message">معلومات هامة</span>
+    </div>
+
+    <!-- ترحيب المستخدم -->
+    <section class="welcome-section" id="welcome-section">
+      <div class="welcome-text">
+        <h1 id="welcome-name">مرحباً بك في لوحة التحكم!</h1>
+        <p id="welcome-message">إبدأ رحلتك المالية الذكية مع BanqOK. قارن، اختر، ووفر!</p>
+      </div>
+      <img src="./ASSETS/EQO/friendly.png" alt="إيكو المساعد" class="welcome-eko">
+    </section>
+
+    <!-- محفظة النقاط -->
+    <section class="wallet-section">
+      <div class="section-header">
+        <h2 class="section-title"><i class="bi bi-wallet2"></i> محفظة النقاط</h2>
+        <button class="refresh-btn" id="refresh-btn" title="تحديث البيانات">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+      </div>
+      
+      <div class="electronic-wallet">
+        <div class="wallet-header">
+          <div class="wallet-logo">
+            <i class="bi bi-wallet2"></i>
+            <span>محفظة BanqOK</span>
+          </div>
+        </div>
+        <div class="wallet-balance">
+          <div class="balance-label">الرصيد المتاح</div>
+          <div class="balance-value" id="points-balance">0 <span class="currency">نقطة</span></div>
+          <div class="last-update" id="last-update">
+            آخر تحديث: <span id="update-time">الآن</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- شراء النقاط -->
+    <section class="purchase-points">
+      <h3 class="purchase-title">شراء نقاط جديدة</h3>
+      <p style="color: var(--light-text); margin-bottom: 20px;">اختر عدد النقاط التي تريد شراءها وطريقة الدفع المناسبة لك</p>
+      
+      <!-- عروض النقاط من الصفحة الرئيسية -->
+      <div class="points-grid" id="points-grid">
+        <!-- سيتم تعبئته ديناميكياً -->
+      </div>
+      
+      <!-- الشحن الحر -->
+      <div class="custom-charge">
+        <h4 class="custom-charge-title"><i class="bi bi-lightning-charge"></i> الشحن الحر - اختر عدد النقاط الذي تريده</h4>
+        <div class="custom-input-container">
+          <input type="number" id="custom-points-input" min="10" max="1000" step="10" placeholder="أدخل عدد النقاط (مضاعفات 10)">
+          <span class="input-suffix">نقطة</span>
+        </div>
+        
+        <!-- حقل برومو كود -->
+        <div class="promo-code-container">
+          <div class="promo-code-input-container">
+            <input type="text" id="promo-code-input" placeholder="أدخل كود الخصم (إن وجد)">
+            <button id="apply-promo-btn">تطبيق الكود</button>
+          </div>
+          <div id="promo-result" class="promo-result"></div>
+        </div>
+        
+        <div class="custom-calc-result" id="custom-calc-result">
+          <h5>تفاصيل الشحن</h5>
+          <div class="custom-calc-details">
+            <div>
+              <div class="custom-total-points" id="custom-total-points">0 نقطة</div>
+              <div class="custom-point-price" id="custom-point-price">سعر النقطة: 0 ج.م</div>
+            </div>
+            <div class="custom-total-price" id="custom-total-price">0 ج.م</div>
+          </div>
+        </div>
+      </div>
+      
+      <h4 style="margin: 25px 0 15px; color: var(--text-color);">اختر طريقة الدفع:</h4>
+      
+      <div class="payment-methods">
+        <div class="payment-method vodafone" data-method="vodafone">
+          <i class="bi bi-phone-fill payment-icon"></i>
+          <span class="payment-name">فودافون كاش</span>
+        </div>
+        
+        <div class="payment-method orange" data-method="orange">
+          <i class="bi bi-phone payment-icon"></i>
+          <span class="payment-name">اورنج كاش</span>
+        </div>
+        
+        <div class="payment-method fawry" data-method="fawry">
+          <i class="bi bi-shop payment-icon"></i>
+          <span class="payment-name">فوري</span>
+        </div>
+        
+        <div class="payment-method instapay" data-method="instapay">
+          <i class="bi bi-lightning-charge payment-icon"></i>
+          <span class="payment-name">انستا باي</span>
+        </div>
+        
+        <div class="payment-method wepay" data-method="wepay">
+          <i class="bi bi-wallet payment-icon"></i>
+          <span class="payment-name">وي باي</span>
+        </div>
+        
+        <div class="payment-method eand" data-method="eand">
+          <i class="bi bi-cash-coin payment-icon"></i>
+          <span class="payment-name">إي أند كاش</span>
+        </div>
+      </div>
+      
+      <!-- تفاصيل الدفع -->
+      <div class="payment-details" id="payment-details">
+        <h4 id="payment-title">تفاصيل الدفع عبر فودافون كاش</h4>
+        <div class="payment-info">
+          <p id="payment-info-text">الرجاء إرسال المبلغ إلى الرقم التالي:</p>
+          <div style="text-align: center; margin: 20px 0;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--primary-color);" id="payment-phone">0100 000 0000</div>
+            <div style="color: var(--light-text); margin-top: 5px;">أو استخدم كود الدفع السريع</div>
+            <div style="background: #f3f4f6; padding: 15px; border-radius: 10px; margin-top: 10px; font-family: monospace; font-size: 1.2rem; letter-spacing: 2px;" id="payment-qr">*858*01000000000*المبلغ#</div>
+          </div>
+        </div>
+        <h5>خطوات الدفع:</h5>
+        <ul class="payment-steps" id="payment-steps">
+          <!-- سيتم تعبئته بواسطة الجافاسكريبت -->
+        </ul>
+      </div>
+      
+      <button class="purchase-btn" id="purchase-btn" disabled>اختر عدد النقاط وطريقة الدفع أولاً</button>
+    </section>
+
+    <!-- الخدمات المتاحة -->
+    <section class="services-section">
+      <div class="section-header">
+        <h2 class="section-title"><i class="bi bi-briefcase"></i> الخدمات المتاحة</h2>
+        <div style="color: var(--light-text);">استخدم نقاطك للاستفادة من خدماتنا الذكية</div>
+      </div>
+      
+      <div class="services-grid">
+        <div class="service-card loan">
+          <div class="service-icon">
+            <i class="bi bi-cash-stack"></i>
+          </div>
+          <h3 class="service-title">تحليل القروض</h3>
+          <p class="service-description">
+            احصل على تحليل ذكي لأفضل عروض القروض المناسبة لمرتبك ووضعك المالي. نحلل مئات العروض ونرشح لك الأفضل.
+          </p>
+          
+          <div class="cost-calculation">
+            <div class="cost-row">
+              <span>التكلفة:</span>
+              <span id="loan-total-cost">15 نقطة</span>
+            </div>
+          </div>
+          
+          <ul class="service-features">
+            <li><i class="bi bi-check-circle"></i> تحليل شخصي حسب دخلك واحتياجاتك</li>
+            <li><i class="bi bi-check-circle"></i> مقارنة بين أفضل ٣ بنوك</li>
+            <li><i class="bi bi-check-circle"></i> توفير يصل إلى ٣٠٪ من تكلفة القرض</li>
+            <li><i class="bi bi-check-circle"></i> تقرير مفصل مع شرح أسباب الترشيح</li>
+          </ul>
+          <div style="display: flex; align-items: center; gap: 15px; margin-top: 20px;">
+            <span style="color: var(--light-text);">التكلفة: <strong style="color: var(--accent-color);" id="loan-cost-text">15 نقطة</strong></span>
+            <button class="service-btn" id="loan-service-btn">ابدأ التحليل الآن</button>
+          </div>
+        </div>
+        
+        <div class="service-card deposit">
+          <div class="service-icon">
+            <i class="bi bi-piggy-bank"></i>
+          </div>
+          <h3 class="service-title">تحليل الودائع</h3>
+          <p class="service-description">
+            ابحث عن أفضل عائد لوديعتك. نحلل جميع عروض الودائع في البنوك المصرية ونرشح لك الأعلى ربحية وأماناً.
+          </p>
+          
+          <div class="cost-calculation">
+            <div class="cost-row">
+              <span>التكلفة:</span>
+              <span id="deposit-total-cost">25 نقطة</span>
+            </div>
+          </div>
+          
+          <ul class="service-features">
+            <li><i class="bi bi-check-circle"></i> مقارنة أسعار الفائدة في كل البنوك</li>
+            <li><i class="bi bi-check-circle"></i> تحليل المخاطر والعوائد</li>
+            <li><i class="bi bi-check-circle"></i> توقعات بأفضل العوائد المستقبلية</li>
+            <li><i class="bi bi-check-circle"></i> دليل تفصيلي لكيفية التقديم</li>
+          </ul>
+          <div style="display: flex; align-items: center; gap: 15px; margin-top: 20px;">
+            <span style="color: var(--light-text);">التكلفة: <strong style="color: var(--warning-color);" id="deposit-cost-text">25 نقطة</strong></span>
+            <button class="service-btn" id="deposit-service-btn">ابدأ التحليل الآن</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- سجل العمليات -->
+    <section class="transactions-section">
+      <div class="section-header">
+        <h2 class="section-title"><i class="bi bi-clock-history"></i> سجل العمليات</h2>
+        <div style="display: flex; gap: 10px;">
+          <button class="delete-all-btn" id="delete-all-btn">
+            <i class="bi bi-trash"></i>
+            حذف السجل
+          </button>
+          <button class="export-btn" id="export-btn">
+            <i class="bi bi-download"></i>
+            تصدير السجل
+          </button>
+        </div>
+      </div>
+      
+      <div class="transactions-table-container">
+        <table class="transactions-table">
+          <thead>
+            <tr>
+              <th>التاريخ</th>
+              <th>الوصف</th>
+              <th>النوع</th>
+              <th>النقاط</th>
+              <th>الرصيد</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="transactions-body">
+            <!-- يتم تعبئته بواسطة الجافاسكريبت -->
+          </tbody>
+        </table>
+        
+        <div class="no-transactions" id="no-transactions">
+          <i class="bi bi-receipt"></i>
+          <h3>لا توجد عمليات سابقة</h3>
+          <p>عند قيامك بأي عملية شراء أو استخدام للخدمات، ستظهر هنا</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- إيكو المساعد -->
+  <div class="eko-assistant" id="eko-assistant">
+    <div class="eko-tooltip" id="eko-tooltip">
+      أهلاً! أنا إيكو، مساعدك في لوحة التحكم. هساعدك تتابع محفظتك وتستخدم خدماتنا الذكية!
+    </div>
+    <img src="./ASSETS/EQO/TRUST.png" alt="إيكو المساعد" id="eko-image">
+  </div>
+
+  <!-- الفوتر -->
+  <footer class="footer" id="footer">
+    <div class="footer-content">
+      <div class="footer-col footer-col-main">
+        <div class="footer-logo">
+          <img src="./ASSETS/BanqOk.png" alt="BanqOK">
+        </div>
+        
+        <p class="footer-about">
+          BanqOK هو أول موقع في مصر يقارن بين خدمات القروض والودائع في كل البنوك المصرية. نقدم لك كل المعلومات التي تحتاجها لاتخاذ القرار المالي الصحيح.
+        </p>
+        
+        <div class="footer-social">
+          <div class="social-title">تابعنا على</div>
+          <div class="social-icons">
+            <a href="https://facebook.com/banqok" target="_blank" class="footer-social-icon" aria-label="فيسبوك">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="https://instagram.com/banqok" target="_blank" class="footer-social-icon" aria-label="انستجرام">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="https://tiktok.com/@banqok" target="_blank" class="footer-social-icon" aria-label="تيك توك">
+            <i class="bi bi-tiktok"></i>
+          </a>
+          <a href="https://twitter.com/banqok" target="_blank" class="footer-social-icon" aria-label="تويتر">
+            <i class="bi bi-twitter-x"></i>
+          </a>
+          <a href="https://linkedin.com/company/banqok" target="_blank" class="footer-social-icon" aria-label="لينكد إن">
+            <i class="bi bi-linkedin"></i>
+          </a>
+          <a href="https://youtube.com/@banqok" target="_blank" class="footer-social-icon" aria-label="يوتيوب">
+            <i class="bi bi-youtube"></i>
+          </a>
+          <a href="https://wa.me/201000000000" target="_blank" class="footer-social-icon" aria-label="واتساب">
+            <i class="bi bi-whatsapp"></i>
+          </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-col">
+        <h3 class="footer-title"><i class="bi bi-link-45deg"></i> روابط سريعة</h3>
+        <ul class="footer-links">
+          <li><a href="index.html"><i class="bi bi-chevron-left"></i> الصفحة الرئيسية</a></li>
+          <li><a href="dashboard.html"><i class="bi bi-chevron-left"></i> لوحة التحكم</a></li>
+          <li><a href="settings.html"><i class="bi bi-chevron-left"></i> إعدادات الحساب</a></li>
+          <li><a href="loan-analysis.html"><i class="bi bi-chevron-left"></i> تحليل القروض</a></li>
+          <li><a href="deposit-analysis.html"><i class="bi bi-chevron-left"></i> تحليل الودائع</a></li>
+          <li><a href="index.html#points"><i class="bi bi-chevron-left"></i> نظام النقاط</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h3 class="footer-title"><i class="bi bi-question-circle"></i> الدعم والمساعدة</h3>
+        <ul class="footer-links">
+       <li><a href="support.html#faq"><i class="bi bi-chevron-left"></i> الأسئلة الشائعة</a></li>
+        <li><a href="support.html#videos"><i class="bi bi-chevron-left"></i> فيديوهات شرح</a></li>
+        <li><a href="support.html#privacy"><i class="bi bi-chevron-left"></i> سياسة الخصوصية</a></li>
+        <li><a href="support.html#terms"><i class="bi bi-chevron-left"></i> الشروط والأحكام</a></li>
+        <li><a href="support.html#security"><i class="bi bi-chevron-left"></i> نصائح أمان</a></li>
+        <li><a href="support.html#technical"><i class="bi bi-chevron-left"></i> الدعم الفني</a></li>
+        <li><a href="support.html#responsibility"><i class="bi bi-chevron-left"></i> المسؤولية الدينية</a></li>
+        <li><a href="support.html#contact"><i class="bi bi-chevron-left"></i> اتصل بنا</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-col">
+        <h3 class="footer-title"><i class="bi bi-phone"></i> تطبيق BanqOK</h3>
+        <div class="footer-app-buttons">
+          <a href="#" class="app-badge google">
+            <i class="bi bi-google-play"></i>
+            <div class="app-badge-text">
+              <span class="app-badge-label">احصل عليه من</span>
+              <span class="app-badge-name">Google Play</span>
+            </div>
+          </a>
+          <a href="#" class="app-badge apple">
+            <i class="bi bi-apple"></i>
+            <div class="app-badge-text">
+              <span class="app-badge-label">احصل عليه من</span>
+              <span class="app-badge-name">App Store</span>
+            </div>
+          </a>
+          <a href="#" class="app-badge huawei">
+            <i class="bi bi-phone"></i>
+            <div class="app-badge-text">
+              <span class="app-badge-label">احصل عليه من</span>
+              <span class="app-badge-name">AppGallery</span>
+            </div>
+          </a>
+          <a href="#" class="app-badge apk">
+            <i class="bi bi-file-earmark-arrow-down"></i>
+            <div class="app-badge-text">
+              <span class="app-badge-label">تحميل مباشر</span>
+              <span class="app-badge-name">APK</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      
+      <div class="footer-divider"></div>
+      
+      <div class="footer-bottom">
+        <div class="footer-copyright">
+          <div class="copyright-text">
+            <i class="bi bi-c-circle"></i> 2025 BanqOK. جميع الحقوق محفوظة.
+            <span class="separator">|</span>
+            <span>أول موقع مصري لمقارنة البنوك</span>
+          </div>
+          <div class="legal-links">
+            <a href="#">سياسة الخصوصية</a>
+            <span class="dot">•</span>
+            <a href="#">الشروط والأحكام</a>
+            <span class="dot">•</span>
+            <a href="#">خريطة الموقع</a>
+          </div>
+        </div>
+         <div class="footer-credits">
+        <span>تصميم وتطوير <a href="#" style="color: #10b981; text-decoration: none;">فريق BanqOK</a></span>
+        <span class="separator">|</span>
+        <span>الإصدار 2.5.0</span>
+      </div>
+      </div>
+    </div>
+    <div id="footer-particles"></div>
+  </footer>
+  
+<script>
+// ===========================
+// المتغيرات العامة
+// ===========================
+let currentUser = null;
+let transactions = [];
+let notifications = [];
+let lastUpdateTime = new Date();
+let selectedPoints = 0;
+let selectedPrice = 0;
+let selectedBonus = 0;
+let selectedPaymentMethod = '';
+let isCustomCharge = false;
+let activePromoCode = null;
+let promoDiscount = 0;
+let ekoMessageTimeout = null;
+let updateInterval = null;
+let dashboardData = null;
+let currentTheme = null;
+
+// متغيرات قاعدة البيانات
+let db;
+const DB_NAME = 'db-banqok';
+const DB_VERSION = 2;
+const STORE_NAME = 'users';
+
+// ===========================
+// تهيئة قاعدة البيانات
+// ===========================
+function initDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    
+    request.onerror = function(event) {
+      console.error("خطأ في فتح قاعدة البيانات:", event.target.error);
+      reject(event.target.error);
+    };
+    
+    request.onsuccess = function(event) {
+      db = event.target.result;
+      console.log('✅ تم فتح قاعدة البيانات بنجاح');
+      resolve(db);
+    };
+    
+    request.onupgradeneeded = function(event) {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const objectStore = db.createObjectStore(STORE_NAME, { keyPath: 'email' });
+        objectStore.createIndex('firstName', 'firstName', { unique: false });
+        objectStore.createIndex('email', 'email', { unique: true });
+        objectStore.createIndex('nationalId', 'nationalId', { unique: true });
+        objectStore.createIndex('status', 'status', { unique: false });
+        objectStore.createIndex('points', 'points', { unique: false });
+        objectStore.createIndex('isAdmin', 'isAdmin', { unique: false });
+        objectStore.createIndex('registrationDate', 'registrationDate', { unique: false });
+      }
+    };
+  });
+}
+
+// ===========================
+// تحديث بيانات المستخدم في قاعدة البيانات
+// ===========================
+function updateUserInDatabase(userData) {
+  return new Promise((resolve, reject) => {
+    if (!db) {
+      reject("قاعدة البيانات غير متاحة");
+      return;
+    }
+    
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const objectStore = transaction.objectStore(STORE_NAME);
+    const request = objectStore.put(userData);
+    
+    request.onsuccess = function() {
+      console.log('✅ تم تحديث بيانات المستخدم في قاعدة البيانات');
+      window.dispatchEvent(new CustomEvent('userDataUpdated', { 
+        detail: { user: userData, silent: true }
+      }));
+      resolve();
+    };
+    
+    request.onerror = function(event) {
+      console.error('❌ خطأ في تحديث بيانات المستخدم:', event.target.error);
+      reject(event.target.error);
+    };
+  });
+}
+
+// ===========================
+// جلب أحدث بيانات المستخدم من قاعدة البيانات
+// ===========================
+function refreshUserFromDatabase() {
+  return new Promise((resolve, reject) => {
+    if (!db || !currentUser || !currentUser.email) {
+      reject("معلومات المستخدم غير متاحة");
+      return;
+    }
+    
+    const transaction = db.transaction([STORE_NAME], 'readonly');
+    const objectStore = transaction.objectStore(STORE_NAME);
+    const request = objectStore.get(currentUser.email);
+    
+    request.onsuccess = function(event) {
+      const userData = event.target.result;
+      if (userData) {
+        currentUser = { ...currentUser, ...userData };
+        localStorage.setItem('banqok_user', JSON.stringify(currentUser));
+        document.getElementById('points-balance').textContent = currentUser.points || 0;
+        window.dispatchEvent(new CustomEvent('userDataUpdated', { 
+          detail: { user: currentUser, silent: true }
+        }));
+        resolve(userData);
+      } else {
+        reject("المستخدم غير موجود");
+      }
+    };
+    
+    request.onerror = function(event) {
+      console.error('❌ خطأ في جلب بيانات المستخدم:', event.target.error);
+      reject(event.target.error);
+    };
+  });
+}
+
+// ===========================
+// تهيئة الصفحة - تحسين الأداء لتقليل التحميل
+// ===========================
+document.addEventListener('DOMContentLoaded', async function() {
+  try {
+    // 1. تهيئة قاعدة البيانات
+    await initDatabase();
+    
+    // 2. التحقق من تسجيل الدخول
+    checkUserLogin();
+    
+    // 3. إخفاء شاشة التحميل
+    setTimeout(() => {
+      document.getElementById('loading-screen').classList.add('hidden');
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.display = 'none';
+      }, 500);
+    }, 2000);
+    
+    // 4. تحميل بيانات المستخدم من قاعدة البيانات (مرة واحدة)
+    setTimeout(async () => {
+      await loadUserData();
+    }, 100);
+    
+    // 5. إعداد إيكو المساعد
+    setupEkoAssistant();
+    
+    // 6. تحميل عروض النقود
+    setTimeout(() => {
+      loadPointsOffersFromMainPage();
+    }, 300);
+    
+    // 7. إعداد الشحن الحر
+    setupCustomCharge();
+    
+    // 8. إعداد طرق الدفع
+    setTimeout(() => {
+      setupPaymentMethods();
+      createPaymentMethodsGrid();
+    }, 400);
+    
+    // 9. إعداد زر الشراء
+    setupPurchaseButton();
+    
+    // 10. تحميل سجل العمليات
+    setTimeout(loadTransactions, 200);
+    
+    // 11. تحميل الإشعارات
+    loadNotifications();
+    
+    // 12. إعداد أزرار الخدمات
+    setupServiceButtons();
+    
+    // 13. إعداد زر التصدير
+    setupExportButton();
+    
+    // 14. إعداد زر حذف السجل
+    setupDeleteButton();
+    
+    // 15. تحديث النافبار
+    updateNavbar();
+    
+    // 16. إعداد المودال التحذيري
+    setupConfirmModal();
+    
+    // 17. إعداد مودال عدم كفاية الرصيد
+    setupInsufficientPointsModal();
+    
+    // 18. إعداد مودال التفاصيل
+    setupDetailsModal();
+    
+    // 19. إعداد مودال الإشعارات المحسن
+    setupNotificationsModalEnhanced();
+    
+    // 20. إعداد مودال تسجيل الخروج
+    setupLogoutModal();
+    
+    // 21. إعداد زر التحديث
+    setupRefreshButton();
+    
+    // 22. إعداد تحديث الوقت
+    setupTimeUpdate();
+    
+    // 23. إعداد تفاعل إيكو مع العناصر
+    setupEkoInteractions();
+    
+    // 24. تحميل إعدادات لوحة التحكم
+    setTimeout(() => {
+      loadDashboardSettings();
+      console.log('✅ تم تحميل جميع إعدادات لوحة التحكم بنجاح');
+    }, 1000);
+    
+    // 25. إعداد نظام ربط الإعدادات مع التحديث اللحظي (بدون إشعارات)
+    setTimeout(() => {
+      setupSettingsUpdateListener();
+      console.log('🔗 تم إعداد نظام ربط الإعدادات مع لوحة التحكم');
+    }, 1200);
+    
+    // 26. إعداد مستمع للتغييرات في localStorage للتحديث اللحظي (بدون إشعارات)
+    setupLocalStorageListener();
+    
+    // 27. إعداد تحديث دوري للبيانات (كل 60 ثانية)
+    setInterval(async () => {
+      if (currentUser) {
+        await refreshUserFromDatabase();
+        console.log('🔄 تم تحديث البيانات من قاعدة البيانات (دوري)');
+      }
+    }, 60000);
+    
+    // 28. إرسال رسالة ترحيب من إيكو
+    setTimeout(() => {
+      showEkoMessage("أهلاً في لوحة تحكمك! أنا إيكو، هساعدك تتابع محفظتك وتستخدم خدماتنا الذكية!");
+    }, 2500);
+    
+  } catch (error) {
+    console.error('❌ خطأ في تهيئة الصفحة:', error);
+  }
+});
+
+// ===========================
+// مستمع للتغييرات في localStorage للتحديث اللحظي (مع إلغاء الإشعارات)
+// ===========================
+function setupLocalStorageListener() {
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'banqok_user' || e.key === 'banqokDashboardData' || 
+        e.key === `banqok_notifications_${currentUser?.email}` ||
+        e.key === `banqok_transactions_${currentUser?.email}`) {
+      
+      console.log('🔄 تم اكتشاف تغيير في localStorage، جاري التحديث اللحظي...');
+      
+      if (e.key === 'banqok_user' && e.newValue) {
+        try {
+          currentUser = JSON.parse(e.newValue);
+          updateUserDataDisplay();
+          updateUserInDatabase(currentUser);
+        } catch (error) {
+          console.error('خطأ في تحديث بيانات المستخدم:', error);
+        }
+      }
+      
+      if (e.key === 'banqokDashboardData' && e.newValue) {
+        try {
+          dashboardData = JSON.parse(e.newValue);
+          loadDashboardSettings();
+        } catch (error) {
+          console.error('خطأ في تحديث إعدادات الداشبورد:', error);
+        }
+      }
+      
+      if (e.key === `banqok_notifications_${currentUser?.email}`) {
+        loadUserNotifications();
+      }
+      
+      if (e.key === `banqok_transactions_${currentUser?.email}`) {
+        loadUserTransactions();
+      }
+      
+      updateUserDataDisplay();
+    }
+  });
+  
+  window.addEventListener('userDataUpdated', function(event) {
+    if (event.detail && event.detail.user && currentUser && currentUser.email === event.detail.user.email) {
+      console.log('🔄 تم استقبال تحديث من صفحة أخرى:', event.detail.user.email);
+      currentUser = event.detail.user;
+      localStorage.setItem('banqok_user', JSON.stringify(currentUser));
+      updateUserDataDisplay();
+    }
+  });
+  
+  console.log('👂 تم إعداد مستمع للتحديثات اللحظية');
+}
+
+// ===========================
+// 1. التحقق من تسجيل الدخول
+// ===========================
+function checkUserLogin() {
+  const userData = localStorage.getItem('banqok_user');
+  
+  if (!userData) {
+    window.location.href = 'login.html';
+    return;
+  }
+  
+  try {
+    currentUser = JSON.parse(userData);
+    
+    if (currentUser.isAdmin) {
+      window.location.href = 'admin-dashboard.html';
+    }
+  } catch (error) {
+    console.error('خطأ في تحليل بيانات المستخدم:', error);
+    window.location.href = 'login.html';
+  }
+}
+
+// ===========================
+// 2. تحميل بيانات المستخدم - محسنة مع قاعدة البيانات (مرة واحدة)
+// ===========================
+async function loadUserData() {
+  if (!currentUser) {
+    setTimeout(loadUserData, 100);
+    return;
+  }
+  
+  try {
+    await refreshUserFromDatabase();
+    loadDashboardSettings();
+    updateUserProfilePicture();
+    document.getElementById('welcome-name').textContent = `مرحباً ${currentUser.firstName || 'عزيزي'} في لوحة التحكم!`;
+    document.getElementById('points-balance').textContent = currentUser.points || 0;
+    document.getElementById('user-modal-name').textContent = `${currentUser.firstName} ${currentUser.lastName || ''}`;
+    document.getElementById('user-modal-email').textContent = currentUser.email;
+    updateLastUpdateTime();
+    loadUserNotifications();
+    loadUserTransactions();
+    createPaymentMethodsGrid();
+    console.log('✅ تم تحميل بيانات المستخدم بنجاح من قاعدة البيانات');
+  } catch (error) {
+    console.error('❌ خطأ في تحميل بيانات المستخدم:', error);
+    document.getElementById('points-balance').textContent = currentUser.points || 0;
+  }
+}
+
+// ===========================
+// تحديث صورة المستخدم في جميع الأماكن - محسنة
+// ===========================
+function updateUserProfilePicture() {
+  if (!currentUser) return;
+  
+  const profilePicUrl = currentUser.profilePic || './ASSETS/EQO/user.png';
+  
+  const userAvatarBtn = document.getElementById('user-avatar-btn');
+  if (userAvatarBtn) {
+    userAvatarBtn.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = profilePicUrl;
+    img.alt = 'صورة المستخدم';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '50%';
+    userAvatarBtn.appendChild(img);
+  }
+  
+  const userModalAvatar = document.getElementById('user-modal-avatar');
+  if (userModalAvatar) {
+    userModalAvatar.src = profilePicUrl;
+  }
+  
+  localStorage.setItem('banqok_profile_pic_url', profilePicUrl);
+}
+
+function updateLastUpdateTime() {
+  lastUpdateTime = new Date();
+  const dateStr = lastUpdateTime.toLocaleDateString('ar-EG');
+  const timeStr = lastUpdateTime.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('update-time').textContent = `${dateStr} - ${timeStr}`;
+}
+
+// ===========================
+// 3. نظام ربط الإعدادات مع لوحة التحكم (بدون إشعارات مزعجة)
+// ===========================
+function setupSettingsUpdateListener() {
+  window.addEventListener('userDataUpdated', function(event) {
+    if (event.detail && event.detail.user) {
+      console.log('🔄 تم استقبال تحديثات المستخدم من صفحة الإعدادات');
+      currentUser = { ...currentUser, ...event.detail.user };
+      localStorage.setItem('banqok_user', JSON.stringify(currentUser));
+      updateUserInDatabase(currentUser);
+      updateUserDataDisplay();
+      applyThemeToAllElements();
+    }
+  });
+  
+  window.addEventListener('themeUpdated', function(event) {
+    if (event.detail && event.detail.dashboardData) {
+      console.log('🎨 تم استقبال تحديثات السيم من صفحة الإعدادات');
+      localStorage.setItem('banqokDashboardData', JSON.stringify(event.detail.dashboardData));
+      loadDashboardSettings();
+    }
+  });
+  
+  window.addEventListener('profilePictureUpdated', function(event) {
+    if (event.detail && event.detail.profilePicUrl) {
+      console.log('🖼️ تم استقبال تحديثات الصورة الشخصية من صفحة الإعدادات');
+      updateProfilePictureFromEvent(event.detail.profilePicUrl);
+    }
+  });
+}
+
+function updateUserDataDisplay() {
+  if (!currentUser) return;
+  document.getElementById('welcome-name').textContent = `مرحباً ${currentUser.firstName || 'عزيزي'} في لوحة التحكم!`;
+  document.getElementById('points-balance').textContent = currentUser.points || 0;
+  updateUserProfilePicture();
+}
+
+function updateProfilePictureFromEvent(profilePicUrl) {
+  if (!currentUser) return;
+  currentUser.profilePic = profilePicUrl;
+  localStorage.setItem('banqok_user', JSON.stringify(currentUser));
+  updateUserInDatabase(currentUser);
+  updateUserProfilePicture();
+}
+
+// ===========================
+// 4. تحميل إعدادات لوحة التحكم
+// ===========================
+function loadDashboardSettings() {
+  const savedDashboardData = localStorage.getItem('banqokDashboardData');
+  
+  if (savedDashboardData) {
+    try {
+      dashboardData = JSON.parse(savedDashboardData);
+      
+      if (dashboardData.wallet && dashboardData.wallet.themes) {
+        const selectedTheme = dashboardData.wallet.theme || 'default';
+        currentTheme = dashboardData.wallet.themes[selectedTheme] || dashboardData.wallet.themes['default'];
+        
+        if (!currentTheme) {
+          currentTheme = {
+            bgColor: '#10b981',
+            glowColor: '#0d8b63',
+            textColor: '#ffffff',
+            symbols: ['✨', '⭐', '🌟', '💫']
+          };
+        }
+        
+        applyThemeToAllElements();
+      }
+      
+      if (dashboardData.promo && dashboardData.promo.codes) {
+        window.validPromoCodes = {};
+        Object.values(dashboardData.promo.codes).forEach(promo => {
+          if (promo.status === 'active') {
+            const today = new Date();
+            const endDate = new Date(promo.endDate);
+            const isExpired = endDate < today;
+            
+            if (!isExpired) {
+              if (promo.usesType === 'infinite' || (promo.usesType === 'limited' && promo.usedCount < promo.maxUses)) {
+                window.validPromoCodes[promo.code] = {
+                  discount: promo.discount,
+                  description: promo.description
+                };
+              }
+            }
+          }
+        });
+      }
+      
+      if (dashboardData.payment && dashboardData.payment.methods) {
+        const paymentDetails = window.paymentDetails || {};
+        Object.values(dashboardData.payment.methods).forEach(method => {
+          if (method.status === 'active') {
+            paymentDetails[method.id] = {
+              name: method.name,
+              phone: method.account,
+              qr: method.id === 'vodafone' ? '*858*' + method.account + '*المبلغ#' :
+                   method.id === 'orange' ? '*9*' + method.account + '*المبلغ#' :
+                   method.id === 'fawry' ? 'قم بزيارة أقرب فرع فوري' :
+                   method.id === 'instapay' ? 'استخدم تطبيق البنك الخاص بك' :
+                   method.id === 'wepay' ? '*9*16555*المبلغ#' :
+                   '*5*' + method.account + '*المبلغ#',
+              steps: method.instructions ? [
+                'افتح تطبيق ' + method.name + ' على هاتفك',
+                'اختر "إرسال أموال" أو "دفع فاتورة"',
+                'أدخل المعلومات المطلوبة',
+                'أدخل المبلغ المطلوب',
+                'أدخل الرقم السري الخاص بك',
+                'احفظ الإيصال وأرسله لنا عبر البريد الإلكتروني'
+              ] : [
+                'اتبع التعليمات المعتادة لاستخدام ' + method.name,
+                'أدخل المبلغ المطلوب',
+                'احفظ الإيصال وأرسله لنا'
+              ]
+            };
+          }
+        });
+        window.paymentDetails = paymentDetails;
+      }
+      
+      if (dashboardData.services && dashboardData.services.list) {
+        dashboardData.services.list.forEach(service => {
+          if (service.status === 'active') {
+            if (service.id === 'loan') {
+              const loanBtn = document.getElementById('loan-service-btn');
+              const loanCost = document.getElementById('loan-cost-text');
+              const loanTotalCost = document.getElementById('loan-total-cost');
+              
+              if (loanBtn && loanCost && loanTotalCost) {
+                loanCost.textContent = service.cost + ' نقطة';
+                loanTotalCost.textContent = service.cost + ' نقطة';
+                
+                const loanIcon = document.querySelector('.service-card.loan .service-icon i');
+                if (loanIcon) {
+                  loanIcon.className = 'bi ' + service.icon;
+                }
+                
+                const loanCard = document.querySelector('.service-card.loan');
+                if (loanCard && service.color) {
+                  loanCard.style.borderRightColor = service.color;
+                  loanBtn.style.borderColor = service.color;
+                  loanBtn.style.color = service.color;
+                }
+                
+                const loanDescription = document.querySelector('.service-card.loan .service-description');
+                if (loanDescription) {
+                  loanDescription.textContent = service.description;
+                }
+                
+                const loanFeatures = document.querySelector('.service-card.loan .service-features');
+                if (loanFeatures && service.features) {
+                  loanFeatures.innerHTML = '';
+                  service.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="bi bi-check-circle"></i> ${feature}`;
+                    loanFeatures.appendChild(li);
+                  });
+                }
+              }
+            } else if (service.id === 'deposit') {
+              const depositBtn = document.getElementById('deposit-service-btn');
+              const depositCost = document.getElementById('deposit-cost-text');
+              const depositTotalCost = document.getElementById('deposit-total-cost');
+              
+              if (depositBtn && depositCost && depositTotalCost) {
+                depositCost.textContent = service.cost + ' نقطة';
+                depositTotalCost.textContent = service.cost + ' نقطة';
+                
+                const depositIcon = document.querySelector('.service-card.deposit .service-icon i');
+                if (depositIcon) {
+                  depositIcon.className = 'bi ' + service.icon;
+                }
+                
+                const depositCard = document.querySelector('.service-card.deposit');
+                if (depositCard && service.color) {
+                  depositCard.style.borderRightColor = service.color;
+                  depositBtn.style.borderColor = service.color;
+                  depositBtn.style.color = service.color;
+                }
+                
+                const depositDescription = document.querySelector('.service-card.deposit .service-description');
+                if (depositDescription) {
+                  depositDescription.textContent = service.description;
+                }
+                
+                const depositFeatures = document.querySelector('.service-card.deposit .service-features');
+                if (depositFeatures && service.features) {
+                  depositFeatures.innerHTML = '';
+                  service.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="bi bi-check-circle"></i> ${feature}`;
+                    depositFeatures.appendChild(li);
+                  });
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      console.log('✅ تم تحميل إعدادات لوحة التحكم بنجاح');
+      return true;
+    } catch (error) {
+      console.error('❌ خطأ في تحميل إعدادات لوحة التحكم:', error);
+      return false;
+    }
+  }
+  
+  return false;
+}
+
+// ===========================
+// تطبيق السيم على كل العناصر
+// ===========================
+function applyThemeToAllElements() {
+  if (!currentTheme) return;
+  
+  applyThemeToWelcome();
+  applyThemeToWallet();
+  applyThemeToPointsCards();
+  applyThemeToFooter();
+  applyThemeToAllButtons();
+  console.log('🎨 تم تطبيق السيم على كل العناصر والأزرار');
+}
+
+function applyThemeToWelcome() {
+  if (!currentTheme) return;
+  
+  const welcomeSection = document.getElementById('welcome-section');
+  if (!welcomeSection) return;
+  
+  if (currentTheme.bgColor && currentTheme.glowColor) {
+    welcomeSection.style.background = `linear-gradient(135deg, ${currentTheme.bgColor} 0%, ${currentTheme.glowColor} 100%)`;
+    
+    if (currentTheme.backgroundImage) {
+      welcomeSection.style.backgroundImage = `url('${currentTheme.backgroundImage}'), linear-gradient(135deg, ${currentTheme.bgColor} 0%, ${currentTheme.glowColor} 100%)`;
+      welcomeSection.style.backgroundSize = 'cover, cover';
+      welcomeSection.style.backgroundBlendMode = 'overlay';
+    }
+  }
+  
+  if (currentTheme.textColor) {
+    const welcomeText = welcomeSection.querySelector('.welcome-text');
+    if (welcomeText) {
+      welcomeText.style.color = currentTheme.textColor;
+    }
+  }
+  
+  addParticlesToWelcome();
+}
+
+function applyThemeToWallet() {
+  if (!currentTheme) return;
+  
+  const electronicWallet = document.querySelector('.electronic-wallet');
+  if (!electronicWallet) return;
+  
+  if (currentTheme.bgColor && currentTheme.glowColor) {
+    electronicWallet.style.background = `linear-gradient(135deg, ${currentTheme.bgColor} 0%, ${currentTheme.glowColor} 100%)`;
+    
+    if (currentTheme.backgroundImage) {
+      electronicWallet.style.backgroundImage = `url('${currentTheme.backgroundImage}'), linear-gradient(135deg, ${currentTheme.bgColor} 0%, ${currentTheme.glowColor} 100%)`;
+      electronicWallet.style.backgroundSize = 'cover, cover';
+      electronicWallet.style.backgroundBlendMode = 'overlay';
+    }
+  }
+  
+  if (currentTheme.textColor) {
+    const walletElements = electronicWallet.querySelectorAll('*');
+    walletElements.forEach(el => {
+      if (!el.classList.contains('particle')) {
+        el.style.color = currentTheme.textColor;
+      }
+    });
+  }
+  
+  addParticlesToWallet();
+}
+
+function applyThemeToPointsCards() {
+  if (!currentTheme) return;
+  
+  const pointCards = document.querySelectorAll('.point-card');
+  pointCards.forEach(card => {
+    if (currentTheme.cardBgColor) {
+      card.style.backgroundColor = currentTheme.cardBgColor;
+    }
+    
+    if (currentTheme.cardTextColor) {
+      const textElements = card.querySelectorAll('.point-amount, .point-price, .point-details');
+      textElements.forEach(el => {
+        el.style.color = currentTheme.cardTextColor;
+      });
+    }
+    
+    addParticlesToPointCard(card);
+  });
+}
+
+function applyThemeToFooter() {
+  if (!currentTheme) return;
+  
+  const footer = document.getElementById('footer');
+  if (!footer) return;
+  
+  if (currentTheme.bgColor && currentTheme.glowColor) {
+    const footerBgColor = darkenColor(currentTheme.bgColor, 40);
+    const footerGradient = `linear-gradient(135deg, ${footerBgColor} 0%, ${darkenColor(currentTheme.glowColor, 50)} 100%)`;
+    
+    footer.style.background = footerGradient;
+    
+    if (currentTheme.backgroundImage) {
+      footer.style.backgroundImage = `url('${currentTheme.backgroundImage}'), ${footerGradient}`;
+      footer.style.backgroundSize = 'cover, cover';
+      footer.style.backgroundBlendMode = 'overlay';
+    }
+  }
+  
+  addParticlesToFooter();
+  applyThemeToFooterSocialIcons();
+}
+
+function applyThemeToFooterSocialIcons() {
+  const footerIcons = document.querySelectorAll('.footer-social-icon');
+  
+  if (!footerIcons.length) return;
+  
+  const primaryColor = currentTheme.bgColor || '#10b981';
+  const primaryHover = currentTheme.glowColor || '#059669';
+  
+  footerIcons.forEach(icon => {
+    icon.style.transition = 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)';
+    
+    icon.addEventListener('mouseenter', function() {
+      this.style.backgroundColor = primaryColor;
+      this.style.color = 'white';
+      this.style.transform = 'translateY(-6px) scale(1.1)';
+      this.style.boxShadow = `0 10px 25px ${primaryColor}80`;
+    });
+    
+    icon.addEventListener('mouseleave', function() {
+      this.style.backgroundColor = 'rgba(255,255,255,0.08)';
+      this.style.color = '#e2e8f0';
+      this.style.transform = '';
+      this.style.boxShadow = '';
+    });
+  });
+}
+
+function applyThemeToAllButtons() {
+  if (!currentTheme) return;
+  
+  const primaryColor = currentTheme.bgColor || '#10b981';
+  const primaryHover = darkenColor(primaryColor, 10);
+  const lightGreen = lightenColor(primaryColor, 85);
+  
+  document.documentElement.style.setProperty('--primary-color', primaryColor);
+  document.documentElement.style.setProperty('--primary-hover', primaryHover);
+  document.documentElement.style.setProperty('--light-green', lightGreen);
+  
+  const notificationsBtn = document.querySelector('.notifications-nav-btn');
+  if (notificationsBtn) {
+    notificationsBtn.style.borderColor = primaryColor;
+    notificationsBtn.style.color = primaryColor;
+  }
+  
+  const refreshBtn = document.getElementById('refresh-btn');
+  if (refreshBtn) {
+    refreshBtn.style.borderColor = primaryColor;
+    refreshBtn.style.color = primaryColor;
+  }
+  
+  const userAvatarBtn = document.getElementById('user-avatar-btn');
+  if (userAvatarBtn) {
+    userAvatarBtn.style.borderColor = primaryColor;
+  }
+  
+  const serviceBtns = document.querySelectorAll('.service-btn');
+  serviceBtns.forEach(btn => {
+    if (!btn.classList.contains('loan') && !btn.classList.contains('deposit')) {
+      btn.style.borderColor = primaryColor;
+      btn.style.color = primaryColor;
+    }
+  });
+  
+  const exportBtn = document.getElementById('export-btn');
+  if (exportBtn) {
+    exportBtn.style.borderColor = primaryColor;
+    exportBtn.style.color = primaryColor;
+  }
+  
+  const viewBtns = document.querySelectorAll('.view-btn');
+  viewBtns.forEach(btn => {
+    btn.style.borderColor = primaryColor;
+    btn.style.color = primaryColor;
+  });
+  
+  const purchaseBtn = document.getElementById('purchase-btn');
+  if (purchaseBtn) {
+    purchaseBtn.style.borderColor = primaryColor;
+    purchaseBtn.style.color = primaryColor;
+  }
+  
+  const applyPromoBtn = document.getElementById('apply-promo-btn');
+  if (applyPromoBtn) {
+    applyPromoBtn.style.borderColor = primaryColor;
+    applyPromoBtn.style.color = primaryColor;
+  }
+  
+  const confirmBtns = document.querySelectorAll('.modal-btn.confirm');
+  confirmBtns.forEach(btn => {
+    if (!btn.style.backgroundColor.includes('danger')) {
+      btn.style.backgroundColor = primaryColor;
+      btn.style.color = 'white';
+    }
+  });
+  
+  const sectionTitles = document.querySelectorAll('.section-title i');
+  sectionTitles.forEach(icon => {
+    icon.style.color = primaryColor;
+  });
+  
+  const customChargeTitle = document.querySelector('.custom-charge-title i');
+  if (customChargeTitle) {
+    customChargeTitle.style.color = primaryColor;
+  }
+  
+  const inputSuffix = document.querySelector('.input-suffix');
+  if (inputSuffix) {
+    inputSuffix.style.backgroundColor = primaryColor;
+  }
+  
+  const stepNumbers = document.querySelectorAll('.step-number');
+  stepNumbers.forEach(step => {
+    step.style.backgroundColor = primaryColor;
+  });
+}
+
+// ===========================
+// دوال مساعدة للألوان
+// ===========================
+function darkenColor(color, percent) {
+  if (color.startsWith('#')) {
+    let r = parseInt(color.substring(1, 3), 16);
+    let g = parseInt(color.substring(3, 5), 16);
+    let b = parseInt(color.substring(5, 7), 16);
+    
+    r = Math.floor(r * (100 - percent) / 100);
+    g = Math.floor(g * (100 - percent) / 100);
+    b = Math.floor(b * (100 - percent) / 100);
+    
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  }
+  
+  if (color.startsWith('rgb')) {
+    const match = color.match(/\d+/g);
+    if (match) {
+      let r = parseInt(match[0]);
+      let g = parseInt(match[1]);
+      let b = parseInt(match[2]);
+      
+      r = Math.floor(r * (100 - percent) / 100);
+      g = Math.floor(g * (100 - percent) / 100);
+      b = Math.floor(b * (100 - percent) / 100);
+      
+      if (match.length === 4) {
+        return `rgba(${r}, ${g}, ${b}, ${match[3]})`;
+      }
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+  }
+  
+  return color;
+}
+
+function lightenColor(color, percent) {
+  if (color.startsWith('#')) {
+    let r = parseInt(color.substring(1, 3), 16);
+    let g = parseInt(color.substring(3, 5), 16);
+    let b = parseInt(color.substring(5, 7), 16);
+    
+    r = Math.min(255, Math.floor(r + (255 - r) * (percent / 100)));
+    g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)));
+    b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)));
+    
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  }
+  
+  if (color.startsWith('rgb')) {
+    const match = color.match(/\d+/g);
+    if (match) {
+      let r = parseInt(match[0]);
+      let g = parseInt(match[1]);
+      let b = parseInt(match[2]);
+      
+      r = Math.min(255, Math.floor(r + (255 - r) * (percent / 100)));
+      g = Math.min(255, Math.floor(g + (255 - g) * (percent / 100)));
+      b = Math.min(255, Math.floor(b + (255 - b) * (percent / 100)));
+      
+      if (match.length === 4) {
+        return `rgba(${r}, ${g}, ${b}, ${match[3]})`;
+      }
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+  }
+  
+  return color;
+}
+
+// ===========================
+// إضافة البرتكلز
+// ===========================
+function addParticlesToWelcome() {
+  const welcomeSection = document.getElementById('welcome-section');
+  if (!welcomeSection || !currentTheme) return;
+  
+  const existingParticles = welcomeSection.querySelectorAll('.welcome-particle');
+  existingParticles.forEach(p => p.remove());
+  
+  const particleCount = currentTheme.particleCount || 15;
+  const availableParticles = currentTheme.symbols || ['✨', '⭐', '🌟', '💫', '🎉'];
+  const particleColor = currentTheme.textColor || '#ffffff';
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle welcome-particle';
+    
+    const symbol = availableParticles[Math.floor(Math.random() * availableParticles.length)];
+    particle.textContent = symbol;
+    particle.style.color = particleColor;
+    
+    particle.style.position = 'absolute';
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%`;
+    
+    const duration = 18 + Math.random() * 12;
+    const delay = Math.random() * 10;
+    const opacity = 0.15 + Math.random() * 0.15;
+    
+    particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite, particleSparkle ${3 + Math.random() * 4}s ease-in-out ${delay}s infinite`;
+    particle.style.fontSize = `${1.2 + Math.random() * 1.8}rem`;
+    particle.style.zIndex = '0';
+    particle.style.opacity = opacity.toString();
+    
+    welcomeSection.appendChild(particle);
+  }
+}
+
+function addParticlesToWallet() {
+  const electronicWallet = document.querySelector('.electronic-wallet');
+  if (!electronicWallet || !currentTheme) return;
+  
+  const existingParticles = electronicWallet.querySelectorAll('.wallet-particle');
+  existingParticles.forEach(p => p.remove());
+  
+  const particleCount = currentTheme.particleCount ? Math.floor(currentTheme.particleCount * 0.8) : 10;
+  const availableParticles = currentTheme.symbols || ['✨', '⭐', '🌟', '💫', '💰'];
+  const particleColor = currentTheme.textColor || '#ffffff';
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle wallet-particle';
+    
+    const symbol = availableParticles[Math.floor(Math.random() * availableParticles.length)];
+    particle.textContent = symbol;
+    particle.style.color = particleColor;
+    
+    particle.style.position = 'absolute';
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%`;
+    
+    const duration = 15 + Math.random() * 10;
+    const delay = Math.random() * 12;
+    const opacity = 0.2 + Math.random() * 0.15;
+    
+    particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite, particleSparkle ${2.5 + Math.random() * 3}s ease-in-out ${delay}s infinite`;
+    particle.style.fontSize = `${1 + Math.random() * 1.5}rem`;
+    particle.style.zIndex = '0';
+    particle.style.opacity = opacity.toString();
+    
+    electronicWallet.appendChild(particle);
+  }
+}
+
+function addParticlesToPointCard(cardElement) {
+  if (!cardElement || !currentTheme) return;
+  
+  const existingParticles = cardElement.querySelectorAll('.points-particle');
+  existingParticles.forEach(p => p.remove());
+  
+  const particleCount = 5;
+  const availableParticles = currentTheme.symbols || ['✨', '⭐', '🌟', '💫'];
+  const particleColor = currentTheme.textColor || '#10b981';
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle points-particle';
+    
+    const symbol = availableParticles[Math.floor(Math.random() * availableParticles.length)];
+    particle.textContent = symbol;
+    particle.style.color = particleColor;
+    
+    particle.style.position = 'absolute';
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%`;
+    
+    const duration = 12 + Math.random() * 8;
+    const delay = Math.random() * 8;
+    const opacity = 0.25 + Math.random() * 0.15;
+    
+    particle.style.animation = `floatParticle ${duration}s linear ${delay}s infinite, particleOrbit ${20 + Math.random() * 10}s linear ${delay}s infinite`;
+    particle.style.fontSize = `${0.8 + Math.random() * 1}rem`;
+    particle.style.zIndex = '0';
+    particle.style.opacity = opacity.toString();
+    
+    cardElement.appendChild(particle);
+  }
+}
+
+function addParticlesToFooter() {
+  const footer = document.getElementById('footer');
+  if (!footer || !currentTheme) return;
+  
+  const existingParticles = footer.querySelectorAll('.footer-particle');
+  existingParticles.forEach(p => p.remove());
+  
+  const particleCount = currentTheme.particleCount ? Math.floor(currentTheme.particleCount * 0.6) : 8;
+  const availableParticles = currentTheme.symbols || ['✨', '⭐', '🌟', '💫'];
+  const particleColor = currentTheme.textColor || '#ffffff';
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle footer-particle';
+    
+    const symbol = availableParticles[Math.floor(Math.random() * availableParticles.length)];
+    particle.textContent = symbol;
+    particle.style.color = particleColor;
+    
+    particle.style.position = 'absolute';
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${10 + Math.random() * 80}%`;
+    
+    const duration = 25 + Math.random() * 15;
+    const delay = Math.random() * 15;
+    const opacity = 0.1 + Math.random() * 0.15;
+    
+    particle.style.animation = `floatParticleHorizontal ${duration}s linear ${delay}s infinite, particleSparkle ${4 + Math.random() * 3}s ease-in-out ${delay}s infinite`;
+    particle.style.fontSize = `${1 + Math.random() * 1.2}rem`;
+    particle.style.zIndex = '0';
+    particle.style.opacity = opacity.toString();
+    
+    footer.appendChild(particle);
+  }
+}
+
+// ===========================
+// 5. نظام بطاقات النقود
+// ===========================
+function loadPointsOffersFromMainPage() {
+  try {
+    const homeData = localStorage.getItem('banqokHomeData');
+    const pointsGrid = document.getElementById('points-grid');
+    
+    let pointsCards = [
+      { points: "٥٠", label: "نقطة", price: "٤٥ ج.م", popular: false },
+      { points: "١٠٠", label: "نقطة", price: "٨٠ ج.م", popular: true },
+      { points: "١٥٠", label: "نقطة", price: "١٢٠ ج.م", popular: false },
+      { points: "٢٠٠", label: "نقطة", price: "١٥٠ ج.م", popular: false }
+    ];
+    
+    if (homeData) {
+      const parsedData = JSON.parse(homeData);
+      
+      if (parsedData.points && parsedData.points.cards) {
+        pointsCards = parsedData.points.cards;
+      }
+    }
+    
+    pointsGrid.innerHTML = '';
+    
+    pointsCards.forEach((card, index) => {
+      const cardElement = document.createElement('div');
+      cardElement.className = `point-card ${card.popular ? 'popular' : ''}`;
+      
+      const pointsNum = extractNumberFromText(card.points);
+      const priceNum = extractNumberFromText(card.price);
+      
+      cardElement.setAttribute('data-points', pointsNum);
+      cardElement.setAttribute('data-price', priceNum);
+      cardElement.setAttribute('data-bonus', '0');
+      
+      const icon = getPointCardIcon(index, card.popular);
+      const perPointInfo = calculatePerPointInfo(pointsNum, priceNum);
+      const discountInfo = calculateDiscountInfo(pointsNum, priceNum);
+      
+      cardElement.innerHTML = `
+        ${card.popular ? '<div class="popular-badge">الأكثر مبيعاً</div>' : ''}
+        <div class="point-icon">${icon}</div>
+        <div class="point-amount">${card.points || '٠'}</div>
+        <div class="point-price">${card.price || '٠ ج.م'}</div>
+        <div class="point-details">${perPointInfo}</div>
+        ${discountInfo ? `<div class="point-bonus">${discountInfo}</div>` : ''}
+      `;
+      
+      cardElement.addEventListener('click', function() {
+        selectPointCard(this, pointsNum, priceNum);
+      });
+      
+      pointsGrid.appendChild(cardElement);
+    });
+    
+    applyThemeToPointsCards();
+    
+    console.log('تم تحميل عروض النقاط بنجاح');
+    return true;
+  } catch (error) {
+    console.error('خطأ في تحميل عروض النقاط:', error);
+    return false;
+  }
+}
+
+function selectPointCard(cardElement, points, price) {
+  document.querySelectorAll('.point-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  
+  cardElement.classList.add('selected');
+  
+  isCustomCharge = false;
+  document.getElementById('custom-points-input').value = '';
+  document.getElementById('custom-calc-result').classList.remove('show');
+  
+  selectedPoints = parseInt(points) || 0;
+  selectedPrice = parseInt(price) || 0;
+  selectedBonus = 0;
+  
+  applyPromoToSelection();
+  updatePurchaseButton();
+  
+  const isPopular = cardElement.classList.contains('popular');
+  if (isPopular) {
+    showEkoMessage(`إختيار ممتاز! ${selectedPoints} نقطة (الأكثر مبيعاً) بـ ${selectedPrice} جنيه!`);
+  } else {
+    showEkoMessage(`إختيار حلو! ${selectedPoints} نقطة بـ ${selectedPrice} جنيه!`);
+  }
+}
+
+function extractNumberFromText(text) {
+  if (!text) return '0';
+  
+  const arabicToEnglish = {
+    '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4',
+    '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9'
+  };
+  
+  let result = '';
+  const str = text.toString();
+  
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (arabicToEnglish[char]) {
+      result += arabicToEnglish[char];
+    } else if (/\d/.test(char)) {
+      result += char;
+    }
+  }
+  
+  return result || '0';
+}
+
+function calculatePerPointInfo(points, price) {
+  const pointsNum = parseInt(points) || 1;
+  const priceNum = parseInt(price) || 0;
+  
+  if (pointsNum > 0 && priceNum > 0) {
+    const perPoint = (priceNum / pointsNum).toFixed(2);
+    return `(النقطة بـ ${perPoint} ج.م)`;
+  }
+  
+  return '(النقطة بـ ١ ج.م)';
+}
+
+function calculateDiscountInfo(points, price) {
+  const pointsNum = parseInt(points) || 1;
+  const priceNum = parseInt(price) || 0;
+  
+  if (pointsNum > 0 && priceNum > 0) {
+    const regularPrice = pointsNum * 1;
+    const discount = ((regularPrice - priceNum) / regularPrice * 100).toFixed(0);
+    return discount > 0 ? `توفير ${discount}٪` : '';
+  }
+  
+  return '';
+}
+
+function getPointCardIcon(index, isPopular) {
+  if (isPopular) {
+    return '<i class="bi bi-star"></i>';
+  }
+  
+  const icons = [
+    '<i class="bi bi-gift"></i>',
+    '<i class="bi bi-award"></i>',
+    '<i class="bi bi-trophy"></i>',
+    '<i class="bi bi-diamond"></i>'
+  ];
+  
+  return icons[index] || icons[0];
+}
+
+// ===========================
+// 6. نظام الشحن الحر
+// ===========================
+function setupCustomCharge() {
+  const customInput = document.getElementById('custom-points-input');
+  const customCalcResult = document.getElementById('custom-calc-result');
+  
+  customInput.addEventListener('input', function() {
+    const points = parseInt(this.value) || 0;
+    
+    if (points >= 5 && points <= 10000) {
+      const priceInfo = calculateCustomPrice(points);
+      
+      document.getElementById('custom-total-points').textContent = `${points} نقطة`;
+      document.getElementById('custom-point-price').textContent = `سعر النقطة: ${priceInfo.perPoint.toFixed(2)} ج.م`;
+      
+      let finalPrice = priceInfo.price;
+      let finalPriceText = `${finalPrice} ج.م`;
+      
+      if (activePromoCode && promoDiscount > 0) {
+        const promoPrice = finalPrice - (finalPrice * promoDiscount / 100);
+        finalPrice = Math.round(promoPrice);
+        finalPriceText = `<span style="text-decoration: line-through; color: var(--light-text); margin-left: 5px;">${priceInfo.price} ج.م</span> ${finalPrice} ج.م`;
+      }
+      
+      document.getElementById('custom-total-price').innerHTML = finalPriceText;
+      
+      customCalcResult.classList.add('show');
+      
+      document.querySelectorAll('.point-card').forEach(card => card.classList.remove('selected'));
+      
+      isCustomCharge = true;
+      selectedPoints = points;
+      selectedPrice = finalPrice;
+      selectedBonus = 0;
+      
+      updatePurchaseButton();
+      
+      if (priceInfo.discount) {
+        showEkoMessage(`شحن حر رائع! ${points} نقطة بـ ${finalPrice} ج.م!`);
+      }
+    } else {
+      customCalcResult.classList.remove('show');
+      isCustomCharge = false;
+      selectedPoints = 0;
+      selectedPrice = 0;
+      updatePurchaseButton();
+    }
+  });
+  
+  document.getElementById('apply-promo-btn').addEventListener('click', applyPromoCode);
+  document.getElementById('promo-code-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      applyPromoCode();
+    }
+  });
+}
+
+function calculateCustomPrice(points) {
+  let price = 0;
+  let perPoint = 1;
+  let discount = null;
+  
+  if (points > 200) {
+    perPoint = 0.8;
+    discount = '20%';
+  } else {
+    try {
+      const homeData = localStorage.getItem('banqokHomeData');
+      if (homeData) {
+        const parsedData = JSON.parse(homeData);
+        
+        if (parsedData.points && parsedData.points.cards && parsedData.points.cards.length > 0) {
+          const offers = parsedData.points.cards;
+          let bestOffer = null;
+          let bestValue = Infinity;
+          
+          offers.forEach(offer => {
+            const offerPoints = parseInt(extractNumberFromText(offer.points)) || 0;
+            const offerPrice = parseInt(extractNumberFromText(offer.price)) || 0;
+            
+            if (offerPoints > 0 && offerPrice > 0) {
+              const offerPerPoint = offerPrice / offerPoints;
+              
+              if (Math.abs(points - offerPoints) <= 50) {
+                if (offerPerPoint < bestValue) {
+                  bestValue = offerPerPoint;
+                  bestOffer = { offerPoints, offerPrice, offerPerPoint };
+                }
+              }
+            }
+          });
+          
+          if (bestOffer) {
+            perPoint = bestOffer.offerPerPoint;
+            const regularPrice = points * 1;
+            const offerPrice = points * perPoint;
+            const calculatedDiscount = ((regularPrice - offerPrice) / regularPrice * 100).toFixed(0);
+            discount = calculatedDiscount > 0 ? `${calculatedDiscount}%` : null;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('خطأ في حساب سعر الشحن الحر:', error);
+    }
+  }
+  
+  price = Math.round(points * perPoint);
+  
+  return { price, perPoint: parseFloat(perPoint), discount };
+}
+
+// ===========================
+// 7. نظام البرومو كود
+// ===========================
+function applyPromoCode() {
+  const promoInput = document.getElementById('promo-code-input');
+  const promoResult = document.getElementById('promo-result');
+  const promoCode = promoInput.value.trim().toUpperCase();
+  
+  if (!promoCode) {
+    showError('الرجاء إدخال كود الخصم');
+    return;
+  }
+  
+  const validPromoCodes = window.validPromoCodes || {
+    'BANQOK25': { discount: 25, description: 'خصم 25% على أول عملية شراء' },
+    'WELCOME50': { discount: 50, description: 'خصم 50% للعملاء الجدد' }
+  };
+  
+  if (validPromoCodes[promoCode]) {
+    activePromoCode = promoCode;
+    promoDiscount = validPromoCodes[promoCode].discount;
+    
+    promoResult.className = 'promo-result show promo-success';
+    promoResult.innerHTML = `
+      <i class="bi bi-check-circle"></i>
+      <strong>تم تطبيق الكود بنجاح!</strong>
+      <div>${validPromoCodes[promoCode].description}</div>
+      <div>نسبة الخصم: ${promoDiscount}%</div>
+    `;
+    
+    showSuccess(`تم تطبيق كود الخصم "${promoCode}" بنجاح`);
+    
+    applyPromoToSelection();
+    
+  } else {
+    promoResult.className = 'promo-result show promo-error';
+    promoResult.innerHTML = `
+      <i class="bi bi-x-circle"></i>
+      <strong>كود خصم غير صالح!</strong>
+      <div>الرجاء التحقق من الكود وإعادة المحاولة</div>
+    `;
+    
+    showError('كود الخصم غير صالح');
+  }
+}
+
+function applyPromoToSelection() {
+  if (!activePromoCode || promoDiscount === 0) return;
+  
+  if (isCustomCharge) {
+    const points = selectedPoints;
+    const originalPrice = Math.round(points * 0.8);
+    const discountedPrice = originalPrice - (originalPrice * promoDiscount / 100);
+    selectedPrice = Math.round(discountedPrice);
+  } else if (selectedPoints > 0) {
+    const discountedPrice = selectedPrice - (selectedPrice * promoDiscount / 100);
+    selectedPrice = Math.round(discountedPrice);
+  }
+  
+  updatePurchaseButton();
+}
+
+// ===========================
+// 8. إنشاء وسائل الدفع
+// ===========================
+function createPaymentMethodsGrid() {
+  const paymentMethodsContainer = document.querySelector('.payment-methods');
+  if (!paymentMethodsContainer) return;
+  
+  paymentMethodsContainer.innerHTML = '';
+  
+  const paymentMethodsList = window.paymentDetails ? Object.keys(window.paymentDetails) : ['vodafone', 'orange', 'fawry', 'instapay', 'wepay', 'eand'];
+  
+  paymentMethodsList.forEach(methodId => {
+    const method = window.paymentDetails ? window.paymentDetails[methodId] : null;
+    
+    let iconClass = 'bi-phone-fill';
+    let methodName = 'فودافون كاش';
+    let methodColor = '#dc2626';
+    
+    switch(methodId) {
+      case 'vodafone':
+        iconClass = 'bi-phone-fill';
+        methodName = method ? method.name : 'فودافون كاش';
+        methodColor = '#dc2626';
+        break;
+      case 'orange':
+        iconClass = 'bi-phone';
+        methodName = method ? method.name : 'اورنج كاش';
+        methodColor = '#ea580c';
+        break;
+      case 'fawry':
+        iconClass = 'bi-shop';
+        methodName = method ? method.name : 'فوري';
+        methodColor = '#fbbf24';
+        break;
+      case 'instapay':
+        iconClass = 'bi-lightning-charge';
+        methodName = method ? method.name : 'انستا باي';
+        methodColor = '#8b5cf6';
+        break;
+      case 'wepay':
+        iconClass = 'bi-wallet';
+        methodName = method ? method.name : 'وي باي';
+        methodColor = '#10b981';
+        break;
+      case 'eand':
+        iconClass = 'bi-cash-coin';
+        methodName = method ? method.name : 'إي أند كاش';
+        methodColor = '#3b82f6';
+        break;
+    }
+    
+    const methodElement = document.createElement('div');
+    methodElement.className = `payment-method ${methodId}`;
+    methodElement.setAttribute('data-method', methodId);
+    methodElement.setAttribute('data-name', methodName);
+    
+    methodElement.innerHTML = `
+      <i class="bi ${iconClass} payment-icon" style="color: ${methodColor};"></i>
+      <span class="payment-name">${methodName}</span>
+    `;
+    
+    paymentMethodsContainer.appendChild(methodElement);
+  });
+  
+  document.querySelectorAll('.payment-method').forEach(method => {
+    method.addEventListener('click', function() {
+      document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+      this.classList.add('selected');
+      selectedPaymentMethod = this.getAttribute('data-method');
+      showPaymentDetails();
+      updatePurchaseButton();
+      
+      const methodName = this.getAttribute('data-name');
+      showEkoMessage(`طريقة دفع ممتازة! ${methodName} أسهل وأسرع طريقة!`);
+    });
+  });
+  
+  if (selectedPaymentMethod) {
+    const selectedMethod = document.querySelector(`.payment-method[data-method="${selectedPaymentMethod}"]`);
+    if (selectedMethod) {
+      selectedMethod.classList.add('selected');
+      showPaymentDetails();
+    }
+  }
+}
+
+function setupPaymentMethods() {
+  const paymentDetailsDiv = document.getElementById('payment-details');
+  
+  function showPaymentDetails() {
+    if (!selectedPaymentMethod) return;
+    
+    const details = window.paymentDetails ? window.paymentDetails[selectedPaymentMethod] : paymentDetails[selectedPaymentMethod];
+    if (!details) return;
+    
+    document.getElementById('payment-title').textContent = `تفاصيل الدفع عبر ${details.name}`;
+    document.getElementById('payment-info-text').textContent = `الرجاء إرسال المبلغ ${selectedPrice > 0 ? `(${selectedPrice} جنيه)` : ''} إلى:`;
+    document.getElementById('payment-phone').textContent = details.phone;
+    
+    const qrCode = selectedPrice > 0 ? details.qr.replace('المبلغ', selectedPrice) : details.qr;
+    document.getElementById('payment-qr').textContent = qrCode;
+    
+    const stepsList = document.getElementById('payment-steps');
+    stepsList.innerHTML = '';
+    
+    details.steps.forEach((step, index) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<div class="step-number">${index + 1}</div> <span>${step}</span>`;
+      stepsList.appendChild(li);
+    });
+    
+    paymentDetailsDiv.classList.add('active');
+  }
+  
+  window.showPaymentDetails = showPaymentDetails;
+}
+
+const paymentDetails = {
+  'vodafone': {
+    name: 'فودافون كاش',
+    phone: '0100 123 4567',
+    qr: '*858*01001234567*المبلغ#',
+    steps: [
+      'افتح تطبيق فودافون كاش على هاتفك',
+      'اختر "إرسال أموال" أو "دفع فاتورة"',
+      'أدخل المعلومات المطلوبة',
+      'أدخل المبلغ المطلوب',
+      'أدخل الرقم السري الخاص بك',
+      'احفظ الإيصال وأرسله لنا عبر البريد الإلكتروني'
+    ]
+  },
+  'orange': {
+    name: 'اورنج كاش',
+    phone: '0122 456 7890',
+    qr: '*9*01224567890*المبلغ#',
+    steps: [
+      'افتح تطبيق اورنج كاش على هاتفك',
+      'اختر "إرسال أموال" أو "دفع فاتورة"',
+      'أدخل المعلومات المطلوبة',
+      'أدخل المبلغ المطلوب',
+      'أدخل الرقم السري الخاص بك',
+      'احفظ الإيصال وأرسله لنا عبر البريد الإلكتروني'
+    ]
+  },
+  'fawry': {
+    name: 'فوري',
+    phone: '19001',
+    qr: 'قم بزيارة أقرب فرع فوري',
+    steps: [
+      'اذهب إلى أقرب فرع فوري',
+      'قدم رقم المحفظة والمبلغ',
+      'ادفع المبلغ نقداً',
+      'احفظ الإيصال',
+      'أرسل صورة الإيصال لنا'
+    ]
+  },
+  'instapay': {
+    name: 'انستا باي',
+    phone: '123456789',
+    qr: 'استخدم تطبيق البنك الخاص بك',
+    steps: [
+      'افتح تطبيق البنك الخاص بك',
+      'اختر خدمة الانستا باي',
+      'أدخل المعلومات المطلوبة',
+      'أدخل المبلغ المطلوب',
+      'أدخل الرقم السري الخاص بك',
+      'احفظ الإيصال وأرسله لنا'
+    ]
+  },
+  'wepay': {
+    name: 'وي باي',
+    phone: '987654321',
+    qr: '*9*16555*المبلغ#',
+    steps: [
+      'افتح تطبيق وي باي على هاتفك',
+      'اختر "إرسال أموال" أو "دفع فاتورة"',
+      'أدخل المعلومات المطلوبة',
+      'أدخل المبلغ المطلوب',
+      'أدخل الرقم السري الخاص بك',
+      'احفظ الإيصال وأرسله لنا عبر البريد الإلكتروني'
+    ]
+  },
+  'eand': {
+    name: 'إي أند كاش',
+    phone: '555555555',
+    qr: '*5*555555555*المبلغ#',
+    steps: [
+      'افتح تطبيق إي أند كاش على هاتفك',
+      'اختر "إرسال أموال" أو "دفع فاتورة"',
+      'أدخل المعلومات المطلوبة',
+      'أدخل المبلغ المطلوب',
+      'أدخل الرقم السري الخاص بك',
+      'احفظ الإيصال وأرسله لنا عبر البريد الإلكتروني'
+    ]
+  }
+};
+
+// ===========================
+// 9. تحديث زر الشراء
+// ===========================
+function updatePurchaseButton() {
+  const purchaseBtn = document.getElementById('purchase-btn');
+  
+  if ((selectedPoints > 0 || isCustomCharge) && selectedPaymentMethod !== '') {
+    purchaseBtn.disabled = false;
+    
+    if (isCustomCharge) {
+      let priceText = `${selectedPrice} ج.م`;
+      
+      if (activePromoCode && promoDiscount > 0) {
+        const originalPrice = Math.round(selectedPoints * 0.8);
+        priceText = `بعد الخصم ${selectedPrice} ج.م (${promoDiscount}% خصم)`;
+      }
+      
+      purchaseBtn.textContent = `شحن ${selectedPoints} نقطة بـ ${priceText}`;
+    } else {
+      let bonusText = selectedBonus > 0 ? ` + ${selectedBonus} نقطة إضافية` : '';
+      
+      let priceText = `${selectedPrice} ج.م`;
+      if (activePromoCode && promoDiscount > 0) {
+        priceText = `بعد الخصم ${selectedPrice} ج.م (${promoDiscount}% خصم)`;
+      }
+      
+      purchaseBtn.textContent = `شراء ${selectedPoints} نقطة${bonusText} بـ ${priceText}`;
+    }
+  } else {
+    purchaseBtn.disabled = true;
+    if (selectedPoints === 0 && !isCustomCharge) {
+      purchaseBtn.textContent = 'اختر عدد النقاط أولاً';
+    } else if (selectedPaymentMethod === '') {
+      purchaseBtn.textContent = 'اختر طريقة الدفع أولاً';
+    }
+  }
+}
+
+function setupPurchaseButton() {
+  const purchaseBtn = document.getElementById('purchase-btn');
+  
+  purchaseBtn.addEventListener('click', function() {
+    if ((selectedPoints === 0 && !isCustomCharge) || selectedPaymentMethod === '') {
+      showError('الرجاء اختيار عدد النقاط وطريقة الدفع أولاً');
+      return;
+    }
+    
+    showInfo('نظام شراء النقاط قيد التطوير حالياً. سيتم تفعيله قريباً!');
+    showEkoMessage('نظام الشراء دلوقتي قيد التطوير! هيكون جاهز قريباً إن شاء الله!');
+  });
+}
+
+// ===========================
+// 10. تحميل سجل العمليات
+// ===========================
+function loadTransactions() {
+  displayTransactions();
+}
+
+function loadUserTransactions() {
+  if (!currentUser) return;
+  
+  const userTransactionsKey = `banqok_transactions_${currentUser.email}`;
+  const savedTransactions = localStorage.getItem(userTransactionsKey);
+  
+  if (savedTransactions) {
+    try {
+      transactions = JSON.parse(savedTransactions);
+      transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    } catch (error) {
+      console.error('خطأ في تحميل عمليات المستخدم:', error);
+      transactions = [];
+    }
+  } else {
+    transactions = [];
+  }
+  
+  displayTransactions();
+}
+
+function displayTransactions() {
+  const transactionsBody = document.getElementById('transactions-body');
+  const noTransactions = document.getElementById('no-transactions');
+  
+  if (transactions.length === 0) {
+    noTransactions.style.display = 'block';
+    transactionsBody.innerHTML = '';
+    return;
+  }
+  
+  noTransactions.style.display = 'none';
+  transactionsBody.innerHTML = '';
+  
+  transactions.forEach(transaction => {
+    const row = document.createElement('tr');
+    
+    const transactionDate = new Date(transaction.date);
+    const formattedDate = transactionDate.toLocaleDateString('ar-EG');
+    const formattedTime = transactionDate.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    
+    let typeClass = 'credit';
+    let typeText = 'إضافة';
+    
+    if (transaction.type === 'debit') {
+      typeClass = 'debit';
+      typeText = 'استخدام';
+    } else if (transaction.status === 'pending') {
+      typeClass = 'pending';
+      typeText = 'قيد الانتظار';
+    } else if (transaction.status === 'expired') {
+      typeClass = 'expired';
+      typeText = 'منتهية';
+    }
+    
+    row.innerHTML = `
+      <td>${formattedDate}<br><small style="color: var(--light-text);">${formattedTime}</small></td>
+      <td>${transaction.description}</td>
+      <td>
+        <span class="transaction-type ${typeClass}">
+          ${typeText}
+        </span>
+      </td>
+      <td>
+        <span style="font-weight: 600; color: ${transaction.type === 'credit' ? 'var(--primary-color)' : 'var(--danger-color)'}">
+          ${transaction.type === 'credit' ? '+' : '-'}${transaction.points}
+        </span>
+      </td>
+      <td>${transaction.balance}</td>
+      <td class="transaction-actions">
+        <button class="action-btn view-btn" data-id="${transaction.id}" title="عرض التفاصيل">
+          <i class="bi bi-eye"></i>
+        </button>
+        <button class="action-btn delete-btn" data-id="${transaction.id}" title="حذف العملية">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    `;
+    
+    transactionsBody.appendChild(row);
+  });
+  
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const transactionId = parseInt(this.getAttribute('data-id'));
+      viewTransactionDetails(transactionId);
+    });
+  });
+  
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const transactionId = parseInt(this.getAttribute('data-id'));
+      deleteTransaction(transactionId);
+    });
+  });
+}
+
+function viewTransactionDetails(transactionId) {
+  const transaction = transactions.find(t => t.id === transactionId);
+  if (!transaction) return;
+  
+  const transactionDate = new Date(transaction.date);
+  const formattedDate = transactionDate.toLocaleDateString('ar-EG');
+  const formattedTime = transactionDate.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+  
+  document.getElementById('details-title').textContent = transaction.description;
+  
+  const detailsType = document.getElementById('details-type');
+  detailsType.textContent = transaction.type === 'credit' ? 'إضافة' : 'استخدام';
+  detailsType.className = 'transaction-type ' + 
+    (transaction.status === 'pending' ? 'pending' : 
+     transaction.status === 'expired' ? 'expired' :
+     transaction.type === 'credit' ? 'credit' : 'debit');
+  
+  const detailsBody = document.getElementById('details-body');
+  
+  let detailsHTML = `
+    <div class="details-row">
+      <span class="details-label">رقم العملية:</span>
+      <span class="details-value">#${transaction.id}</span>
+    </div>
+    <div class="details-row">
+      <span class="details-label">التاريخ:</span>
+      <span class="details-value">${formattedDate} ${formattedTime}</span>
+    </div>
+    <div class="details-row">
+      <span class="details-label">الوصف:</span>
+      <span class="details-value">${transaction.description}</span>
+    </div>
+    <div class="details-row">
+      <span class="details-label">النقاط:</span>
+      <span class="details-value" style="font-weight: 700; color: ${transaction.type === 'credit' ? 'var(--primary-color)' : 'var(--danger-color)'}">
+        ${transaction.type === 'credit' ? '+' : '-'}${transaction.points} نقطة
+      </span>
+    </div>
+    <div class="details-row">
+      <span class="details-label">الرصيد بعد العملية:</span>
+      <span class="details-value">${transaction.balance} نقطة</span>
+    </div>
+    <div class="details-row">
+      <span class="details-label">الحالة:</span>
+      <span class="details-value">
+        <span class="transaction-type ${transaction.status === 'pending' ? 'pending' : transaction.status === 'expired' ? 'expired' : 'credit'}">
+          ${transaction.status === 'pending' ? 'قيد الانتظار' : transaction.status === 'expired' ? 'منتهية' : 'مكتمل'}
+        </span>
+      </span>
+    </div>
+  `;
+  
+  if (transaction.details) {
+    detailsHTML += `
+      <div class="details-row">
+        <span class="details-label">تفاصيل إضافية:</span>
+        <span class="details-value">${transaction.details}</span>
+      </div>
+    `;
+  }
+  
+  detailsBody.innerHTML = detailsHTML;
+  
+  document.getElementById('details-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function deleteTransaction(transactionId) {
+  const transaction = transactions.find(t => t.id === transactionId);
+  if (!transaction) return;
+  
+  if (!confirm(`هل أنت متأكد من حذف عملية "${transaction.description}"؟`)) {
+    return;
+  }
+  
+  transactions = transactions.filter(t => t.id !== transactionId);
+  
+  const userTransactionsKey = `banqok_transactions_${currentUser.email}`;
+  localStorage.setItem(userTransactionsKey, JSON.stringify(transactions));
+  
+  displayTransactions();
+  
+  showSuccess('تم حذف العملية بنجاح');
+  showEkoMessage('تم حذف العملية من سجلك!');
+}
+
+// ===========================
+// 11. تحميل الإشعارات
+// ===========================
+function loadNotifications() {
+  updateNotificationsBadge();
+}
+
+function loadUserNotifications() {
+  if (!currentUser) return;
+  
+  const userNotificationsKey = `banqok_notifications_${currentUser.email}`;
+  const savedNotifications = localStorage.getItem(userNotificationsKey);
+  
+  if (savedNotifications) {
+    try {
+      notifications = JSON.parse(savedNotifications);
+      notifications.sort((a, b) => new Date(b.date) - new Date(a.date));
+    } catch (error) {
+      console.error('خطأ في تحميل إشعارات المستخدم:', error);
+      notifications = [];
+    }
+  } else {
+    notifications = [];
+  }
+  
+  updateNotificationsBadge();
+  
+  if (document.getElementById('notifications-modal').classList.contains('active')) {
+    displayNotificationsEnhanced();
+  }
+}
+
+function updateNotificationsBadge() {
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const badgeElement = document.querySelector('.notifications-badge');
+  
+  if (badgeElement) {
+    badgeElement.textContent = unreadCount;
+    if (unreadCount === 0) {
+      badgeElement.style.display = 'none';
+    } else {
+      badgeElement.style.display = 'flex';
+    }
+  }
+}
+
+// ===========================
+// مودال الإشعارات المحسن
+// ===========================
+function setupNotificationsModalEnhanced() {
+  const notificationsBtn = document.getElementById('notifications-btn');
+  const notificationsClose = document.getElementById('notifications-close');
+  const notificationsModal = document.getElementById('notifications-modal');
+  const deleteAllBtn = document.getElementById('delete-all-notifications-btn');
+  
+  notificationsBtn.addEventListener('click', function() {
+    notificationsModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    displayNotificationsEnhanced();
+  });
+  
+  notificationsClose.addEventListener('click', closeNotificationsModalEnhanced);
+  
+  notificationsModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeNotificationsModalEnhanced();
+    }
+  });
+  
+  deleteAllBtn.addEventListener('click', function() {
+    const deleteAllModal = document.getElementById('delete-all-notifications-modal');
+    deleteAllModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+  
+  setupDeleteAllNotificationsModal();
+}
+
+function closeNotificationsModalEnhanced() {
+  document.getElementById('notifications-modal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+function displayNotificationsEnhanced() {
+  const notificationsList = document.getElementById('notifications-list');
+  
+  if (notifications.length === 0) {
+    notificationsList.innerHTML = `
+      <div class="no-notifications">
+        <i class="bi bi-bell-slash"></i>
+        <h4>لا توجد إشعارات</h4>
+        <p style="color: var(--light-text);">عند وصول إشعارات جديدة، ستظهر هنا</p>
+      </div>
+    `;
+    return;
+  }
+  
+  notificationsList.innerHTML = '';
+  
+  notifications.forEach(notification => {
+    const notificationElement = document.createElement('div');
+    notificationElement.className = `notification-item ${notification.read ? 'read' : 'unread'}`;
+    notificationElement.setAttribute('data-id', notification.id);
+    
+    const notificationDate = new Date(notification.date);
+    const formattedDate = notificationDate.toLocaleDateString('ar-EG');
+    const formattedTime = notificationDate.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    
+    let iconClass = 'bi-info-circle';
+    if (notification.type === 'success') iconClass = 'bi-check-circle';
+    else if (notification.type === 'error') iconClass = 'bi-exclamation-circle';
+    else if (notification.type === 'warning') iconClass = 'bi-exclamation-triangle';
+    
+    notificationElement.innerHTML = `
+      <div class="notification-content">
+        <div class="notification-title">
+          <i class="bi ${iconClass}"></i>
+          ${notification.title}
+        </div>
+        <div class="notification-message">${notification.message}</div>
+        <div class="notification-time">
+          <i class="bi bi-clock"></i>
+          ${formattedDate} - ${formattedTime}
+        </div>
+      </div>
+      <button class="delete-notification-btn" data-id="${notification.id}" title="حذف الإشعار">
+        <i class="bi bi-trash"></i>
+      </button>
+    `;
+    
+    notificationElement.addEventListener('click', function(e) {
+      if (!e.target.closest('.delete-notification-btn')) {
+        markNotificationAsRead(notification.id);
+      }
+    });
+    
+    notificationsList.appendChild(notificationElement);
+  });
+  
+  document.querySelectorAll('.delete-notification-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const notificationId = parseInt(this.getAttribute('data-id'));
+      deleteNotification(notificationId);
+    });
+  });
+}
+
+function deleteNotification(notificationId) {
+  notifications = notifications.filter(n => n.id !== notificationId);
+  
+  const userNotificationsKey = `banqok_notifications_${currentUser.email}`;
+  localStorage.setItem(userNotificationsKey, JSON.stringify(notifications));
+  
+  updateNotificationsBadge();
+  displayNotificationsEnhanced();
+  
+  showSuccess('تم حذف الإشعار بنجاح');
+}
+
+function setupDeleteAllNotificationsModal() {
+  const deleteAllModal = document.getElementById('delete-all-notifications-modal');
+  const cancelBtn = document.getElementById('delete-all-notifications-cancel');
+  const confirmBtn = document.getElementById('delete-all-notifications-confirm');
+  
+  cancelBtn.addEventListener('click', function() {
+    deleteAllModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+  
+  confirmBtn.addEventListener('click', function() {
+    notifications = [];
+    
+    const userNotificationsKey = `banqok_notifications_${currentUser.email}`;
+    localStorage.setItem(userNotificationsKey, JSON.stringify(notifications));
+    
+    updateNotificationsBadge();
+    displayNotificationsEnhanced();
+    
+    deleteAllModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    
+    showSuccess('تم حذف جميع الإشعارات بنجاح');
+    showEkoMessage('تم مسح كل الإشعارات! دلوقتي تقدر تبدأ من جديد!');
+  });
+  
+  deleteAllModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      deleteAllModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+}
+
+function markNotificationAsRead(id) {
+  const notificationIndex = notifications.findIndex(n => n.id === id);
+  
+  if (notificationIndex !== -1) {
+    notifications[notificationIndex].read = true;
+    
+    const userNotificationsKey = `banqok_notifications_${currentUser.email}`;
+    localStorage.setItem(userNotificationsKey, JSON.stringify(notifications));
+    
+    updateNotificationsBadge();
+    displayNotificationsEnhanced();
+  }
+}
+
+// ===========================
+// 12. إعداد أزرار الخدمات - التوجيه المباشر
+// ===========================
+function setupServiceButtons() {
+  const loanServiceBtn = document.getElementById('loan-service-btn');
+  const depositServiceBtn = document.getElementById('deposit-service-btn');
+  
+  loanServiceBtn.addEventListener('click', function() {
+    showEkoMessage("هنتحول لصفحة تحليل القروض دلوقتي!");
+    window.location.href = 'loan-analysis.html';
+  });
+  
+  depositServiceBtn.addEventListener('click', function() {
+    showEkoMessage("هنتحول لصفحة تحليل الودائع دلوقتي!");
+    window.location.href = 'deposit-analysis.html';
+  });
+}
+
+// ===========================
+// 13. إعداد زر التصدير
+// ===========================
+function setupExportButton() {
+  const exportBtn = document.getElementById('export-btn');
+  
+  exportBtn.addEventListener('click', function() {
+    exportTransactions();
+  });
+}
+
+function exportTransactions() {
+  if (transactions.length === 0) {
+    showError('لا توجد عمليات لتصديرها');
+    return;
+  }
+  
+  let reportContent = `
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>سجل عمليات BanqOK</title>
+      <style>
+        body {
+          font-family: 'Cairo', sans-serif;
+          line-height: 1.6;
+          color: #333;
+          padding: 20px;
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+          border-bottom: 3px solid #10b981;
+          padding-bottom: 20px;
+        }
+        .header img {
+          height: 60px;
+          margin-bottom: 10px;
+        }
+        .header h1 {
+          color: #10b981;
+          margin: 0;
+        }
+        .user-info {
+          background: #f9fafb;
+          padding: 15px;
+          border-radius: 10px;
+          margin-bottom: 20px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 10px;
+          text-align: right;
+        }
+        th {
+          background-color: #f3f4f6;
+          font-weight: 700;
+        }
+        .credit {
+          color: #10b981;
+        }
+        .debit {
+          color: #ef4444;
+        }
+        .pending {
+          color: #8b5cf6;
+        }
+        .summary {
+          background: #f0fdf4;
+          padding: 20px;
+          border-radius: 10px;
+          margin-top: 30px;
+          border-right: 5px solid #10b981;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 1px solid #e5e7eb;
+          color: #6b7280;
+          font-size: 0.9rem;
+        }
+        @media print {
+          body {
+            padding: 0;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <img src="./ASSETS/BanqOk.png" alt="BanqOK">
+        <h1>سجل عمليات BanqOK</h1>
+        <p>${new Date().toLocaleDateString('ar-EG')} ${new Date().toLocaleTimeString('ar-EG')}</p>
+      </div>
+      
+      <div class="user-info">
+        <p><strong>اسم المستخدم:</strong> ${currentUser.firstName} ${currentUser.lastName || ''}</p>
+        <p><strong>البريد الإلكتروني:</strong> ${currentUser.email}</p>
+        <p><strong>آخر تحديث:</strong> ${lastUpdateTime.toLocaleDateString('ar-EG')} ${lastUpdateTime.toLocaleTimeString('ar-EG')}</p>
+      </div>
+      
+      <h2>العمليات</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>التاريخ</th>
+            <th>الوصف</th>
+            <th>النوع</th>
+            <th>النقاط</th>
+            <th>الرصيد</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  sortedTransactions.forEach(transaction => {
+    const transactionDate = new Date(transaction.date);
+    const formattedDate = transactionDate.toLocaleDateString('ar-EG');
+    const formattedTime = transactionDate.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    
+    const typeClass = transaction.status === 'pending' ? 'pending' : 
+                     transaction.status === 'expired' ? 'expired' :
+                     transaction.type === 'credit' ? 'credit' : 'debit';
+    const typeText = transaction.status === 'pending' ? 'قيد الانتظار' :
+                    transaction.status === 'expired' ? 'منتهية' :
+                    transaction.type === 'credit' ? 'إضافة' : 'استخدام';
+    
+    reportContent += `
+      <tr>
+        <td>${formattedDate} ${formattedTime}</td>
+        <td>${transaction.description}</td>
+        <td class="${typeClass}">${typeText}</td>
+        <td class="${typeClass}">${transaction.type === 'credit' ? '+' : '-'}${transaction.points}</td>
+        <td>${transaction.balance}</td>
+        <td>${transaction.status === 'pending' ? 'قيد الانتظار' : transaction.status === 'expired' ? 'منتهية' : 'مكتمل'}</td>
+      </tr>
+    `;
+  });
+  
+  const totalCredits = transactions.filter(t => t.type === 'credit' && t.status === 'completed')
+    .reduce((sum, t) => sum + t.points, 0);
+  const totalDebits = transactions.filter(t => t.type === 'debit')
+    .reduce((sum, t) => sum + t.points, 0);
+  
+  reportContent += `
+        </tbody>
+      </table>
+      
+      <div class="summary">
+        <h3>ملخص السجل</h3>
+        <p><strong>إجمالي النقاط المضافة:</strong> +${totalCredits} نقطة</p>
+        <p><strong>إجمالي النقاط المستخدمة:</strong> -${totalDebits} نقطة</p>
+        <p><strong>الرصيد الحالي:</strong> ${currentUser.points || 0} نقطة</p>
+        <p><strong>إجمالي العمليات:</strong> ${transactions.length} عملية</p>
+      </div>
+      
+      <div class="footer">
+        <p>© 2025 BanqOK. جميع الحقوق محفوظة.</p>
+        <p>هذا التقرير تم إنشاؤه تلقائياً من خلال نظام BanqOK</p>
+        <p>رقم المرجع: BANQOK-REPORT-${new Date().getTime()}</p>
+      </div>
+    </body>
+    </html>
+  `;
+  
+  const reportWindow = window.open('', '_blank');
+  reportWindow.document.write(reportContent);
+  reportWindow.document.close();
+  
+  setTimeout(() => {
+    reportWindow.print();
+  }, 500);
+  
+  showSuccess('تم تصدير سجل العمليات بنجاح');
+  showEkoMessage("سجل عملياتك اتنزل! خليه عندك علشان تتابع مصروفاتك!");
+}
+
+// ===========================
+// 14. إعداد زر حذف السجل
+// ===========================
+function setupDeleteButton() {
+  const deleteBtn = document.getElementById('delete-all-btn');
+  const deleteCancelBtn = document.getElementById('delete-cancel');
+  const deleteConfirmBtn = document.getElementById('delete-confirm');
+  const deleteModal = document.getElementById('delete-confirm-modal');
+  
+  deleteBtn.addEventListener('click', function() {
+    if (transactions.length === 0) {
+      showError('لا توجد عمليات لحذفها');
+      return;
+    }
+    
+    deleteModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+  
+  deleteCancelBtn.addEventListener('click', function() {
+    deleteModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+  
+  deleteConfirmBtn.addEventListener('click', function() {
+    transactions = [];
+    
+    const userTransactionsKey = `banqok_transactions_${currentUser.email}`;
+    localStorage.setItem(userTransactionsKey, JSON.stringify(transactions));
+    
+    displayTransactions();
+    
+    deleteModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    
+    showSuccess('تم حذف سجل العمليات بالكامل بنجاح');
+    showEkoMessage("تم مسح سجل عملياتك! يمكنك البدء من جديد!");
+  });
+  
+  deleteModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      deleteModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+}
+
+// ===========================
+// 15. تحديث النافبار - محسنة
+// ===========================
+function updateNavbar() {
+  const navActions = document.getElementById('nav-actions');
+  
+  if (!navActions) return;
+  
+  navActions.innerHTML = '';
+  
+  const notificationsBtn = document.createElement('button');
+  notificationsBtn.className = 'notifications-nav-btn';
+  notificationsBtn.id = 'notifications-btn';
+  notificationsBtn.innerHTML = `
+    <i class="bi bi-bell"></i>
+    <span class="nav-btn-text">الإشعارات</span>
+    <span class="notifications-badge" style="display: none;">0</span>
+  `;
+  navActions.appendChild(notificationsBtn);
+  
+  const userAvatarBtn = document.createElement('button');
+  userAvatarBtn.className = 'user-avatar-btn';
+  userAvatarBtn.id = 'user-avatar-btn';
+  
+  const avatarSrc = currentUser?.profilePic || './ASSETS/EQO/user.png';
+  const avatarImg = document.createElement('img');
+  avatarImg.src = avatarSrc;
+  avatarImg.alt = 'صورة المستخدم';
+  avatarImg.style.width = '100%';
+  avatarImg.style.height = '100%';
+  avatarImg.style.objectFit = 'cover';
+  avatarImg.style.borderRadius = '50%';
+  
+  userAvatarBtn.appendChild(avatarImg);
+  navActions.appendChild(userAvatarBtn);
+  
+  updateNotificationsBadge();
+  
+  notificationsBtn.addEventListener('click', openNotificationsModalEnhanced);
+  userAvatarBtn.addEventListener('click', openUserModal);
+  
+  applyThemeToNavbarButtons();
+}
+
+function openNotificationsModalEnhanced() {
+  document.getElementById('notifications-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  displayNotificationsEnhanced();
+}
+
+function applyThemeToNavbarButtons() {
+  if (!currentTheme) return;
+  
+  const primaryColor = currentTheme.bgColor || '#10b981';
+  
+  const notificationsBtn = document.querySelector('.notifications-nav-btn');
+  if (notificationsBtn) {
+    notificationsBtn.style.borderColor = primaryColor;
+    notificationsBtn.style.color = primaryColor;
+  }
+  
+  const userAvatarBtn = document.getElementById('user-avatar-btn');
+  if (userAvatarBtn) {
+    userAvatarBtn.style.borderColor = primaryColor;
+  }
+}
+
+// ===========================
+// مودال المستخدم
+// ===========================
+function openUserModal() {
+  const userModalAvatar = document.getElementById('user-modal-avatar');
+  const avatarSrc = currentUser?.profilePic || './ASSETS/EQO/user.png';
+  if (userModalAvatar) {
+    userModalAvatar.src = avatarSrc;
+  }
+  
+  document.getElementById('user-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeUserModal() {
+  document.getElementById('user-modal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+document.getElementById('user-modal-close').addEventListener('click', closeUserModal);
+document.getElementById('user-modal-logout').addEventListener('click', logoutUser);
+
+document.getElementById('user-modal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeUserModal();
+  }
+});
+
+// ===========================
+// 16. إعداد المودال التحذيري
+// ===========================
+function setupConfirmModal() {
+  const confirmCancelBtn = document.getElementById('confirm-cancel');
+  const confirmOkBtn = document.getElementById('confirm-ok');
+  
+  confirmCancelBtn.addEventListener('click', closeConfirmModal);
+  confirmOkBtn.addEventListener('click', processPurchase);
+  
+  document.getElementById('confirm-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeConfirmModal();
+    }
+  });
+}
+
+function showConfirmPurchaseModal() {
+  const modal = document.getElementById('confirm-modal');
+  const confirmPoints = document.getElementById('confirm-points');
+  const confirmPrice = document.getElementById('confirm-price');
+  
+  let pointsText = selectedPoints.toString();
+  if (selectedBonus > 0) {
+    pointsText += ` + ${selectedBonus} (إضافية)`;
+  }
+  
+  confirmPoints.textContent = pointsText;
+  confirmPrice.textContent = selectedPrice;
+  
+  const confirmTitle = document.getElementById('confirm-title');
+  if (isCustomCharge) {
+    confirmTitle.textContent = 'تأكيد عملية الشحن الحر';
+  } else {
+    confirmTitle.textContent = 'تأكيد عملية الشراء';
+  }
+  
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeConfirmModal() {
+  const modal = document.getElementById('confirm-modal');
+  modal.classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+function processPurchase() {
+  showInfo('نظام شراء النقاط قيد التطوير حالياً. سيتم تفعيله قريباً!');
+  closeConfirmModal();
+  return;
+}
+
+// ===========================
+// 17. إعداد مودال عدم كفاية الرصيد
+// ===========================
+function setupInsufficientPointsModal() {
+  const insufficientCancelBtn = document.getElementById('insufficient-cancel');
+  const insufficientBuyBtn = document.getElementById('insufficient-buy');
+  const insufficientModal = document.getElementById('insufficient-points-modal');
+  
+  insufficientCancelBtn.addEventListener('click', function() {
+    insufficientModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+  
+  insufficientBuyBtn.addEventListener('click', function() {
+    insufficientModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    
+    document.querySelector('.purchase-points').scrollIntoView({ behavior: 'smooth' });
+    
+    const hundredPointsCard = document.querySelector('.point-card[data-points="100"]');
+    if (hundredPointsCard) {
+      hundredPointsCard.click();
+    }
+    
+    showEkoMessage("إشتري نقاط زيادة علشان تقدر تستخدم الخدمة! عبوة 100 نقطة أحلى اختيار!");
+  });
+  
+  insufficientModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      insufficientModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+}
+
+function showInsufficientPointsModal(requiredPoints, serviceName) {
+  const insufficientModal = document.getElementById('insufficient-points-modal');
+  const insufficientMessage = document.getElementById('insufficient-message');
+  
+  insufficientMessage.textContent = `نقاطك غير كافية! تحتاج ${requiredPoints} نقاط لاستخدام خدمة ${serviceName}.`;
+  
+  insufficientModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// ===========================
+// 18. إعداد مودال التفاصيل
+// ===========================
+function setupDetailsModal() {
+  const detailsClose = document.getElementById('details-close');
+  const detailsModal = document.getElementById('details-modal');
+  
+  detailsClose.addEventListener('click', closeDetailsModal);
+  
+  detailsModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeDetailsModal();
+    }
+  });
+}
+
+function closeDetailsModal() {
+  document.getElementById('details-modal').classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+// ===========================
+// 19. إعداد مودال تسجيل الخروج
+// ===========================
+function setupLogoutModal() {
+  const logoutCancelBtn = document.getElementById('logout-cancel');
+  const logoutConfirmBtn = document.getElementById('logout-confirm');
+  const logoutModal = document.getElementById('logout-confirm-modal');
+  
+  logoutCancelBtn.addEventListener('click', function() {
+    logoutModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  });
+  
+  logoutConfirmBtn.addEventListener('click', function() {
+    localStorage.removeItem('banqok_user');
+    window.location.href = 'index.html';
+  });
+  
+  logoutModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      logoutModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+  });
+}
+
+function logoutUser(e) {
+  e.preventDefault();
+  closeUserModal();
+  document.getElementById('logout-confirm-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+// ===========================
+// 20. إعداد زر التحديث
+// ===========================
+function setupRefreshButton() {
+  const refreshBtn = document.getElementById('refresh-btn');
+  
+  refreshBtn.addEventListener('click', async function() {
+    this.classList.add('spinning');
+    await refreshData();
+    
+    setTimeout(() => {
+      this.classList.remove('spinning');
+    }, 1000);
+  });
+}
+
+async function refreshData() {
+  await loadUserData();
+  loadUserNotifications();
+  loadUserTransactions();
+  updateLastUpdateTime();
+  loadPointsOffersFromMainPage();
+  createPaymentMethodsGrid();
+  
+  showSuccess('تم تحديث البيانات بنجاح');
+  showEkoMessage('تم تحديث كل بياناتك! كل حاجة مظبوطة!');
+}
+
+// ===========================
+// 21. إعداد تحديث الوقت
+// ===========================
+function setupTimeUpdate() {
+  setInterval(updateLastUpdateTime, 60000);
+}
+
+// ===========================
+// 22. إعداد إيكو المساعد
+// ===========================
+function setupEkoAssistant() {
+  const ekoAssistant = document.getElementById('eko-assistant');
+  const ekoTooltip = document.getElementById('eko-tooltip');
+  const ekoImage = document.getElementById('eko-image');
+  
+  const ekoMessagesList = window.ekoMessages || [
+    "أهلاً في لوحة تحكمك! أنا إيكو، موجود علشان أساعدك في رحلتك المالية!",
+    "محفظتك فيها <span id='eko-points'>0</span> نقطة! تقدر تستخدمها في تحليل القروض أو الودائع!",
+    "عندك عرض خاص! أول عملية شراء هتاخد ١٠٪ نقاط إضافية!",
+    "محتاج قرض؟ خدمة تحليل القروض بتاعتنا هتدلك على أفضل عرض!",
+    "عايز تودع فلوسك؟ خدمة الودائع هتدلك على أعلى فايدة!",
+    "خلي بالك! كل عملية استخدام للخدمات تكون حسب المبلغ!",
+    "لو محتاج مساعدة في أي حاجة، إضغط عليا وأنا حاضر!"
+  ];
+  
+  if (dashboardData?.eko?.images?.assistant) {
+    ekoImage.src = dashboardData.eko.images.assistant;
+  }
+  
+  setTimeout(() => {
+    ekoTooltip.innerHTML = ekoMessagesList[0];
+    ekoAssistant.classList.add('active');
+    
+    setTimeout(() => {
+      ekoAssistant.classList.remove('active');
+    }, 6000);
+  }, 3000);
+  
+  const ekoInterval = setInterval(() => {
+    const randomMessage = ekoMessagesList[Math.floor(Math.random() * ekoMessagesList.length)];
+    
+    if (randomMessage) {
+      ekoTooltip.innerHTML = randomMessage;
+      ekoAssistant.classList.add('active');
+      
+      setTimeout(() => {
+        ekoAssistant.classList.remove('active');
+      }, 8000);
+    }
+  }, 25000);
+  
+  ekoAssistant.addEventListener('click', function() {
+    const randomMessage = ekoMessagesList[Math.floor(Math.random() * ekoMessagesList.length)];
+    
+    ekoTooltip.innerHTML = randomMessage;
+    ekoAssistant.classList.add('active');
+    
+    ekoImage.style.animation = 'pulse 0.5s ease-in-out';
+    setTimeout(() => {
+      ekoImage.style.animation = 'float 4s ease-in-out infinite';
+    }, 500);
+    
+    setTimeout(() => {
+      ekoAssistant.classList.remove('active');
+    }, 8000);
+  });
+  
+  ekoAssistant.addEventListener('mouseenter', function() {
+    ekoImage.style.animation = 'pulse 1s ease-in-out infinite';
+  });
+  
+  ekoAssistant.addEventListener('mouseleave', function() {
+    ekoImage.style.animation = 'float 4s ease-in-out infinite';
+  });
+  
+  window.ekoInterval = ekoInterval;
+}
+
+// ===========================
+// إعداد تفاعل إيكو مع العناصر
+// ===========================
+function setupEkoInteractions() {
+  const ekoInteractions = {
+    'points-balance': 'هذا هو رصيد نقاطك الحالي. يمكنك استخدامه لشراء خدماتنا الذكية!',
+    'custom-points-input': 'أدخل هنا عدد النقاط التي تريد شراءها. يمكنك إدخال أي عدد من مضاعفات العشرة!',
+    'loan-service-btn': 'انقر هنا للذهاب إلى صفحة تحليل القروض. هتقدر تحصل على أفضل عروض القروض المناسبة لك!',
+    'deposit-service-btn': 'انقر هنا للذهاب إلى صفحة تحليل الودائع. هتلاقي أعلى عائد لمدخراتك!',
+    'refresh-btn': 'انقر هنا لتحديث جميع بياناتك الحالية!',
+    'export-btn': 'انقر هنا لتصدير سجل عملياتك كملف PDF!',
+    'delete-all-btn': 'انقر هنا لحذف سجل عملياتك بالكامل. كن حذراً، هذا الإجراء لا يمكن التراجع عنه!',
+    'purchase-btn': 'انقر هنا لتأكيد عملية شراء النقاط بعد اختيار العدد وطريقة الدفع!',
+    'user-avatar-btn': 'انقر هنا لعرض معلومات حسابك والخيارات الأخرى!'
+  };
+  
+  Object.keys(ekoInteractions).forEach(elementId => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.addEventListener('mouseenter', function() {
+        showEkoMessage(ekoInteractions[elementId]);
+      });
+    }
+  });
+  
+  document.querySelectorAll('.point-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      const points = this.getAttribute('data-points');
+      const price = this.getAttribute('data-price');
+      showEkoMessage(`هذه البطاقة تعطيك ${points} نقطة بسعر ${price} جنيه. انقر لتحديدها!`);
+    });
+  });
+  
+  document.querySelectorAll('.payment-method').forEach(method => {
+    method.addEventListener('mouseenter', function() {
+      const methodName = this.getAttribute('data-name') || this.querySelector('.payment-name').textContent;
+      showEkoMessage(`طريقة الدفع ${methodName}. انقر لتحديدها!`);
+    });
+  });
+  
+  document.querySelectorAll('.service-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      const isLoan = this.classList.contains('loan');
+      const serviceName = isLoan ? 'تحليل القروض' : 'تحليل الودائع';
+      showEkoMessage(`خدمة ${serviceName}. انقر على الزر للذهاب إلى صفحة التحليل!`);
+    });
+  });
+}
+
+// ===========================
+// إظهار رسائل التنبيه
+// ===========================
+function showSuccess(message) {
+  const alertElement = document.getElementById('success-alert');
+  const messageElement = document.getElementById('success-message');
+  
+  messageElement.textContent = message;
+  alertElement.style.display = 'flex';
+  
+  setTimeout(() => {
+    alertElement.style.display = 'none';
+  }, 5000);
+}
+
+function showError(message) {
+  const alertElement = document.getElementById('error-alert');
+  const messageElement = document.getElementById('error-message');
+  
+  messageElement.textContent = message;
+  alertElement.style.display = 'flex';
+  
+  setTimeout(() => {
+    alertElement.style.display = 'none';
+  }, 5000);
+}
+
+function showInfo(message) {
+  const alertElement = document.getElementById('info-alert');
+  const messageElement = document.getElementById('info-message');
+  
+  messageElement.innerHTML = message;
+  alertElement.style.display = 'flex';
+  
+  setTimeout(() => {
+    alertElement.style.display = 'none';
+  }, 5000);
+}
+
+function showEkoMessage(message) {
+  clearTimeout(ekoMessageTimeout);
+  
+  const ekoTooltip = document.getElementById('eko-tooltip');
+  const ekoAssistant = document.getElementById('eko-assistant');
+  
+  if (ekoTooltip && ekoAssistant) {
+    ekoTooltip.innerHTML = message;
+    ekoAssistant.classList.add('active');
+    
+    ekoMessageTimeout = setTimeout(() => {
+      ekoAssistant.classList.remove('active');
+    }, 8000);
+  }
+}
+
+// ===========================
+// تنظيف عند إغلاق الصفحة
+// ===========================
+window.addEventListener('beforeunload', function() {
+  if (updateInterval) {
+    clearInterval(updateInterval);
+  }
+  
+  if (window.ekoInterval) {
+    clearInterval(window.ekoInterval);
+  }
+  
+  if (ekoMessageTimeout) {
+    clearTimeout(ekoMessageTimeout);
+  }
+});
+
+console.log('✅ تم تحميل لوحة تحكم المستخدم بنجاح مع الربط بقاعدة البيانات');
+</script>
+</body>
+</html>

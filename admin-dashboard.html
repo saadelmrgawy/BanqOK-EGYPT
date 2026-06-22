@@ -1,0 +1,4557 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة تحكم المسؤول - BanqOK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* متغيرات الألوان */
+    :root {
+      --primary-color: #10b981;
+      --primary-hover: #059669;
+      --accent-color: #3b82f6;
+      --accent-hover: #2563eb;
+      --danger-color: #ef4444;
+      --danger-hover: #dc2626;
+      --warning-color: #f59e0b;
+      --warning-hover: #d97706;
+      --success-color: #10b981;
+      --success-hover: #059669;
+      --info-color: #3b82f6;
+      --info-hover: #2563eb;
+      --dark-color: #1f2937;
+      --light-color: #f9fafb;
+      --card-bg: #ffffff;
+      --text-color: #1f2937;
+      --light-text: #6b7280;
+      --border-radius: 12px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
+      --sidebar-width: 280px;
+      --sidebar-collapsed: 80px;
+    }
+
+    /* الأنيميشنات */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* أساسيات الصفحة */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--light-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .admin-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* =================== الشريط الجانبي =================== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, var(--dark-color) 0%, #111827 100%);
+      color: white;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .sidebar.collapsed {
+      width: var(--sidebar-collapsed);
+    }
+    
+    .sidebar-header {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .admin-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .admin-logo img {
+      height: 50px;
+      filter: brightness(0) invert(1);
+    }
+    
+    .sidebar.collapsed .admin-logo h1 {
+      display: none;
+    }
+    
+    .admin-info {
+      text-align: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .admin-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-color);
+      margin: 0 auto 10px;
+    }
+    
+    .admin-name {
+      font-weight: 700;
+      margin-bottom: 5px;
+      white-space: nowrap;
+    }
+    
+    .admin-email {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+      white-space: nowrap;
+    }
+    
+    .sidebar.collapsed .admin-info > div:not(.admin-avatar) {
+      display: none;
+    }
+    
+    /* القائمة الجانبية */
+    .sidebar-menu {
+      padding: 20px 0;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: all 0.3s;
+      border-right: 3px solid transparent;
+      gap: 10px;
+      position: relative;
+    }
+    
+    .menu-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+    
+    .menu-item.active {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--primary-color);
+      border-right-color: var(--primary-color);
+    }
+    
+    .menu-item i {
+      font-size: 1.2rem;
+      min-width: 24px;
+    }
+    
+    .menu-text {
+      white-space: nowrap;
+    }
+    
+    .sidebar.collapsed .menu-text {
+      display: none;
+    }
+    
+    /* شارة الإشعارات في القائمة */
+    .notification-badge-sidebar {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--danger-color);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .sidebar.collapsed .notification-badge-sidebar {
+      left: 5px;
+    }
+    
+    /* =================== المحتوى الرئيسي =================== */
+    .main-content {
+      flex: 1;
+      margin-right: var(--sidebar-width);
+      transition: all 0.3s ease;
+      min-height: 100vh;
+    }
+    
+    .main-content.expanded {
+      margin-right: var(--sidebar-collapsed);
+    }
+    
+    /* شريط التنقل العلوي */
+    .top-nav {
+      background: white;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .toggle-sidebar {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    
+    .toggle-sidebar:hover {
+      background: var(--light-color);
+      transform: rotate(90deg);
+    }
+    
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    /* تم إزالة زر الإشعارات من الشريط العلوي */
+    
+    .logout-btn {
+      background: var(--danger-color);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    
+    .logout-btn:hover {
+      background: var(--danger-hover);
+      transform: translateY(-2px);
+    }
+    
+    /* المحتوى */
+    .content-wrapper {
+      padding: 25px;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    /* =================== الأقسام =================== */
+    
+    /* بطاقات الإحصائيات */
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+      border-top: 4px solid var(--primary-color);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .stat-card.users {
+      border-top-color: var(--accent-color);
+    }
+    
+    .stat-card.visitors {
+      border-top-color: var(--success-color);
+    }
+    
+    .stat-card.active {
+      border-top-color: var(--warning-color);
+    }
+    
+    .stat-card.points {
+      border-top-color: var(--danger-color);
+    }
+    
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+    }
+    
+    .stat-card.users .stat-icon {
+      background: var(--accent-color);
+    }
+    
+    .stat-card.visitors .stat-icon {
+      background: var(--success-color);
+    }
+    
+    .stat-card.active .stat-icon {
+      background: var(--warning-color);
+    }
+    
+    .stat-card.points .stat-icon {
+      background: var(--danger-color);
+    }
+    
+    .stat-info h3 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    
+    .stat-info p {
+      color: var(--light-text);
+      font-size: 0.9rem;
+    }
+    
+    .stat-change {
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .stat-change.positive {
+      color: var(--success-color);
+    }
+    
+    .stat-change.negative {
+      color: var(--danger-color);
+    }
+    
+    /* الرسوم البيانية */
+    .charts-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .chart-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    
+    .chart-card h3 {
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+      color: var(--text-color);
+    }
+    
+    .chart-wrapper {
+      height: 250px;
+      position: relative;
+    }
+    
+    /* الدوائر التحليلية */
+    .analytics-circles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .analytics-circle {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+    }
+    
+    .analytics-circle:hover {
+      transform: translateY(-5px);
+    }
+    
+    .circle-progress {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary-color) 0% 75%, #e5e7eb 75% 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 15px;
+      position: relative;
+    }
+    
+    .circle-progress::before {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: white;
+      border-radius: 50%;
+    }
+    
+    .circle-value {
+      position: relative;
+      z-index: 1;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    
+    .circle-label {
+      font-size: 0.9rem;
+      color: var(--light-text);
+    }
+    
+    /* الأقسام الرئيسية */
+    .section {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow);
+      animation: fadeInUp 0.5s ease;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--light-color);
+    }
+    
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .section-title i {
+      color: var(--primary-color);
+    }
+    
+    .section-actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      font-family: 'Cairo', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: var(--light-color);
+      color: var(--text-color);
+      border: 1px solid #e5e7eb;
+    }
+    
+    .btn-secondary:hover {
+      background: #f3f4f6;
+      transform: translateY(-2px);
+    }
+    
+    .btn-danger {
+      background: var(--danger-color);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background: var(--danger-hover);
+      transform: translateY(-2px);
+    }
+    
+    .btn-success {
+      background: var(--success-color);
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background: var(--success-hover);
+      transform: translateY(-2px);
+    }
+    
+    /* =================== قسم المستخدمين =================== */
+    .users-table-wrapper {
+      overflow-x: auto;
+      margin-top: 20px;
+    }
+    
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+    
+    .users-table th {
+      background: var(--light-color);
+      padding: 12px 15px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--text-color);
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .users-table td {
+      padding: 15px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: middle;
+    }
+    
+    .users-table tbody tr:hover {
+      background: rgba(16, 185, 129, 0.05);
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--light-color);
+    }
+    
+    .user-name {
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    
+    .user-email {
+      font-size: 0.8rem;
+      color: var(--light-text);
+    }
+    
+    .user-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .status-active {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+    }
+    
+    .status-inactive {
+      background: rgba(156, 163, 175, 0.1);
+      color: var(--light-text);
+    }
+    
+    .status-blocked {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .user-actions {
+      display: flex;
+      gap: 5px;
+    }
+    
+    .action-btn {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+    
+    .edit-btn {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+    }
+    
+    .edit-btn:hover {
+      background: var(--success-color);
+      color: white;
+    }
+    
+    .block-btn {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .block-btn:hover {
+      background: var(--danger-color);
+      color: white;
+    }
+    
+    .delete-btn {
+      background: rgba(156, 163, 175, 0.1);
+      color: var(--light-text);
+    }
+    
+    .delete-btn:hover {
+      background: #6b7280;
+      color: white;
+    }
+    
+    .points-btn {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+    }
+    
+    .points-btn:hover {
+      background: var(--warning-color);
+      color: white;
+    }
+    
+    .add-points-btn {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--accent-color);
+    }
+    
+    .add-points-btn:hover {
+      background: var(--accent-color);
+      color: white;
+    }
+    
+    .select-user-checkbox {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    
+    /* =================== قسم إدارة الصفحات =================== */
+    .pages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .page-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 25px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+      border-top: 4px solid var(--primary-color);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .page-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+    
+    .page-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    }
+    
+    .page-card:nth-child(2)::before {
+      background: linear-gradient(90deg, var(--accent-color), var(--success-color));
+    }
+    
+    .page-card:nth-child(3)::before {
+      background: linear-gradient(90deg, var(--success-color), var(--warning-color));
+    }
+    
+    .page-card:nth-child(4)::before {
+      background: linear-gradient(90deg, var(--warning-color), var(--info-color));
+    }
+    
+    .page-card:nth-child(5)::before {
+      background: linear-gradient(90deg, var(--info-color), var(--danger-color));
+    }
+    
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    
+    .page-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+      background: var(--primary-color);
+    }
+    
+    .page-card:nth-child(2) .page-icon {
+      background: var(--accent-color);
+    }
+    
+    .page-card:nth-child(3) .page-icon {
+      background: var(--success-color);
+    }
+    
+    .page-card:nth-child(4) .page-icon {
+      background: var(--warning-color);
+    }
+    
+    .page-card:nth-child(5) .page-icon {
+      background: var(--info-color);
+    }
+    
+    .page-title-card {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    
+    .page-description {
+      color: var(--light-text);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+    
+    .page-actions {
+      margin-top: auto;
+      display: flex;
+      gap: 10px;
+    }
+    
+/* =================== حقل كلمة المرور - ضبط احترافي =================== */
+.password-input {
+  position: relative;
+  width: 100%;
+}
+
+/* input */
+.password-input .form-control {
+  width: 100%;
+  height: 48px;                 /* تثبيت ارتفاع الحقل */
+  padding: 0 44px 0 14px;       /* مساحة للعين يمين */
+  font-size: 0.95rem;
+  line-height: 48px;            /* توحيد النص عموديًا */
+}
+
+/* زر العين */
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 0;
+  height: 100%;                 /* نفس ارتفاع الحقل */
+  width: 36px;
+
+  display: grid;
+  place-items: center;          /* توسيط حقيقي */
+  
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 3;
+
+  color: #9ca3af;
+  transition: color 0.25s ease;
+}
+
+/* Hover */
+.password-toggle:hover {
+  color: var(--primary-color);
+}
+
+/* أيقونة العين */
+.password-toggle i {
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+/* حالة التفعيل */
+.password-toggle.active {
+  color: var(--primary-color);
+}
+
+/* موبايل */
+@media (max-width: 480px) {
+  .password-input .form-control {
+    height: 44px;
+    line-height: 44px;
+    padding-right: 40px;
+  }
+
+  .password-toggle {
+    width: 32px;
+  }
+}
+   
+    /* إخفاء أسهم التحكم في حقل النقاط الترحيبية */
+    #welcome-points-amount::-webkit-outer-spin-button,
+    #welcome-points-amount::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    #welcome-points-amount {
+      -moz-appearance: textfield;
+    }
+    
+    /* =================== قسم الإشعارات =================== */
+    .notifications-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .notification-item-admin {
+      background: var(--light-color);
+      border-radius: var(--border-radius);
+      padding: 15px;
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      transition: all 0.3s;
+    }
+    
+    .notification-item-admin:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+    
+    .notification-item-admin.unread {
+      background: rgba(16, 185, 129, 0.05);
+      border-right: 4px solid var(--primary-color);
+    }
+    
+    .notification-icon-large {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+      flex-shrink: 0;
+    }
+    
+    .notification-icon-large.success { background: var(--success-color); }
+    .notification-icon-large.error { background: var(--danger-color); }
+    .notification-icon-large.warning { background: var(--warning-color); }
+    .notification-icon-large.info { background: var(--info-color); }
+    
+    .notification-content-admin {
+      flex: 1;
+    }
+    
+    .notification-title-admin {
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    
+    .notification-message-admin {
+      color: var(--light-text);
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    
+    .notification-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+    
+    .notification-time {
+      color: var(--light-text);
+    }
+    
+    .delete-notification {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger-color);
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .delete-notification:hover {
+      background: var(--danger-color);
+      color: white;
+    }
+    
+    /* =================== مودالات التعديل =================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: white;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: fadeInUp 0.4s ease;
+    }
+    
+    .modal-large {
+      max-width: 800px;
+    }
+    
+    .modal-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--light-text);
+      cursor: pointer;
+      padding: 5px;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+    }
+    
+    .close-modal:hover {
+      color: var(--danger-color);
+      background-color: rgba(239, 68, 68, 0.1);
+      border-radius: 50%;
+    }
+    
+    .modal-body {
+      padding: 20px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    
+    .modal-footer {
+      padding: 20px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: var(--border-radius);
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+    
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .form-row .form-group {
+      flex: 1;
+    }
+    
+    /* =================== قسم النقاط الترحيبية =================== */
+    .welcome-points-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: var(--border-radius);
+      padding: 30px;
+      margin-top: 20px;
+    }
+    
+    .welcome-points-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .points-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    #welcome-points-amount {
+      width: 100px;
+      display: inline-block;
+      margin-left: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 700;
+      padding: 5px 15px;
+      text-align: center;
+    }
+    
+    .points-label {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.3);
+      transition: .4s;
+      border-radius: 30px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: var(--success-color);
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(30px);
+    }
+    
+    .welcome-message-preview {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-top: 20px;
+      border-right: 4px solid var(--primary-color);
+    }
+    
+    /* =================== قسم إعدادات المسؤول =================== */
+    .admin-settings-form {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .admin-profile-section {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    
+    .admin-avatar-upload {
+      flex: 0 0 150px;
+      text-align: center;
+    }
+    
+    .admin-avatar-large {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 5px solid var(--light-color);
+      box-shadow: var(--shadow);
+      margin-bottom: 15px;
+    }
+    
+    .admin-form-fields {
+      flex: 1;
+    }
+    
+    /* =================== قسم أعلى 10 مستخدمين بالنقاط =================== */
+    .top-users-container {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 25px;
+      margin-top: 30px;
+      box-shadow: var(--shadow);
+    }
+    
+    .top-users-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .top-user-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: var(--light-color);
+      border-radius: var(--border-radius);
+      transition: all 0.3s;
+    }
+    
+    .top-user-item:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+    
+    .top-user-item:nth-child(1) .user-rank {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    }
+    
+    .top-user-item:nth-child(2) .user-rank {
+      background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+    }
+    
+    .top-user-item:nth-child(3) .user-rank {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    }
+    
+    .user-rank {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-left: 15px;
+      flex-shrink: 0;
+    }
+    
+    .top-user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex: 1;
+    }
+    
+    .top-user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: var(--shadow);
+    }
+    
+    .top-user-details {
+      flex: 1;
+    }
+    
+    .top-user-name {
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    
+    .top-user-email {
+      font-size: 0.85rem;
+      color: var(--light-text);
+    }
+    
+    .top-user-points {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 8px 15px;
+      border-radius: 20px;
+    }
+    
+    /* =================== قسم تحليل نقاط المستخدمين =================== */
+    .points-analysis-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .analysis-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--primary-color);
+    }
+    
+    .analysis-card:nth-child(2) {
+      border-top-color: var(--accent-color);
+    }
+    
+    .analysis-card:nth-child(3) {
+      border-top-color: var(--success-color);
+    }
+    
+    .analysis-card:nth-child(4) {
+      border-top-color: var(--warning-color);
+    }
+    
+    .analysis-card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .analysis-card-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 10px;
+    }
+    
+    .analysis-card-change {
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .analysis-card-change.positive {
+      color: var(--success-color);
+    }
+    
+    .analysis-card-change.negative {
+      color: var(--danger-color);
+    }
+    
+    /* =================== رسائل التنبيه =================== */
+    .alert {
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    .alert-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-color);
+      border-right: 4px solid var(--success-color);
+    }
+    
+    .alert-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger-color);
+      border-right: 4px solid var(--danger-color);
+    }
+    
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning-color);
+      border-right: 4px solid var(--warning-color);
+    }
+    
+    .alert-info {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--info-color);
+      border-right: 4px solid var(--info-color);
+    }
+    
+    /* =================== التجاوب =================== */
+    @media (max-width: 1200px) {
+      .sidebar {
+        width: var(--sidebar-collapsed);
+      }
+      
+      .sidebar .menu-text,
+      .sidebar .admin-logo h1,
+      .sidebar .admin-info > div:not(.admin-avatar) {
+        display: none;
+      }
+      
+      .main-content {
+        margin-right: var(--sidebar-collapsed);
+      }
+      
+      .main-content.expanded {
+        margin-right: var(--sidebar-width);
+      }
+      
+      .sidebar.expanded {
+        width: var(--sidebar-width);
+      }
+      
+      .sidebar.expanded .menu-text,
+      .sidebar.expanded .admin-logo h1,
+      .sidebar.expanded .admin-info > div:not(.admin-avatar) {
+        display: block;
+      }
+      
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 992px) {
+      .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .analytics-circles {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .pages-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .points-analysis-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .admin-profile-section {
+        flex-direction: column;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .stats-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .analytics-circles {
+        grid-template-columns: 1fr;
+      }
+      
+      .top-nav {
+        padding: 15px;
+      }
+      
+      .content-wrapper {
+        padding: 15px;
+      }
+      
+      .section {
+        padding: 20px;
+      }
+      
+      .nav-right {
+        gap: 10px;
+      }
+      
+      .modal {
+        width: 95%;
+      }
+      
+      .pages-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .points-analysis-cards {
+        grid-template-columns: 1fr;
+      }
+      
+      .admin-profile-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+      
+      .charts-container {
+        gap: 15px;
+      }
+      
+      .chart-wrapper {
+        height: 200px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .section-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+      }
+      
+      .top-user-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      
+      .user-rank {
+        margin-left: 0;
+      }
+      
+      .top-user-info {
+        width: 100%;
+      }
+      
+      .top-user-points {
+        align-self: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- الهيكل الرئيسي -->
+  <div class="admin-container">
+    
+    <!-- الشريط الجانبي -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="admin-logo">
+          <img src="./ASSETS/BanqOk.png" alt="BanqOK Admin" style="height: 50px;">
+        </div>
+      </div>
+      
+      <div class="admin-info">
+        <img src="./ASSETS/EQO/user.png" alt="صورة المسؤول" class="admin-avatar" id="admin-avatar">
+        <div class="admin-name" id="admin-name">المسؤول BanqOK</div>
+        <div class="admin-email" id="admin-email">admin@banqok.com</div>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <a href="#" class="menu-item active" data-section="dashboard">
+          <i class="bi bi-speedometer2"></i>
+          <span class="menu-text">لوحة التحكم</span>
+        </a>
+        <a href="#" class="menu-item" data-section="users">
+          <i class="bi bi-people-fill"></i>
+          <span class="menu-text">إدارة المستخدمين</span>
+        </a>
+        <a href="#" class="menu-item" data-section="welcome-points">
+          <i class="bi bi-gift-fill"></i>
+          <span class="menu-text">النقاط الترحيبية</span>
+        </a>
+        <a href="#" class="menu-item" data-section="pages">
+          <i class="bi bi-window-stack"></i>
+          <span class="menu-text">إدارة الصفحات</span>
+        </a>
+        <a href="#" class="menu-item" data-section="notifications">
+          <i class="bi bi-bell-fill"></i>
+          <span class="menu-text">الإشعارات</span>
+          <span class="notification-badge-sidebar" id="notification-count-sidebar">0</span>
+        </a>
+        <a href="#" class="menu-item" data-section="settings">
+          <i class="bi bi-gear-fill"></i>
+          <span class="menu-text">إعدادات المسؤول</span>
+        </a>
+      </nav>
+    </aside>
+    
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content" id="main-content">
+      <!-- شريط التنقل العلوي -->
+      <nav class="top-nav">
+        <div class="nav-left">
+          <button class="toggle-sidebar" id="toggle-sidebar">
+            <i class="bi bi-list"></i>
+          </button>
+          <h1 class="page-title" id="page-title">لوحة التحكم</h1>
+        </div>
+        
+        <div class="nav-right">
+          <!-- تم إزالة زر الإشعارات من هنا -->
+          <button class="logout-btn" id="logout-btn">
+            <i class="bi bi-box-arrow-left"></i>
+            تسجيل الخروج
+          </button>
+        </div>
+      </nav>
+      
+      <!-- محتوى الأقسام -->
+      <div class="content-wrapper">
+        
+        <!-- قسم لوحة التحكم -->
+        <section class="content-section" id="dashboard-section">
+          <!-- إحصائيات سريعة -->
+          <div class="stats-cards">
+            <div class="stat-card users">
+              <div class="stat-header">
+                <div class="stat-icon">
+                  <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 id="total-users">0</h3>
+                  <p>إجمالي المستخدمين</p>
+                </div>
+              </div>
+              <div class="stat-change positive">
+                <i class="bi bi-arrow-up"></i>
+                <span>+12 هذا الشهر</span>
+              </div>
+            </div>
+            
+            <div class="stat-card visitors">
+              <div class="stat-header">
+                <div class="stat-icon">
+                  <i class="bi bi-eye-fill"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 id="today-visitors">0</h3>
+                  <p>زوار اليوم</p>
+                </div>
+              </div>
+              <div class="stat-change positive">
+                <i class="bi bi-arrow-up"></i>
+                <span>+5% عن الأمس</span>
+              </div>
+            </div>
+            
+            <div class="stat-card active">
+              <div class="stat-header">
+                <div class="stat-icon">
+                  <i class="bi bi-activity"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 id="active-users">0</h3>
+                  <p>المستخدمين النشطين</p>
+                </div>
+              </div>
+              <div class="stat-change positive">
+                <i class="bi bi-arrow-up"></i>
+                <span>+8% هذا الأسبوع</span>
+              </div>
+            </div>
+            
+            <div class="stat-card points">
+              <div class="stat-header">
+                <div class="stat-icon">
+                  <i class="bi bi-coin"></i>
+                </div>
+                <div class="stat-info">
+                  <h3 id="total-points">0</h3>
+                  <p>إجمالي النقاط</p>
+                </div>
+              </div>
+              <div class="stat-change positive">
+                <i class="bi bi-arrow-up"></i>
+                <span>+150 هذا الشهر</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- تحليل نقاط المستخدمين -->
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-graph-up"></i>
+                تحليل نقاط المستخدمين
+              </h2>
+            </div>
+            
+            <div class="points-analysis-cards">
+              <div class="analysis-card">
+                <div class="analysis-card-title">
+                  <i class="bi bi-coin" style="color: var(--primary-color);"></i>
+                  متوسط النقاط للمستخدم
+                </div>
+                <div class="analysis-card-value" id="average-points">0</div>
+                <div class="analysis-card-change positive">
+                  <i class="bi bi-arrow-up"></i>
+                  <span>+2.5% عن الشهر الماضي</span>
+                </div>
+              </div>
+              
+              <div class="analysis-card">
+                <div class="analysis-card-title">
+                  <i class="bi bi-gift" style="color: var(--accent-color);"></i>
+                  النقاط الترحيبية الموزعة
+                </div>
+                <div class="analysis-card-value" id="welcome-points-distributed">0</div>
+                <div class="analysis-card-change positive">
+                  <i class="bi bi-arrow-up"></i>
+                  <span>+50 هذا الشهر</span>
+                </div>
+              </div>
+              
+              <div class="analysis-card">
+                <div class="analysis-card-title">
+                  <i class="bi bi-trophy" style="color: var(--success-color);"></i>
+                  صاحب أكبر رصيد نقاط
+                </div>
+                <div class="analysis-card-value" id="top-user-points">0</div>
+                <div class="analysis-card-change positive">
+                  <i class="bi bi-person-circle"></i>
+                  <span id="top-user-name">غير محدد</span>
+                </div>
+              </div>
+              
+              <div class="analysis-card">
+                <div class="analysis-card-title">
+                  <i class="bi bi-arrow-up-right" style="color: var(--warning-color);"></i>
+                  النمو الشهري للنقاط
+                </div>
+                <div class="analysis-card-value" id="monthly-growth">0%</div>
+                <div class="analysis-card-change positive">
+                  <i class="bi bi-arrow-up"></i>
+                  <span>+15% عن الشهر الماضي</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- أعلى 10 مستخدمين بالنقاط -->
+          <div class="top-users-container">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-trophy-fill"></i>
+                أعلى 10 مستخدمين بالنقاط
+              </h2>
+            </div>
+            
+            <div class="top-users-list" id="top-users-list">
+              <!-- سيتم تعبئتها ديناميكياً -->
+            </div>
+          </div>
+          
+          <!-- التحليلات -->
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-graph-up"></i>
+                التحليلات التفاعلية
+              </h2>
+            </div>
+            
+            <!-- الدوائر التحليلية -->
+            <div class="analytics-circles">
+              <div class="analytics-circle">
+                <div class="circle-progress" id="users-progress">
+                  <div class="circle-value" id="users-percentage">0%</div>
+                </div>
+                <div class="circle-label">نسبة المستخدمين النشطين</div>
+              </div>
+              
+              <div class="analytics-circle">
+                <div class="circle-progress" id="active-progress">
+                  <div class="circle-value" id="active-percentage">0%</div>
+                </div>
+                <div class="circle-label">المستخدمين النشطين اليوم</div>
+              </div>
+              
+              <div class="analytics-circle">
+                <div class="circle-progress" id="points-progress">
+                  <div class="circle-value" id="points-percentage">0%</div>
+                </div>
+                <div class="circle-label">مستخدمين برصيد نقاط</div>
+              </div>
+              
+              <div class="analytics-circle">
+                <div class="circle-progress" id="growth-progress">
+                  <div class="circle-value" id="growth-percentage">0%</div>
+                </div>
+                <div class="circle-label">نمو المستخدمين</div>
+              </div>
+            </div>
+            
+            <!-- الرسوم البيانية -->
+            <div class="charts-container">
+              <div class="chart-card">
+                <h3>توزيع المستخدمين حسب المحافظة</h3>
+                <div class="chart-wrapper">
+                  <canvas id="governorate-chart"></canvas>
+                </div>
+              </div>
+              
+              <div class="chart-card">
+                <h3>نمو المستخدمين الشهري</h3>
+                <div class="chart-wrapper">
+                  <canvas id="users-growth-chart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- آخر المستخدمين المسجلين -->
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-person-plus-fill"></i>
+                آخر المستخدمين المسجلين
+              </h2>
+            </div>
+            
+            <div class="users-table-wrapper">
+              <table class="users-table" id="recent-users-table">
+                <thead>
+                  <tr>
+                    <th>المستخدم</th>
+                    <th>الرقم القومي</th>
+                    <th>الهاتف</th>
+                    <th>النقاط</th>
+                    <th>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- سيتم تعبئة الجدول ديناميكياً -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        
+        <!-- قسم إدارة المستخدمين -->
+        <section class="content-section" id="users-section" style="display: none;">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-people-fill"></i>
+                إدارة المستخدمين
+              </h2>
+              <div class="section-actions">
+                <button class="btn btn-primary" id="add-points-to-selected">
+                  <i class="bi bi-plus-circle"></i>
+                  إضافة نقاط للمحدد
+                </button>
+                <button class="btn btn-success" id="add-points-to-all">
+                  <i class="bi bi-plus-circle-fill"></i>
+                  إضافة نقاط للجميع
+                </button>
+                <button class="btn btn-danger" id="delete-selected-users">
+                  <i class="bi bi-trash"></i>
+                  حذف المحدد
+                </button>
+                <button class="btn btn-primary" id="add-user-btn">
+                  <i class="bi bi-person-plus"></i>
+                  إضافة مستخدم
+                </button>
+              </div>
+            </div>
+            
+            <div class="users-table-wrapper">
+              <table class="users-table" id="all-users-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40px;">
+                      <input type="checkbox" id="select-all-users" class="select-user-checkbox">
+                    </th>
+                    <th>المستخدم</th>
+                    <th>الرقم القومي</th>
+                    <th>الهاتف</th>
+                    <th>النقاط</th>
+                    <th>الحالة</th>
+                    <th>الإجراءات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- سيتم تعبئة الجدول ديناميكياً -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        
+        <!-- قسم النقاط الترحيبية -->
+        <section class="content-section" id="welcome-points-section" style="display: none;">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-gift-fill"></i>
+                إدارة النقاط الترحيبية
+              </h2>
+              <div class="section-actions">
+                <button class="btn btn-success" id="save-welcome-points">
+                  <i class="bi bi-check-circle"></i>
+                  حفظ التغييرات
+                </button>
+              </div>
+            </div>
+            
+            <div class="welcome-points-card">
+              <div class="welcome-points-header">
+                <div class="points-info">
+                  <input type="number" class="form-control" id="welcome-points-amount" value="50" min="0" max="1000" step="1">
+                  <span class="points-label">نقطة ترحيبية</span>
+                </div>
+                <div class="points-toggle">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="welcome-points-toggle" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <div style="margin-top: 5px; font-size: 0.8rem;">تفعيل النقاط الترحيبية</div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="welcome-message" style="color: white;">رسالة الترحيب للمستخدم الجديد</label>
+                <textarea class="form-control" id="welcome-message" rows="3" style="background: rgba(255, 255, 255, 0.1); color: white; border-color: rgba(255, 255, 255, 0.3);">
+مبروك يا صديقي! حسابك الجديد اتعمل بنجاح وحصلت على 50 نقطة ترحيبية هدية مننا!
+                </textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="notification-message" style="color: white;">رسالة الإشعار للمستخدم</label>
+                <textarea class="form-control" id="notification-message" rows="3" style="background: rgba(255, 255, 255, 0.1); color: white; border-color: rgba(255, 255, 255, 0.3);">
+🎉 مبروك! حصلت على 50 نقطة ترحيبية هدية من BanqOK لكونك مستخدم جديد!
+                </textarea>
+              </div>
+            </div>
+            
+            <div class="alert alert-info" style="margin-top: 20px;">
+              <i class="bi bi-info-circle"></i>
+              <span>تطبق هذه الإعدادات مباشرةً على صفحة تسجيل الدخول ويتم تحديثها فور حفظ التغييرات</span>
+            </div>
+          </div>
+        </section>
+        
+        <!-- قسم إدارة الصفحات -->
+        <section class="content-section" id="pages-section" style="display: none;">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-window-stack"></i>
+                إدارة صفحات الموقع
+              </h2>
+            </div>
+            
+            <div class="pages-grid">
+              <div class="page-card">
+                <div class="page-header">
+                  <div class="page-icon">
+                    <i class="bi bi-house-door"></i>
+                  </div>
+                  <div>
+                    <h3 class="page-title-card">الصفحة الرئيسية</h3>
+                    <span class="user-email" style="color: var(--light-text); font-size: 0.85rem;">index.html</span>
+                  </div>
+                </div>
+                <p class="page-description">
+                  الصفحة الرئيسية للموقع التي تعرض محتوى BanqOK الرئيسي والمميزات الأساسية للتطبيق، حيث يمكن للمستخدمين الاطلاع على جميع الخدمات والعروض.
+                </p>
+                <div class="page-actions">
+
+                  <a href="./edit-home.html" target="_blank" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                    <i class="bi bi-pencil"></i>
+                    تحرير
+                  </a>
+                </div>
+              </div>
+              
+              <div class="page-card">
+                <div class="page-header">
+                  <div class="page-icon">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                  </div>
+                  <div>
+                    <h3 class="page-title-card">تسجيل الدخول</h3>
+                    <span class="user-email" style="color: var(--light-text); font-size: 0.85rem;">login.html</span>
+                  </div>
+                </div>
+                <p class="page-description">
+                  صفحة تسجيل الدخول للمستخدمين الحاليين للوصول إلى حساباتهم واستخدام خدمات BanqOK، تحتوي على نظام التحقق المتقدم والنقاط الترحيبية.
+                </p>
+                <div class="page-actions">
+                  <a href="./edit-login.html" target="_blank" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                    <i class="bi bi-pencil"></i>
+                    تحرير
+                  </a>
+                </div>
+              </div>
+              
+              <div class="page-card">
+                <div class="page-header">
+                  <div class="page-icon">
+                    <i class="bi bi-person-badge"></i>
+                  </div>
+                  <div>
+                    <h3 class="page-title-card">لوحة تحكم المستخدم</h3>
+                    <span class="user-email" style="color: var(--light-text); font-size: 0.85rem;">dashboard.html</span>
+                  </div>
+                </div>
+                <p class="page-description">
+                  لوحة التحكم الخاصة بالمستخدمين حيث يمكنهم إدارة نقاطهم ومعاملاتهم والمعلومات الشخصية، ومتابعة آخر التحديثات والإشعارات.
+                </p>
+                <div class="page-actions">
+                  <a href="./edit-dashboard.html" target="_blank" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                    <i class="bi bi-pencil"></i>
+                    تحرير
+                  </a>
+                </div>
+              </div>
+              
+              <div class="page-card">
+                <div class="page-header">
+                  <div class="page-icon">
+                    <i class="bi bi-graph-up-arrow"></i>
+                  </div>
+                  <div>
+                    <h3 class="page-title-card">تحليل القروض</h3>
+                    <span class="user-email" style="color: var(--light-text); font-size: 0.85rem;">loan-analysis.html</span>
+                  </div>
+                </div>
+                <p class="page-description">
+                  صفحة تحليل القروض التي تساعد المستخدمين في تقييم وتقدير القروض المناسبة لاحتياجاتهم، مع مقارنات بين البنوك المختلفة.
+                </p>
+                <div class="page-actions">
+                  <a href="./edit-loan-analysis.html" target="_blank" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                    <i class="bi bi-pencil"></i>
+                    تحرير
+                  </a>
+                </div>
+              </div>
+              
+              <div class="page-card">
+                <div class="page-header">
+                  <div class="page-icon">
+                    <i class="bi bi-piggy-bank"></i>
+                  </div>
+                  <div>
+                    <h3 class="page-title-card">تحليل الودائع</h3>
+                    <span class="user-email" style="color: var(--light-text); font-size: 0.85rem;">deposit-analysis.html</span>
+                  </div>
+                </div>
+                <p class="page-description">
+                  صفحة تحليل الودائع التي تساعد المستخدمين في اختيار أفضل برامج الودائع والأرباح، مع مقارنة العائد من البنوك المختلفة.
+                </p>
+                <div class="page-actions">
+                  <a href="edit-deposits-analysis.html" target="_blank" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                    <i class="bi bi-pencil"></i>
+                    تحرير
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- قسم الإشعارات الجديد -->
+        <section class="content-section" id="notifications-section" style="display: none;">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-bell-fill"></i>
+                إدارة الإشعارات
+              </h2>
+              <div class="section-actions">
+                <button class="btn btn-danger" id="delete-all-notifications">
+                  <i class="bi bi-trash"></i>
+                  حذف الكل
+                </button>
+              </div>
+            </div>
+            
+            <div class="notifications-list" id="notifications-list-admin">
+              <!-- سيتم تعبئتها ديناميكياً -->
+            </div>
+            
+            <div id="no-notifications-message" style="text-align: center; padding: 40px; color: var(--light-text); display: none;">
+              <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+              <p style="margin-top: 15px;">لا توجد إشعارات حالياً</p>
+            </div>
+          </div>
+        </section>
+        
+        <!-- قسم إعدادات المسؤول -->
+        <section class="content-section" id="settings-section" style="display: none;">
+          <div class="section">
+            <div class="section-header">
+              <h2 class="section-title">
+                <i class="bi bi-gear-fill"></i>
+                إعدادات المسؤول
+              </h2>
+              <div class="section-actions">
+                <button class="btn btn-success" id="save-admin-settings">
+                  <i class="bi bi-check-circle"></i>
+                  حفظ التغييرات
+                </button>
+              </div>
+            </div>
+            
+            <div class="admin-settings-form">
+              <div class="admin-profile-section">
+                <div class="admin-avatar-upload">
+                  <img src="./ASSETS/EQO/user.png" alt="صورة المسؤول" class="admin-avatar-large" id="admin-avatar-large">
+                  <input type="file" id="admin-avatar-input" accept="image/*" style="display: none;">
+                  <button class="btn btn-secondary" onclick="document.getElementById('admin-avatar-input').click()" style="margin-top: 10px;">
+                    <i class="bi bi-camera"></i>
+                    تغيير الصورة
+                  </button>
+                </div>
+                
+                <div class="admin-form-fields">
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="admin-first-name">الاسم الأول:</label>
+                      <input type="text" class="form-control" id="admin-first-name" value="المسؤول">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="admin-last-name">اسم العائلة:</label>
+                      <input type="text" class="form-control" id="admin-last-name" value="BanqOK">
+                    </div>
+                  </div>
+                  
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="admin-email-input">البريد الإلكتروني</label>
+                      <input type="email" class="form-control" id="admin-email-input" value="admin@banqok.com">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="admin-phone-input">رقم الهاتف</label>
+                      <input type="tel" class="form-control" id="admin-phone-input" value="01000000000">
+                    </div>
+                  </div>
+                  
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="admin-national-id">الرقم القومي</label>
+                      <input type="text" class="form-control" id="admin-national-id" value="29901011501234">
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="admin-governorate">المحافظة</label>
+                      <select class="form-control" id="admin-governorate">
+                        <option value="القاهرة" selected>القاهرة</option>
+                        <option value="الجيزة">الجيزة</option>
+                        <option value="الإسكندرية">الإسكندرية</option>
+                        <option value="الدقهلية">الدقهلية</option>
+                        <option value="البحر الأحمر">البحر الأحمر</option>
+                        <option value="البحيرة">البحيرة</option>
+                        <option value="الفيوم">الفيوم</option>
+                        <option value="الغربية">الغربية</option>
+                        <option value="الإسماعيلية">الإسماعيلية</option>
+                        <option value="المنوفية">المنوفية</option>
+                        <option value="المنيا">المنيا</option>
+                        <option value="القليوبية">القليوبية</option>
+                        <option value="الوادي الجديد">الوادي الجديد</option>
+                        <option value="السويس">السويس</option>
+                        <option value="أسوان">أسوان</option>
+                        <option value="أسيوط">أسيوط</option>
+                        <option value="بني سويف">بني سويف</option>
+                        <option value="بورسعيد">بورسعيد</option>
+                        <option value="دمياط">دمياط</option>
+                        <option value="الشرقية">الشرقية</option>
+                        <option value="سوهاج">سوهاج</option>
+                        <option value="جنوب سيناء">جنوب سيناء</option>
+                        <option value="كفر الشيخ">كفر الشيخ</option>
+                        <option value="مطروح">مطروح</option>
+                        <option value="الأقصر">الأقصر</option>
+                        <option value="قنا">قنا</option>
+                        <option value="شمال سيناء">شمال سيناء</option>
+                        <option value="الواحات">الواحات</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="admin-job">الوظيفة</label>
+                    <input type="text" class="form-control" id="admin-job" value="مدير النظام">
+                  </div>
+                </div>
+              </div>
+              
+              <h3 style="margin: 30px 0 20px; padding-bottom: 10px; border-bottom: 2px solid var(--light-color);">تغيير كلمة المرور</h3>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <div class="password-input">
+                    <label for="admin-current-password">كلمة المرور الحالية</label>
+                    <input type="password" class="form-control" id="admin-current-password" value="Banqok@2026">
+                    <button type="button" class="password-toggle" id="toggle-current-password">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <div class="password-input">
+                    <label for="admin-new-password">كلمة المرور الجديدة</label>
+                    <input type="password" class="form-control" id="admin-new-password" placeholder="أدخل كلمة مرور جديدة">
+                    <button type="button" class="password-toggle" id="toggle-new-password">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <div class="password-input">
+                  <label for="admin-confirm-password">تأكيد كلمة المرور الجديدة</label>
+                  <input type="password" class="form-control" id="admin-confirm-password" placeholder="أعد كتابة كلمة المرور الجديدة">
+                  <button type="button" class="password-toggle" id="toggle-confirm-password">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="alert alert-info" id="password-match-message" style="display: none;"></div>
+              
+              <div class="alert alert-info" style="margin-top: 30px;">
+                <i class="bi bi-info-circle"></i>
+                <span>تطبق التغييرات مباشرةً على صفحة تسجيل الدخول، ويتم تحديث بيانات المسؤول في قاعدة البيانات فور الحفظ</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+  
+  <!-- مودال إضافة مستخدم جديد -->
+  <div class="modal-overlay" id="add-user-modal">
+    <div class="modal modal-large">
+      <div class="modal-header">
+        <h3 class="modal-title">إضافة مستخدم جديد</h3>
+        <button class="close-modal" id="close-add-user-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-user-firstname">الاسم الأول:</label>
+            <input type="text" class="form-control" id="new-user-firstname" placeholder="مثال: أحمد">
+          </div>
+          
+          <div class="form-group">
+            <label for="new-user-lastname">اسم العائلة:</label>
+            <input type="text" class="form-control" id="new-user-lastname" placeholder="مثال: محمد">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-user-email">البريد الإلكتروني:</label>
+            <input type="email" class="form-control" id="new-user-email" placeholder="example@gmail.com">
+          </div>
+          
+          <div class="form-group">
+            <div class="password-input">
+              <label for="new-user-password">كلمة المرور:</label>
+              <input type="password" class="form-control" id="new-user-password" placeholder="كلمة مرور قوية">
+              <button type="button" class="password-toggle" id="toggle-new-user-password">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-user-national-id">الرقم القومي:</label>
+            <input type="text" class="form-control" id="new-user-national-id" placeholder="14 رقم بدون مسافات">
+          </div>
+          
+          <div class="form-group">
+            <label for="new-user-phone">رقم الهاتف:</label>
+            <input type="tel" class="form-control" id="new-user-phone" placeholder="مثال: 01012345678">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-user-age">العمر:</label>
+            <input type="number" class="form-control" id="new-user-age" min="18" max="100" value="25">
+          </div>
+          
+          <div class="form-group">
+            <label for="new-user-governorate">المحافظة:</label>
+            <select class="form-control" id="new-user-governorate">
+              <option value="القاهرة">القاهرة</option>
+              <option value="الجيزة">الجيزة</option>
+              <option value="الإسكندرية">الإسكندرية</option>
+              <option value="الدقهلية">الدقهلية</option>
+              <option value="البحر الأحمر">البحر الأحمر</option>
+              <option value="البحيرة">البحيرة</option>
+              <option value="الفيوم">الفيوم</option>
+              <option value="الغربية">الغربية</option>
+              <option value="الإسماعيلية">الإسماعيلية</option>
+              <option value="المنوفية">المنوفية</option>
+              <option value="المنيا">المنيا</option>
+              <option value="القليوبية">القليوبية</option>
+              <option value="الوادي الجديد">الوادي الجديد</option>
+              <option value="السويس">السويس</option>
+              <option value="أسوان">أسوان</option>
+              <option value="أسيوط">أسيوط</option>
+              <option value="بني سويف">بني سويف</option>
+              <option value="بورسعيد">بورسعيد</option>
+              <option value="دمياط">دمياط</option>
+              <option value="الشرقية">الشرقية</option>
+              <option value="سوهاج">سوهاج</option>
+              <option value="جنوب سيناء">جنوب سيناء</option>
+              <option value="كفر الشيخ">كفر الشيخ</option>
+              <option value="مطروح">مطروح</option>
+              <option value="الأقصر">الأقصر</option>
+              <option value="قنا">قنا</option>
+              <option value="شمال سيناء">شمال سيناء</option>
+              <option value="الواحات">الواحات</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-user-job">الوظيفة:</label>
+            <input type="text" class="form-control" id="new-user-job" placeholder="مثال: مهندس">
+          </div>
+          
+          <div class="form-group">
+            <label for="new-user-points">النقاط الابتدائية:</label>
+            <input type="number" class="form-control" id="new-user-points" min="0" value="50">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-add-user">إلغاء</button>
+        <button class="btn btn-primary" id="confirm-add-user">إضافة المستخدم</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال تعديل بيانات المستخدم -->
+  <div class="modal-overlay" id="edit-user-modal">
+    <div class="modal modal-large">
+      <div class="modal-header">
+        <h3 class="modal-title">تعديل بيانات المستخدم</h3>
+        <button class="close-modal" id="close-edit-user-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="edit-user-form">
+        <!-- سيتم تعبئة النموذج ديناميكياً -->
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال تأكيد حذف المستخدم -->
+  <div class="modal-overlay" id="confirm-delete-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">تأكيد الحذف</h3>
+        <button class="close-modal" id="close-delete-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="delete-message">هل أنت متأكد من حذف المستخدم المحدد؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-delete">إلغاء</button>
+        <button class="btn btn-danger" id="confirm-delete">حذف</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال تأكيد حذف المحدد -->
+  <div class="modal-overlay" id="confirm-delete-selected-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">تأكيد حذف المستخدمين المحددين</h3>
+        <button class="close-modal" id="close-delete-selected-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="delete-selected-message">هل أنت متأكد من حذف المستخدمين المحددين؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+        <p id="selected-users-count" style="color: var(--danger-color); font-weight: 600;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-delete-selected">إلغاء</button>
+        <button class="btn btn-danger" id="confirm-delete-selected">حذف المحددين</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال حظر المستخدم -->
+  <div class="modal-overlay" id="block-user-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">حظر المستخدم</h3>
+        <button class="close-modal" id="close-block-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="block-reason">سبب الحظر:</label>
+          <textarea class="form-control" id="block-reason" rows="3" placeholder="أكتب سبب حظر المستخدم..."></textarea>
+        </div>
+        <p id="block-user-info" style="margin-top: 15px;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-block">إلغاء</button>
+        <button class="btn btn-danger" id="confirm-block">حظر</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال إضافة نقاط للجميع -->
+  <div class="modal-overlay" id="add-points-all-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">إضافة نقاط لجميع المستخدمين</h3>
+        <button class="close-modal" id="close-points-all-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="points-all-amount">عدد النقاط لكل مستخدم:</label>
+          <input type="number" class="form-control" id="points-all-amount" min="1" max="1000" value="10">
+        </div>
+        <div class="form-group">
+          <label for="points-all-message">رسالة الإشعار للمستخدمين:</label>
+          <textarea class="form-control" id="points-all-message" rows="3" placeholder="رسالة ترسل لجميع المستخدمين مع النقاط"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-points-all">إلغاء</button>
+        <button class="btn btn-primary" id="confirm-points-all">إضافة النقاط</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال إضافة نقاط للمحدد -->
+  <div class="modal-overlay" id="add-points-selected-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">إضافة نقاط للمستخدمين المحددين</h3>
+        <button class="close-modal" id="close-points-selected-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="points-selected-amount">عدد النقاط لكل مستخدم:</label>
+          <input type="number" class="form-control" id="points-selected-amount" min="1" max="1000" value="10">
+        </div>
+        <div class="form-group">
+          <label for="points-selected-message">رسالة الإشعار للمستخدمين:</label>
+          <textarea class="form-control" id="points-selected-message" rows="3" placeholder="رسالة ترسل للمستخدمين المحددين مع النقاط"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-points-selected">إلغاء</button>
+        <button class="btn btn-primary" id="confirm-points-selected">إضافة النقاط</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال إضافة نقاط لمستخدم واحد -->
+  <div class="modal-overlay" id="add-points-single-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">إضافة نقاط للمستخدم</h3>
+        <button class="close-modal" id="close-points-single-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="points-single-amount">عدد النقاط:</label>
+          <input type="number" class="form-control" id="points-single-amount" min="1" max="1000" value="10">
+        </div>
+        <div class="form-group">
+          <label for="points-single-message">رسالة الإشعار للمستخدم:</label>
+          <textarea class="form-control" id="points-single-message" rows="3" placeholder="رسالة ترسل للمستخدم مع النقاط"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-points-single">إلغاء</button>
+        <button class="btn btn-primary" id="confirm-points-single">إضافة النقاط</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال تأكيد إضافة نقاط للجميع -->
+  <div class="modal-overlay" id="confirm-add-points-all-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">تأكيد إضافة النقاط</h3>
+        <button class="close-modal" id="close-confirm-add-points-all">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-add-points-all-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-confirm-add-points-all">إلغاء</button>
+        <button class="btn btn-primary" id="confirm-add-points-all-action">تأكيد</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال تأكيد إضافة نقاط للمحدد -->
+  <div class="modal-overlay" id="confirm-add-points-selected-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">تأكيد إضافة النقاط</h3>
+        <button class="close-modal" id="close-confirm-add-points-selected">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-add-points-selected-message"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-confirm-add-points-selected">إلغاء</button>
+        <button class="btn btn-primary" id="confirm-add-points-selected-action">تأكيد</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- مودال تأكيد تسجيل الخروج -->
+  <div class="modal-overlay" id="confirm-logout-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">تسجيل الخروج</h3>
+        <button class="close-modal" id="close-logout-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>هل أنت متأكد من تسجيل الخروج من لوحة التحكم؟</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-logout">إلغاء</button>
+        <button class="btn btn-danger" id="confirm-logout">تسجيل الخروج</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ============== كود جافاسكريبت الكامل للمسؤول (نسخة معدلة بالكامل) ============== */
+    /* متغيرات عامة */
+    let db;
+    const DB_NAME = 'db-banqok';
+    const DB_VERSION = 2;
+    const STORE_NAME = 'users';
+    let currentAdmin = null;
+    let allUsers = [];
+    let selectedUsers = [];
+    let usersForDeletion = [];
+    let userForPoints = null;
+    let userForBlock = null;
+    let currentSection = 'dashboard';
+    let databaseInitialized = false;
+    let notifications = [];
+    let governorateChart = null;
+    let usersGrowthChart = null;
+    let welcomePointsEnabled = true;
+    let welcomePointsAmount = 50;
+    
+    // متغيرات لتخزين بيانات النقاط قبل التأكيد
+    let pendingPointsAll = null;
+    let pendingPointsSelected = null;
+    
+    /* تهيئة الصفحة */
+    document.addEventListener('DOMContentLoaded', async function() {
+      await initDatabase();
+      databaseInitialized = true;
+      
+      await loadAdminData();
+      loadWelcomePointsSettings();
+      setupUI();
+      await loadAllUsers();
+      updateStats();
+      updatePointsAnalysis();
+      updateTopUsers();
+      setupCharts();
+      setupEventListeners();
+      setupModals();
+      setupSystem();
+      loadNotifications();
+      setupLoginPageConnection();
+      
+      console.log('🚀 تم تحميل لوحة تحكم المسؤول بنجاح');
+    });
+    
+    /* تهيئة قاعدة البيانات */
+    function initDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        
+        request.onerror = function(event) {
+          console.error("خطأ في فتح قاعدة البيانات:", event.target.error);
+          reject(event.target.error);
+        };
+        
+        request.onsuccess = function(event) {
+          db = event.target.result;
+          resolve(db);
+        };
+        
+        request.onupgradeneeded = function(event) {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            const objectStore = db.createObjectStore(STORE_NAME, { keyPath: 'email' });
+            objectStore.createIndex('firstName', 'firstName', { unique: false });
+            objectStore.createIndex('email', 'email', { unique: true });
+            objectStore.createIndex('nationalId', 'nationalId', { unique: true });
+            objectStore.createIndex('status', 'status', { unique: false });
+            objectStore.createIndex('points', 'points', { unique: false });
+            objectStore.createIndex('isAdmin', 'isAdmin', { unique: false });
+            objectStore.createIndex('registrationDate', 'registrationDate', { unique: false });
+          }
+        };
+      });
+    }
+    
+    /* تحميل بيانات المسؤول */
+    async function loadAdminData() {
+      return new Promise((resolve, reject) => {
+        if (!db) {
+          reject("قاعدة البيانات غير متاحة");
+          return;
+        }
+        
+        const transaction = db.transaction([STORE_NAME], 'readonly');
+        const objectStore = transaction.objectStore(STORE_NAME);
+        const request = objectStore.get('admin@banqok.com');
+        
+        request.onsuccess = function(event) {
+          currentAdmin = event.target.result;
+          
+          if (!currentAdmin) {
+            createAdminAccount();
+          } else {
+            updateUIWithAdminData();
+          }
+          
+          resolve(currentAdmin);
+        };
+        
+        request.onerror = function(event) {
+          reject(event.target.error);
+        };
+      });
+    }
+    
+    /* تحميل إعدادات النقاط الترحيبية */
+    function loadWelcomePointsSettings() {
+      const savedPoints = localStorage.getItem('banqok_welcome_points');
+      const savedEnabled = localStorage.getItem('banqok_welcome_enabled');
+      const savedMessage = localStorage.getItem('banqok_welcome_message');
+      const savedNotification = localStorage.getItem('banqok_notification_message');
+      
+      if (savedPoints) {
+        welcomePointsAmount = parseInt(savedPoints);
+        document.getElementById('welcome-points-amount').value = welcomePointsAmount;
+      }
+      if (savedEnabled !== null) welcomePointsEnabled = savedEnabled === 'true';
+      if (savedMessage) document.getElementById('welcome-message').value = savedMessage;
+      if (savedNotification) document.getElementById('notification-message').value = savedNotification;
+      
+      document.getElementById('welcome-points-toggle').checked = welcomePointsEnabled;
+    }
+    
+    /* إنشاء حساب المسؤول إذا لم يكن موجوداً */
+    function createAdminAccount() {
+      currentAdmin = {
+        firstName: "المسؤول",
+        lastName: "BanqOK",
+        email: "admin@banqok.com",
+        password: "Banqok@2026",
+        age: 35,
+        governorate: "القاهرة",
+        job: "مدير النظام",
+        phone: "01000000000",
+        nationalId: "29901011501234",
+        isAdmin: true,
+        isPremium: true,
+        status: "active",
+        points: 1000,
+        registrationDate: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        profilePic: "./ASSETS/EQO/1.png",
+        originalEmail: "admin@banqok.com",
+        canEditCredentials: true,
+        isFirstLogin: false
+      };
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      objectStore.add(currentAdmin);
+      
+      updateUIWithAdminData();
+    }
+    
+    /* تحديث واجهة المستخدم ببيانات المسؤول */
+    function updateUIWithAdminData() {
+      if (!currentAdmin) return;
+      
+      document.getElementById('admin-name').textContent = `${currentAdmin.firstName} ${currentAdmin.lastName}`;
+      document.getElementById('admin-email').textContent = currentAdmin.email;
+      document.getElementById('admin-avatar').src = currentAdmin.profilePic || './ASSETS/EQO/1.png';
+      document.getElementById('admin-avatar-large').src = currentAdmin.profilePic || './ASSETS/EQO/1.png';
+      document.getElementById('admin-first-name').value = currentAdmin.firstName;
+      document.getElementById('admin-last-name').value = currentAdmin.lastName;
+      document.getElementById('admin-email-input').value = currentAdmin.email;
+      document.getElementById('admin-phone-input').value = currentAdmin.phone || '01000000000';
+      document.getElementById('admin-national-id').value = currentAdmin.nationalId || '29901011501234';
+      document.getElementById('admin-governorate').value = currentAdmin.governorate || 'القاهرة';
+      document.getElementById('admin-job').value = currentAdmin.job || 'مدير النظام';
+      document.getElementById('admin-current-password').value = currentAdmin.password;
+      
+      // تحديث حقل النقاط الترحيبية
+      document.getElementById('welcome-points-amount').value = welcomePointsAmount;
+      document.getElementById('welcome-points-toggle').checked = welcomePointsEnabled;
+    }
+    
+    /* تحميل جميع المستخدمين */
+    async function loadAllUsers() {
+      return new Promise((resolve, reject) => {
+        if (!db) {
+          reject("قاعدة البيانات غير متاحة");
+          return;
+        }
+        
+        const transaction = db.transaction([STORE_NAME], 'readonly');
+        const objectStore = transaction.objectStore(STORE_NAME);
+        const request = objectStore.getAll();
+        
+        request.onsuccess = function(event) {
+          allUsers = event.target.result || [];
+          
+          const regularUsers = allUsers.filter(user => !user.isAdmin);
+          
+          updateRecentUsersTable(regularUsers.slice(0, 5));
+          updateAllUsersTable(regularUsers);
+          
+          resolve(allUsers);
+        };
+        
+        request.onerror = function(event) {
+          reject(event.target.error);
+        };
+      });
+    }
+    
+    /* تحديث جدول آخر المستخدمين */
+    function updateRecentUsersTable(users) {
+      const tbody = document.querySelector('#recent-users-table tbody');
+      if (!tbody) return;
+      
+      tbody.innerHTML = '';
+      
+      users.forEach(user => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td>
+            <div class="user-info">
+              <img src="${user.profilePic || './ASSETS/EQO/1.png'}" alt="صورة المستخدم" class="user-avatar">
+              <div>
+                <div class="user-name">${user.firstName} ${user.lastName}</div>
+                <div class="user-email">${user.email}</div>
+              </div>
+            </div>
+          </td>
+          <td>${user.nationalId || 'غير محدد'}</td>
+          <td>${user.phone || 'غير محدد'}</td>
+          <td><strong>${user.points || 0}</strong></td>
+          <td>
+            <span class="user-status status-${user.status || 'active'}">
+              ${getStatusText(user.status)}
+            </span>
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+    }
+    
+    /* تحديث جدول جميع المستخدمين */
+    function updateAllUsersTable(users) {
+      const tbody = document.querySelector('#all-users-table tbody');
+      if (!tbody) return;
+      
+      tbody.innerHTML = '';
+      
+      users.forEach((user, index) => {
+        const row = document.createElement('tr');
+        
+        row.innerHTML = `
+          <td>
+            <input type="checkbox" class="select-user-checkbox user-checkbox-item" data-index="${index}" data-email="${user.email}">
+          </td>
+          <td>
+            <div class="user-info">
+              <img src="${user.profilePic || './ASSETS/EQO/1.png'}" alt="صورة المستخدم" class="user-avatar">
+              <div>
+                <div class="user-name">${user.firstName} ${user.lastName}</div>
+                <div class="user-email">${user.email}</div>
+              </div>
+            </div>
+          </td>
+          <td>${user.nationalId || 'غير محدد'}</td>
+          <td>${user.phone || 'غير محدد'}</td>
+          <td><strong>${user.points || 0}</strong></td>
+          <td>
+            <span class="user-status status-${user.status || 'active'}">
+              ${getStatusText(user.status)}
+            </span>
+          </td>
+          <td>
+            <div class="user-actions">
+              <button class="action-btn add-points-btn" onclick="addPointsToSingleUser('${user.email}')">
+                <i class="bi bi-plus-lg"></i>
+              </button>
+              <button class="action-btn edit-btn" onclick="editUser('${user.email}')">
+                <i class="bi bi-pencil"></i>
+              </button>
+              <button class="action-btn block-btn" onclick="blockUser('${user.email}', '${user.firstName} ${user.lastName}')">
+                <i class="bi bi-lock"></i>
+              </button>
+              <button class="action-btn delete-btn" onclick="confirmDeleteUser('${user.email}', '${user.firstName} ${user.lastName}')">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        
+        tbody.appendChild(row);
+      });
+      
+      setupUserCheckboxes();
+    }
+    
+    /* تحديث أعلى 10 مستخدمين بالنقاط */
+    function updateTopUsers() {
+      const topUsersList = document.getElementById('top-users-list');
+      if (!topUsersList) return;
+      
+      const regularUsers = allUsers.filter(user => !user.isAdmin && user.status === 'active');
+      const sortedUsers = [...regularUsers].sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 10);
+      
+      topUsersList.innerHTML = '';
+      
+      sortedUsers.forEach((user, index) => {
+        const userItem = document.createElement('div');
+        userItem.className = 'top-user-item';
+        
+        userItem.innerHTML = `
+          <div class="user-rank">${index + 1}</div>
+          <div class="top-user-info">
+            <img src="${user.profilePic || './ASSETS/EQO/1.png'}" alt="صورة المستخدم" class="top-user-avatar">
+            <div class="top-user-details">
+              <div class="top-user-name">${user.firstName} ${user.lastName}</div>
+              <div class="top-user-email">${user.email}</div>
+            </div>
+          </div>
+          <div class="top-user-points">${user.points || 0} نقطة</div>
+        `;
+        
+        topUsersList.appendChild(userItem);
+      });
+    }
+    
+    /* تحديث تحليل النقاط */
+    function updatePointsAnalysis() {
+      const regularUsers = allUsers.filter(user => !user.isAdmin && user.status === 'active');
+      
+      if (regularUsers.length === 0) {
+        document.getElementById('average-points').textContent = '0';
+        document.getElementById('welcome-points-distributed').textContent = '0';
+        document.getElementById('top-user-points').textContent = '0';
+        document.getElementById('top-user-name').textContent = 'غير محدد';
+        document.getElementById('monthly-growth').textContent = '0%';
+        return;
+      }
+      
+      const totalPoints = regularUsers.reduce((sum, user) => sum + (user.points || 0), 0);
+      const averagePoints = Math.round(totalPoints / regularUsers.length);
+      document.getElementById('average-points').textContent = averagePoints;
+      
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      const welcomePoints = regularUsers.filter(user => {
+        const regDate = user.registrationDate ? new Date(user.registrationDate) : new Date();
+        return regDate >= oneMonthAgo;
+      }).length * welcomePointsAmount;
+      document.getElementById('welcome-points-distributed').textContent = welcomePoints;
+      
+      const topUser = [...regularUsers].sort((a, b) => (b.points || 0) - (a.points || 0))[0];
+      if (topUser) {
+        document.getElementById('top-user-points').textContent = topUser.points || 0;
+        document.getElementById('top-user-name').textContent = `${topUser.firstName} ${topUser.lastName}`;
+      }
+      
+      // النمو الشهري الحقيقي
+      const twoMonthsAgo = new Date();
+      twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      
+      const usersLastMonth = regularUsers.filter(u => {
+        const regDate = u.registrationDate ? new Date(u.registrationDate) : new Date();
+        return regDate >= twoMonthsAgo && regDate < oneMonthAgo;
+      }).length;
+      
+      const usersThisMonth = regularUsers.filter(u => {
+        const regDate = u.registrationDate ? new Date(u.registrationDate) : new Date();
+        return regDate >= oneMonthAgo;
+      }).length;
+      
+      let monthlyGrowth = 0;
+      if (usersLastMonth > 0) {
+        monthlyGrowth = ((usersThisMonth - usersLastMonth) / usersLastMonth) * 100;
+      }
+      document.getElementById('monthly-growth').textContent = `${Math.round(monthlyGrowth)}%`;
+      
+      document.getElementById('total-points').textContent = totalPoints;
+    }
+    
+    /* إعداد شيك بوكسات المستخدمين */
+    function setupUserCheckboxes() {
+      const checkboxes = document.querySelectorAll('.user-checkbox-item');
+      const selectAllCheckbox = document.getElementById('select-all-users');
+      
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          const email = this.getAttribute('data-email');
+          
+          if (this.checked) {
+            if (!selectedUsers.includes(email)) {
+              selectedUsers.push(email);
+            }
+          } else {
+            const index = selectedUsers.indexOf(email);
+            if (index > -1) {
+              selectedUsers.splice(index, 1);
+            }
+            selectAllCheckbox.checked = false;
+          }
+          
+          updateDeleteSelectedButton();
+        });
+      });
+      
+      selectAllCheckbox.addEventListener('change', function() {
+        checkboxes.forEach(checkbox => {
+          checkbox.checked = this.checked;
+          const email = checkbox.getAttribute('data-email');
+          
+          if (this.checked) {
+            if (!selectedUsers.includes(email)) {
+              selectedUsers.push(email);
+            }
+          } else {
+            selectedUsers = [];
+          }
+        });
+        
+        updateDeleteSelectedButton();
+      });
+    }
+    
+    /* تحديث زر حذف المحدد */
+    function updateDeleteSelectedButton() {
+      const deleteBtn = document.getElementById('delete-selected-users');
+      if (deleteBtn) deleteBtn.disabled = selectedUsers.length === 0;
+      
+      const addPointsSelectedBtn = document.getElementById('add-points-to-selected');
+      if (addPointsSelectedBtn) addPointsSelectedBtn.disabled = selectedUsers.length === 0;
+    }
+    
+    /* الحصول على نص الحالة */
+    function getStatusText(status) {
+      switch(status) {
+        case 'active': return 'نشط';
+        case 'inactive': return 'غير نشط';
+        case 'blocked': return 'محظور';
+        default: return 'نشط';
+      }
+    }
+    
+    /* تحديث الإحصائيات */
+    function updateStats() {
+      if (!allUsers.length) return;
+      
+      const regularUsers = allUsers.filter(user => !user.isAdmin);
+      const today = new Date().toDateString();
+      
+      document.getElementById('total-users').textContent = regularUsers.length;
+      
+      // عدد زوار اليوم - محاكاة بواقع 10-20% من إجمالي المستخدمين
+      const todayVisitors = Math.round(regularUsers.length * (0.1 + Math.random() * 0.2));
+      document.getElementById('today-visitors').textContent = todayVisitors;
+      
+      // المستخدمين النشطين (دخلوا خلال 24 ساعة)
+      const activeUsers = regularUsers.filter(user => {
+        if (!user.lastLogin) return false;
+        const lastLogin = new Date(user.lastLogin);
+        const now = new Date();
+        const diffHours = (now - lastLogin) / (1000 * 60 * 60);
+        return diffHours <= 24 && user.status === 'active';
+      }).length;
+      document.getElementById('active-users').textContent = activeUsers;
+      
+      const totalPoints = regularUsers.reduce((sum, user) => sum + (user.points || 0), 0);
+      document.getElementById('total-points').textContent = totalPoints;
+      
+      updateAnalyticsCircles(regularUsers.length, activeUsers, totalPoints);
+    }
+    
+    /* تحديث الدوائر التحليلية - تعتمد على بيانات حقيقية */
+    function updateAnalyticsCircles(totalUsers, activeUsers, totalPoints) {
+      // نسبة المستخدمين النشطين (من إجمالي المستخدمين)
+      const activeRate = totalUsers > 0 ? Math.round((activeUsers / totalUsers) * 100) : 0;
+      document.getElementById('users-percentage').textContent = `${activeRate}%`;
+      document.getElementById('users-progress').style.background = `conic-gradient(var(--primary-color) 0% ${activeRate}%, #e5e7eb ${activeRate}% 100%)`;
+      
+      // نسبة المستخدمين النشطين اليوم (من إجمالي النشطين؟) - نستخدم نفس النسبة ولكن نعكسها
+      document.getElementById('active-percentage').textContent = `${activeRate}%`;
+      document.getElementById('active-progress').style.background = `conic-gradient(var(--success-color) 0% ${activeRate}%, #e5e7eb ${activeRate}% 100%)`;
+      
+      // نسبة المستخدمين الذين لديهم رصيد نقاط > 0
+      const regularUsers = allUsers.filter(u => !u.isAdmin);
+      const usersWithPoints = regularUsers.filter(u => (u.points || 0) > 0).length;
+      const pointsRate = totalUsers > 0 ? Math.round((usersWithPoints / totalUsers) * 100) : 0;
+      document.getElementById('points-percentage').textContent = `${pointsRate}%`;
+      document.getElementById('points-progress').style.background = `conic-gradient(var(--warning-color) 0% ${pointsRate}%, #e5e7eb ${pointsRate}% 100%)`;
+      
+      // نسبة نمو المستخدمين هذا الشهر مقارنة بالشهر الماضي
+      const oneMonthAgo = new Date();
+      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+      const twoMonthsAgo = new Date();
+      twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+      
+      const usersLastMonth = regularUsers.filter(u => {
+        const regDate = u.registrationDate ? new Date(u.registrationDate) : new Date();
+        return regDate >= twoMonthsAgo && regDate < oneMonthAgo;
+      }).length;
+      
+      const usersThisMonth = regularUsers.filter(u => {
+        const regDate = u.registrationDate ? new Date(u.registrationDate) : new Date();
+        return regDate >= oneMonthAgo;
+      }).length;
+      
+      let growthRate = 0;
+      if (usersLastMonth > 0) {
+        growthRate = Math.round(((usersThisMonth - usersLastMonth) / usersLastMonth) * 100);
+      } else if (usersThisMonth > 0) {
+        growthRate = 100; // إذا لم يكن هناك مستخدمين الشهر الماضي ولكن هناك هذا الشهر
+      }
+      const growthRateLimited = Math.min(Math.max(growthRate, 0), 100); // تقييد بين 0 و 100
+      document.getElementById('growth-percentage').textContent = `${growthRateLimited}%`;
+      document.getElementById('growth-progress').style.background = `conic-gradient(var(--info-color) 0% ${growthRateLimited}%, #e5e7eb ${growthRateLimited}% 100%)`;
+    }
+    
+    /* إعداد الرسوم البيانية */
+    function setupCharts() {
+      updateCharts();
+    }
+    
+    /* تحديث الرسوم البيانية ببيانات حقيقية */
+    function updateCharts() {
+      const regularUsers = allUsers.filter(user => !user.isAdmin);
+      
+      // توزيع المحافظات
+      const governoratesData = {};
+      regularUsers.forEach(user => {
+        if (user.governorate) {
+          governoratesData[user.governorate] = (governoratesData[user.governorate] || 0) + 1;
+        }
+      });
+      
+      const governorates = Object.keys(governoratesData);
+      const governorateCounts = Object.values(governoratesData);
+      const governorateColors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1'];
+      
+      const governorateCtx = document.getElementById('governorate-chart').getContext('2d');
+      if (governorateChart) {
+        governorateChart.data.labels = governorates;
+        governorateChart.data.datasets[0].data = governorateCounts;
+        governorateChart.update();
+      } else {
+        governorateChart = new Chart(governorateCtx, {
+          type: 'doughnut',
+          data: {
+            labels: governorates,
+            datasets: [{
+              data: governorateCounts,
+              backgroundColor: governorateColors.slice(0, governorates.length),
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                rtl: true,
+                labels: {
+                  padding: 20,
+                  font: { family: 'Cairo' }
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      // نمو المستخدمين الشهري
+      const months = [];
+      const monthCounts = [];
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthName = month.toLocaleDateString('ar-EG', { month: 'long' });
+        months.push(monthName);
+        
+        const nextMonth = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+        const count = regularUsers.filter(user => {
+          const regDate = user.registrationDate ? new Date(user.registrationDate) : new Date();
+          return regDate >= month && regDate < nextMonth;
+        }).length;
+        monthCounts.push(count);
+      }
+      
+      const growthCtx = document.getElementById('users-growth-chart').getContext('2d');
+      if (usersGrowthChart) {
+        usersGrowthChart.data.labels = months;
+        usersGrowthChart.data.datasets[0].data = monthCounts;
+        usersGrowthChart.update();
+      } else {
+        usersGrowthChart = new Chart(growthCtx, {
+          type: 'line',
+          data: {
+            labels: months,
+            datasets: [{
+              label: 'عدد المستخدمين الجدد',
+              data: monthCounts,
+              borderColor: '#3b82f6',
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              borderWidth: 3,
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { font: { family: 'Cairo' } }
+              },
+              x: {
+                ticks: { font: { family: 'Cairo' } }
+              }
+            }
+          }
+        });
+      }
+    }
+    
+    /* إعداد واجهة المستخدم */
+    function setupUI() {
+      const menuItems = document.querySelectorAll('.menu-item');
+      menuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          menuItems.forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+          
+          const section = this.getAttribute('data-section');
+          currentSection = section;
+          
+          document.querySelectorAll('.content-section').forEach(s => {
+            s.style.display = 'none';
+          });
+          document.getElementById(`${section}-section`).style.display = 'block';
+          updatePageTitle(section);
+          loadSectionContent(section);
+        });
+      });
+      
+      document.getElementById('toggle-sidebar').addEventListener('click', function() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+        this.innerHTML = sidebar.classList.contains('collapsed') ? 
+          '<i class="bi bi-list"></i>' : 
+          '<i class="bi bi-arrow-right-square"></i>';
+      });
+      
+      document.getElementById('logout-btn').addEventListener('click', function() {
+        document.getElementById('confirm-logout-modal').classList.add('active');
+      });
+      
+      // تحديث شارة الإشعارات في القائمة الجانبية
+      updateSidebarNotificationBadge();
+    }
+    
+    /* تحديث عنوان الصفحة */
+    function updatePageTitle(section) {
+      const titles = {
+        'dashboard': 'لوحة التحكم',
+        'users': 'إدارة المستخدمين',
+        'welcome-points': 'النقاط الترحيبية',
+        'pages': 'إدارة الصفحات',
+        'notifications': 'الإشعارات',
+        'settings': 'إعدادات المسؤول'
+      };
+      document.getElementById('page-title').textContent = titles[section] || 'لوحة التحكم';
+    }
+    
+    /* تحميل محتوى القسم */
+    function loadSectionContent(section) {
+      switch(section) {
+        case 'welcome-points':
+          loadWelcomePoints();
+          break;
+        case 'pages':
+          loadPages();
+          break;
+        case 'notifications':
+          loadNotificationsPage();
+          break;
+        case 'settings':
+          loadAdminSettings();
+          break;
+      }
+    }
+    
+    function loadWelcomePoints() {
+      document.getElementById('welcome-points-amount').value = welcomePointsAmount;
+      document.getElementById('welcome-points-toggle').checked = welcomePointsEnabled;
+    }
+    
+    function loadAdminSettings() {
+      const currentPassword = document.getElementById('admin-current-password');
+      const newPassword = document.getElementById('admin-new-password');
+      const confirmPassword = document.getElementById('admin-confirm-password');
+      currentPassword.type = 'password';
+      newPassword.type = 'password';
+      confirmPassword.type = 'password';
+    }
+    
+    function loadPages() {}
+    
+    /* إعداد الأحداث */
+    function setupEventListeners() {
+      document.getElementById('save-welcome-points').addEventListener('click', saveWelcomePoints);
+      document.getElementById('save-admin-settings').addEventListener('click', saveAdminSettings);
+      
+      document.getElementById('add-points-to-all').addEventListener('click', function() {
+        openAddPointsAllModal();
+      });
+      
+      document.getElementById('add-points-to-selected').addEventListener('click', function() {
+        if (selectedUsers.length > 0) {
+          openAddPointsSelectedModal();
+        } else {
+          showAlert('يجب تحديد مستخدمين أولاً', 'error');
+        }
+      });
+      
+      document.getElementById('add-user-btn').addEventListener('click', function() {
+        openAddUserModal();
+      });
+      
+      document.getElementById('delete-selected-users').addEventListener('click', function() {
+        if (selectedUsers.length > 0) {
+          openDeleteSelectedModal();
+        }
+      });
+      
+      document.getElementById('delete-all-notifications').addEventListener('click', function() {
+        deleteAllNotifications();
+      });
+      
+      document.getElementById('welcome-points-toggle').addEventListener('change', function() {
+        welcomePointsEnabled = this.checked;
+      });
+    }
+    
+    /* إعداد المودالات */
+    function setupModals() {
+      // قائمة المودالات لإضافة مستمعي الأحداث العامة (إغلاق عند النقر خارج المحتوى)
+      const modals = [
+        'add-user-modal', 'edit-user-modal', 'confirm-delete-modal', 
+        'confirm-delete-selected-modal', 'block-user-modal', 
+        'add-points-all-modal', 'add-points-selected-modal', 
+        'add-points-single-modal', 'confirm-add-points-all-modal', 
+        'confirm-add-points-selected-modal', 'confirm-logout-modal'
+      ];
+      
+      modals.forEach(modalId => {
+        const modalOverlay = document.getElementById(modalId);
+        if (modalOverlay) {
+          modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+              modalOverlay.classList.remove('active');
+            }
+          });
+        }
+      });
+      
+      // أزرار الإغلاق المحددة
+      // مودال إضافة مستخدم
+      document.getElementById('close-add-user-modal').addEventListener('click', () => 
+        document.getElementById('add-user-modal').classList.remove('active'));
+      document.getElementById('cancel-add-user').addEventListener('click', () => 
+        document.getElementById('add-user-modal').classList.remove('active'));
+      
+      // مودال تعديل مستخدم
+      const closeEditUser = document.getElementById('close-edit-user-modal');
+      if (closeEditUser) {
+        closeEditUser.addEventListener('click', () => 
+          document.getElementById('edit-user-modal').classList.remove('active'));
+      }
+      
+      // مودال تأكيد حذف مستخدم
+      document.getElementById('close-delete-modal').addEventListener('click', () => 
+        document.getElementById('confirm-delete-modal').classList.remove('active'));
+      document.getElementById('cancel-delete').addEventListener('click', () => 
+        document.getElementById('confirm-delete-modal').classList.remove('active'));
+      
+      // مودال تأكيد حذف المحدد
+      document.getElementById('close-delete-selected-modal').addEventListener('click', () => 
+        document.getElementById('confirm-delete-selected-modal').classList.remove('active'));
+      document.getElementById('cancel-delete-selected').addEventListener('click', () => 
+        document.getElementById('confirm-delete-selected-modal').classList.remove('active'));
+      
+      // مودال حظر مستخدم
+      document.getElementById('close-block-modal').addEventListener('click', () => 
+        document.getElementById('block-user-modal').classList.remove('active'));
+      document.getElementById('cancel-block').addEventListener('click', () => 
+        document.getElementById('block-user-modal').classList.remove('active'));
+      
+      // مودال إضافة نقاط للجميع
+      document.getElementById('close-points-all-modal').addEventListener('click', () => 
+        document.getElementById('add-points-all-modal').classList.remove('active'));
+      document.getElementById('cancel-points-all').addEventListener('click', () => 
+        document.getElementById('add-points-all-modal').classList.remove('active'));
+      
+      // مودال إضافة نقاط للمحدد
+      document.getElementById('close-points-selected-modal').addEventListener('click', () => 
+        document.getElementById('add-points-selected-modal').classList.remove('active'));
+      document.getElementById('cancel-points-selected').addEventListener('click', () => 
+        document.getElementById('add-points-selected-modal').classList.remove('active'));
+      
+      // مودال إضافة نقاط لمستخدم واحد
+      document.getElementById('close-points-single-modal').addEventListener('click', () => 
+        document.getElementById('add-points-single-modal').classList.remove('active'));
+      document.getElementById('cancel-points-single').addEventListener('click', () => 
+        document.getElementById('add-points-single-modal').classList.remove('active'));
+      
+      // مودال تأكيد إضافة نقاط للجميع
+      document.getElementById('close-confirm-add-points-all').addEventListener('click', () => 
+        document.getElementById('confirm-add-points-all-modal').classList.remove('active'));
+      document.getElementById('cancel-confirm-add-points-all').addEventListener('click', () => 
+        document.getElementById('confirm-add-points-all-modal').classList.remove('active'));
+      
+      // مودال تأكيد إضافة نقاط للمحدد
+      document.getElementById('close-confirm-add-points-selected').addEventListener('click', () => 
+        document.getElementById('confirm-add-points-selected-modal').classList.remove('active'));
+      document.getElementById('cancel-confirm-add-points-selected').addEventListener('click', () => 
+        document.getElementById('confirm-add-points-selected-modal').classList.remove('active'));
+      
+      // مودال تسجيل الخروج
+      document.getElementById('close-logout-modal').addEventListener('click', () => 
+        document.getElementById('confirm-logout-modal').classList.remove('active'));
+      document.getElementById('cancel-logout').addEventListener('click', () => 
+        document.getElementById('confirm-logout-modal').classList.remove('active'));
+      
+      // أزرار التأكيد
+      document.getElementById('confirm-add-user').addEventListener('click', createNewUser);
+      document.getElementById('confirm-delete').addEventListener('click', deleteUser);
+      document.getElementById('confirm-delete-selected').addEventListener('click', deleteSelectedUsers);
+      document.getElementById('confirm-block').addEventListener('click', blockUserConfirm);
+      document.getElementById('confirm-points-all').addEventListener('click', confirmAddPointsAll);
+      document.getElementById('confirm-points-selected').addEventListener('click', confirmAddPointsSelected);
+      document.getElementById('confirm-points-single').addEventListener('click', addPointsToSingleUserConfirm);
+      document.getElementById('confirm-add-points-all-action').addEventListener('click', executeAddPointsAll);
+      document.getElementById('confirm-add-points-selected-action').addEventListener('click', executeAddPointsSelected);
+      document.getElementById('confirm-logout').addEventListener('click', function() {
+        localStorage.removeItem('banqok_user');
+        window.location.href = 'login.html';
+      });
+    }
+    
+    /* فتح مودال إضافة مستخدم جديد */
+    function openAddUserModal() {
+      document.getElementById('add-user-modal').classList.add('active');
+      document.getElementById('new-user-firstname').value = '';
+      document.getElementById('new-user-lastname').value = '';
+      document.getElementById('new-user-email').value = '';
+      document.getElementById('new-user-password').value = '';
+      document.getElementById('new-user-national-id').value = '';
+      document.getElementById('new-user-phone').value = '';
+      document.getElementById('new-user-age').value = '25';
+      document.getElementById('new-user-governorate').value = 'القاهرة';
+      document.getElementById('new-user-job').value = '';
+      document.getElementById('new-user-points').value = welcomePointsAmount;
+    }
+    
+    /* إنشاء مستخدم جديد */
+    async function createNewUser() {
+      const firstName = document.getElementById('new-user-firstname').value.trim();
+      const lastName = document.getElementById('new-user-lastname').value.trim();
+      const email = document.getElementById('new-user-email').value.trim();
+      const password = document.getElementById('new-user-password').value;
+      const nationalId = document.getElementById('new-user-national-id').value.trim();
+      const phone = document.getElementById('new-user-phone').value.trim();
+      const age = parseInt(document.getElementById('new-user-age').value) || 25;
+      const governorate = document.getElementById('new-user-governorate').value;
+      const job = document.getElementById('new-user-job').value.trim();
+      const points = parseInt(document.getElementById('new-user-points').value) || welcomePointsAmount;
+      
+      if (!firstName || !lastName) {
+        showAlert('يرجى إدخال الاسم الكامل', 'error');
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        showAlert('يرجى إدخال بريد إلكتروني صحيح', 'error');
+        return;
+      }
+      if (!password || password.length < 6) {
+        showAlert('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+        return;
+      }
+      if (nationalId && nationalId.length !== 14) {
+        showAlert('الرقم القومي يجب أن يكون 14 رقم', 'error');
+        return;
+      }
+      if (!phone || phone.length !== 11) {
+        showAlert('رقم الهاتف يجب أن يكون 11 رقم', 'error');
+        return;
+      }
+      
+      const existingUser = allUsers.find(user => user.email === email);
+      if (existingUser) {
+        showAlert('البريد الإلكتروني مستخدم بالفعل', 'error');
+        return;
+      }
+      const existingNationalId = allUsers.find(user => user.nationalId === nationalId);
+      if (existingNationalId) {
+        showAlert('الرقم القومي مستخدم بالفعل', 'error');
+        return;
+      }
+      
+      const newUser = {
+        firstName, lastName, email, password, age, governorate, job, phone, nationalId,
+        isAdmin: false, isPremium: false, status: 'active', points,
+        registrationDate: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        profilePic: '',
+        originalEmail: email,
+        canEditCredentials: true,
+        isFirstLogin: true
+      };
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      const request = objectStore.add(newUser);
+      
+      request.onsuccess = function() {
+        showAlert(`تم إنشاء حساب ${firstName} ${lastName} بنجاح`, 'success');
+        document.getElementById('add-user-modal').classList.remove('active');
+        allUsers.push(newUser);
+        loadAllUsers();
+        updateStats();
+        updateCharts();
+        updatePointsAnalysis();
+        updateTopUsers();
+        addNotification(`تم إضافة مستخدم جديد: ${firstName} ${lastName}`, 'success');
+        sendNotificationToUser(newUser, {
+          title: 'حساب جديد! 🎉',
+          message: `مرحباً ${firstName}! تم إنشاء حسابك بنجاح وحصلت على ${points} نقطة هدية!`,
+          type: 'success'
+        });
+        updateLoginPageWithNewUser(newUser);
+      };
+      
+      request.onerror = function(event) {
+        if (event.target.error.name === 'ConstraintError') {
+          showAlert('البريد الإلكتروني أو الرقم القومي مستخدم بالفعل', 'error');
+        } else {
+          showAlert('حدث خطأ أثناء إنشاء الحساب', 'error');
+          console.error('Error adding user:', event.target.error);
+        }
+      };
+    }
+    
+    /* تعديل بيانات المستخدم */
+    function editUser(email) {
+      const user = allUsers.find(u => u.email === email);
+      if (!user) { showAlert('المستخدم غير موجود', 'error'); return; }
+      
+      const modal = document.getElementById('edit-user-modal');
+      const form = document.getElementById('edit-user-form');
+      
+      form.innerHTML = `
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-firstname">الاسم الأول:</label>
+            <input type="text" class="form-control" id="edit-firstname" value="${user.firstName}">
+          </div>
+          <div class="form-group">
+            <label for="edit-lastname">اسم العائلة:</label>
+            <input type="text" class="form-control" id="edit-lastname" value="${user.lastName}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-email">البريد الإلكتروني:</label>
+            <input type="email" class="form-control" id="edit-email" value="${user.email}" readonly>
+          </div>
+          <div class="form-group">
+            <div class="password-input">
+              <label for="edit-password">كلمة المرور:</label>
+              <input type="password" class="form-control" id="edit-password" value="${user.password}">
+              <button type="button" class="password-toggle" id="toggle-edit-password">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-national-id">الرقم القومي:</label>
+            <input type="text" class="form-control" id="edit-national-id" value="${user.nationalId || ''}">
+          </div>
+          <div class="form-group">
+            <label for="edit-phone">رقم الهاتف:</label>
+            <input type="tel" class="form-control" id="edit-phone" value="${user.phone || ''}">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-age">العمر:</label>
+            <input type="number" class="form-control" id="edit-age" value="${user.age || 25}">
+          </div>
+          <div class="form-group">
+            <label for="edit-governorate">المحافظة:</label>
+            <select class="form-control" id="edit-governorate">${generateGovernorateOptions(user.governorate)}</select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-job">الوظيفة:</label>
+            <input type="text" class="form-control" id="edit-job" value="${user.job || ''}">
+          </div>
+          <div class="form-group">
+            <label for="edit-points">النقاط:</label>
+            <input type="number" class="form-control" id="edit-points" value="${user.points || 0}">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="cancel-edit-user">إلغاء</button>
+          <button class="btn btn-primary" id="save-edit-user">حفظ التغييرات</button>
+        </div>
+      `;
+      
+      modal.classList.add('active');
+      
+      document.getElementById('cancel-edit-user').addEventListener('click', () => modal.classList.remove('active'));
+      document.getElementById('save-edit-user').addEventListener('click', () => saveUserChanges(email));
+      document.getElementById('toggle-edit-password').addEventListener('click', function() {
+        const pwd = document.getElementById('edit-password');
+        const icon = this.querySelector('i');
+        if (pwd.type === 'password') { pwd.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+        else { pwd.type = 'password'; icon.className = 'bi bi-eye'; }
+      });
+      
+      // إعادة ربط زر الإغلاق X لأنه يتم إنشاء عناصر جديدة ديناميكياً
+      const closeBtn = document.getElementById('close-edit-user-modal');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => modal.classList.remove('active'));
+      }
+    }
+    
+    /* حفظ تغييرات المستخدم */
+    function saveUserChanges(oldEmail) {
+      const firstName = document.getElementById('edit-firstname').value.trim();
+      const lastName = document.getElementById('edit-lastname').value.trim();
+      const email = document.getElementById('edit-email').value.trim();
+      const password = document.getElementById('edit-password').value;
+      const nationalId = document.getElementById('edit-national-id').value.trim();
+      const phone = document.getElementById('edit-phone').value.trim();
+      const age = parseInt(document.getElementById('edit-age').value) || 25;
+      const governorate = document.getElementById('edit-governorate').value;
+      const job = document.getElementById('edit-job').value.trim();
+      const points = parseInt(document.getElementById('edit-points').value) || 0;
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      const request = objectStore.get(oldEmail);
+      
+      request.onsuccess = function(event) {
+        const user = event.target.result;
+        if (user) {
+          const oldPoints = user.points || 0;
+          const pointsChange = points - oldPoints;
+          
+          user.firstName = firstName;
+          user.lastName = lastName;
+          user.password = password;
+          user.nationalId = nationalId;
+          user.phone = phone;
+          user.age = age;
+          user.governorate = governorate;
+          user.job = job;
+          user.points = points;
+          
+          if (email !== oldEmail) {
+            user.email = email;
+            user.originalEmail = email;
+            objectStore.delete(oldEmail);
+            objectStore.add(user);
+          } else {
+            objectStore.put(user);
+          }
+          
+          if (pointsChange !== 0) {
+            addTransactionToUser(user, {
+              type: pointsChange > 0 ? 'credit' : 'debit',
+              amount: Math.abs(pointsChange),
+              reason: 'تعديل يدوي من المسؤول',
+              admin: currentAdmin.email
+            });
+            sendNotificationToUser(user, {
+              title: pointsChange > 0 ? 'تم تعديل نقاطك! 📈' : 'تم تعديل نقاطك! 📉',
+              message: pointsChange > 0 ? 
+                `تم إضافة ${pointsChange} نقطة لحسابك من قبل المسؤول` :
+                `تم خصم ${Math.abs(pointsChange)} نقطة من حسابك من قبل المسؤول`,
+              type: pointsChange > 0 ? 'success' : 'warning'
+            });
+          }
+          
+          showAlert(`تم تحديث بيانات ${firstName} بنجاح`, 'success');
+          addNotification(`تم تعديل بيانات المستخدم: ${firstName} ${lastName}`, 'info');
+          document.getElementById('edit-user-modal').classList.remove('active');
+          
+          const userIndex = allUsers.findIndex(u => u.email === oldEmail);
+          if (userIndex !== -1) {
+            allUsers[userIndex] = user;
+            if (email !== oldEmail) {
+              allUsers.splice(userIndex, 1);
+              allUsers.push(user);
+            }
+          }
+          
+          loadAllUsers();
+          updateStats();
+          updateCharts();
+          updatePointsAnalysis();
+          updateTopUsers();
+          updateLoginPageWithUserChanges(user);
+        }
+      };
+      
+      request.onerror = function(event) {
+        showAlert('حدث خطأ أثناء تحديث بيانات المستخدم', 'error');
+        console.error('Error updating user:', event.target.error);
+      };
+    }
+    
+    /* حظر مستخدم */
+    function blockUser(email, userName) {
+      userForBlock = { email, userName };
+      document.getElementById('block-user-info').textContent = `المستخدم: ${userName}`;
+      document.getElementById('block-reason').value = '';
+      document.getElementById('block-user-modal').classList.add('active');
+    }
+    
+    function blockUserConfirm() {
+      const reason = document.getElementById('block-reason').value.trim();
+      if (!reason) { showAlert('يرجى كتابة سبب الحظر', 'error'); return; }
+      if (!userForBlock) return;
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      const request = objectStore.get(userForBlock.email);
+      
+      request.onsuccess = function(event) {
+        const user = event.target.result;
+        if (user) {
+          user.status = 'blocked';
+          objectStore.put(user);
+          showAlert(`تم حظر المستخدم ${userForBlock.userName} بنجاح`, 'success');
+          addNotification(`تم حظر المستخدم: ${userForBlock.userName} - السبب: ${reason}`, 'error');
+          document.getElementById('block-user-modal').classList.remove('active');
+          
+          const userIndex = allUsers.findIndex(u => u.email === userForBlock.email);
+          if (userIndex !== -1) allUsers[userIndex] = user;
+          
+          sendNotificationToUser(user, {
+            title: 'تم حظر حسابك! ⚠️',
+            message: `تم حظر حسابك من قبل المسؤول. السبب: ${reason}`,
+            type: 'error'
+          });
+          loadAllUsers();
+          updateStats();
+          updateCharts();
+          updatePointsAnalysis();
+          updateTopUsers();
+        }
+      };
+      userForBlock = null;
+    }
+    
+    /* تأكيد حذف مستخدم */
+    function confirmDeleteUser(email, userName) {
+      usersForDeletion = [email];
+      document.getElementById('delete-message').textContent = `هل أنت متأكد من حذف المستخدم ${userName}؟ هذا الإجراء لا يمكن التراجع عنه.`;
+      document.getElementById('confirm-delete-modal').classList.add('active');
+    }
+    
+    function deleteUser() {
+      if (usersForDeletion.length === 0) return;
+      const email = usersForDeletion[0];
+      const user = allUsers.find(u => u.email === email);
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      const request = objectStore.delete(email);
+      
+      request.onsuccess = function() {
+        showAlert(`تم حذف المستخدم بنجاح`, 'success');
+        addNotification(`تم حذف المستخدم: ${user.firstName} ${user.lastName}`, 'error');
+        document.getElementById('confirm-delete-modal').classList.remove('active');
+        
+        const userIndex = allUsers.findIndex(u => u.email === email);
+        if (userIndex !== -1) allUsers.splice(userIndex, 1);
+        
+        loadAllUsers();
+        updateStats();
+        updateCharts();
+        updatePointsAnalysis();
+        updateTopUsers();
+        usersForDeletion = [];
+      };
+      
+      request.onerror = function(event) {
+        showAlert('حدث خطأ أثناء حذف المستخدم', 'error');
+        console.error('Error deleting user:', event.target.error);
+      };
+    }
+    
+    /* فتح مودال حذف المحدد */
+    function openDeleteSelectedModal() {
+      document.getElementById('selected-users-count').textContent = `عدد المستخدمين المحددين: ${selectedUsers.length}`;
+      document.getElementById('confirm-delete-selected-modal').classList.add('active');
+    }
+    
+    function deleteSelectedUsers() {
+      if (selectedUsers.length === 0) return;
+      
+      let deletedCount = 0;
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      
+      selectedUsers.forEach(email => {
+        const user = allUsers.find(u => u.email === email);
+        if (user) {
+          objectStore.delete(email);
+          const userIndex = allUsers.findIndex(u => u.email === email);
+          if (userIndex !== -1) allUsers.splice(userIndex, 1);
+          deletedCount++;
+          addNotification(`تم حذف المستخدم: ${user.firstName} ${user.lastName}`, 'error');
+        }
+      });
+      
+      transaction.oncomplete = function() {
+        showAlert(`تم حذف ${deletedCount} مستخدم بنجاح`, 'success');
+        document.getElementById('confirm-delete-selected-modal').classList.remove('active');
+        selectedUsers = [];
+        document.getElementById('select-all-users').checked = false;
+        loadAllUsers();
+        updateStats();
+        updateCharts();
+        updatePointsAnalysis();
+        updateTopUsers();
+      };
+      
+      transaction.onerror = function(event) {
+        showAlert('حدث خطأ أثناء حذف المستخدمين', 'error');
+        console.error('Error deleting users:', event.target.error);
+      };
+    }
+    
+    /* فتح مودال إضافة نقاط للجميع */
+    function openAddPointsAllModal() {
+      document.getElementById('add-points-all-modal').classList.add('active');
+    }
+    
+    /* فتح مودال إضافة نقاط للمحدد */
+    function openAddPointsSelectedModal() {
+      document.getElementById('add-points-selected-modal').classList.add('active');
+    }
+    
+    /* فتح مودال إضافة نقاط لمستخدم واحد */
+    function addPointsToSingleUser(email) {
+      const user = allUsers.find(u => u.email === email);
+      if (!user) return;
+      userForPoints = user;
+      document.getElementById('add-points-single-modal').classList.add('active');
+    }
+    
+    /* تأكيد إضافة نقاط للجميع */
+    function confirmAddPointsAll() {
+      const amount = parseInt(document.getElementById('points-all-amount').value);
+      const message = document.getElementById('points-all-message').value.trim();
+      if (!amount || amount <= 0) {
+        showAlert('يرجى إدخال عدد صحيح من النقاط', 'error');
+        return;
+      }
+      if (!message) {
+        showAlert('يرجى إدخال رسالة الإشعار', 'error');
+        return;
+      }
+      const regularUsers = allUsers.filter(user => !user.isAdmin && user.status === 'active');
+      if (regularUsers.length === 0) {
+        showAlert('لا يوجد مستخدمين نشطين لإضافة النقاط لهم', 'warning');
+        return;
+      }
+      pendingPointsAll = { amount, message, count: regularUsers.length };
+      document.getElementById('confirm-add-points-all-message').innerHTML = 
+        `هل أنت متأكد من إضافة <strong>${amount}</strong> نقطة لـ <strong>${regularUsers.length}</strong> مستخدم نشط؟`;
+      document.getElementById('add-points-all-modal').classList.remove('active');
+      document.getElementById('confirm-add-points-all-modal').classList.add('active');
+    }
+    
+    /* تنفيذ إضافة نقاط للجميع بعد التأكيد */
+    function executeAddPointsAll() {
+      if (!pendingPointsAll) return;
+      addPointsToAllUsersAction(pendingPointsAll.amount, pendingPointsAll.message);
+      document.getElementById('confirm-add-points-all-modal').classList.remove('active');
+      pendingPointsAll = null;
+    }
+    
+    /* تأكيد إضافة نقاط للمحدد */
+    function confirmAddPointsSelected() {
+      const amount = parseInt(document.getElementById('points-selected-amount').value);
+      const message = document.getElementById('points-selected-message').value.trim();
+      if (!amount || amount <= 0) {
+        showAlert('يرجى إدخال عدد صحيح من النقاط', 'error');
+        return;
+      }
+      if (!message) {
+        showAlert('يرجى إدخال رسالة الإشعار', 'error');
+        return;
+      }
+      if (selectedUsers.length === 0) {
+        showAlert('يرجى تحديد مستخدمين أولاً', 'error');
+        return;
+      }
+      // تصفية المستخدمين المحظورين
+      const activeSelected = selectedUsers.filter(email => {
+        const user = allUsers.find(u => u.email === email);
+        return user && user.status === 'active';
+      });
+      if (activeSelected.length === 0) {
+        showAlert('لا يوجد مستخدمين نشطين بين المحددين', 'warning');
+        return;
+      }
+      pendingPointsSelected = { amount, message, count: activeSelected.length, emails: activeSelected };
+      document.getElementById('confirm-add-points-selected-message').innerHTML = 
+        `هل أنت متأكد من إضافة <strong>${amount}</strong> نقطة لـ <strong>${activeSelected.length}</strong> مستخدم نشط من المحددين؟`;
+      document.getElementById('add-points-selected-modal').classList.remove('active');
+      document.getElementById('confirm-add-points-selected-modal').classList.add('active');
+    }
+    
+    /* تنفيذ إضافة نقاط للمحدد بعد التأكيد */
+    function executeAddPointsSelected() {
+      if (!pendingPointsSelected) return;
+      addPointsToSelectedUsersAction(pendingPointsSelected.amount, pendingPointsSelected.message, pendingPointsSelected.emails);
+      document.getElementById('confirm-add-points-selected-modal').classList.remove('active');
+      pendingPointsSelected = null;
+    }
+    
+    /* تنفيذ إضافة نقاط للجميع */
+    async function addPointsToAllUsersAction(pointsAmount, message) {
+      const regularUsers = allUsers.filter(user => !user.isAdmin && user.status === 'active');
+      if (regularUsers.length === 0) {
+        showAlert('لا يوجد مستخدمين نشطين لإضافة النقاط لهم', 'warning');
+        return;
+      }
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      let updatedCount = 0;
+      
+      for (const user of regularUsers) {
+        const request = objectStore.get(user.email);
+        request.onsuccess = function(event) {
+          const userData = event.target.result;
+          if (userData) {
+            userData.points = (userData.points || 0) + pointsAmount;
+            addTransactionToUser(userData, {
+              type: 'credit', amount: pointsAmount, reason: 'إضافة نقاط للجميع',
+              message: message, admin: currentAdmin.email, isBulk: true
+            });
+            sendNotificationToUser(userData, {
+              title: 'تم إضافة نقاط للجميع! 🎁',
+              message: message, type: 'success'
+            });
+            objectStore.put(userData);
+            updatedCount++;
+            const userIndex = allUsers.findIndex(u => u.email === userData.email);
+            if (userIndex !== -1) allUsers[userIndex] = userData;
+          }
+        };
+      }
+      
+      transaction.oncomplete = function() {
+        showAlert(`تم إضافة ${pointsAmount} نقطة لـ ${updatedCount} مستخدم نشط`, 'success');
+        addNotification(`تم إضافة ${pointsAmount} نقطة لـ ${updatedCount} مستخدم`, 'success');
+        document.getElementById('add-points-all-modal').classList.remove('active');
+        loadAllUsers();
+        updateStats();
+        updateCharts();
+        updatePointsAnalysis();
+        updateTopUsers();
+      };
+      
+      transaction.onerror = function(event) {
+        showAlert('حدث خطأ أثناء تحديث النقاط', 'error');
+        console.error('Transaction error:', event.target.error);
+      };
+    }
+    
+    /* تنفيذ إضافة نقاط للمحدد */
+    async function addPointsToSelectedUsersAction(pointsAmount, message, emails) {
+      if (emails.length === 0) return;
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      let updatedCount = 0;
+      
+      for (const email of emails) {
+        const request = objectStore.get(email);
+        request.onsuccess = function(event) {
+          const user = event.target.result;
+          if (user) {
+            user.points = (user.points || 0) + pointsAmount;
+            addTransactionToUser(user, {
+              type: 'credit', amount: pointsAmount, reason: 'إضافة نقاط للمستخدمين المحددين',
+              message: message, admin: currentAdmin.email
+            });
+            sendNotificationToUser(user, {
+              title: 'تم إضافة نقاط لحسابك! 🎉',
+              message: message, type: 'success'
+            });
+            objectStore.put(user);
+            updatedCount++;
+            const userIndex = allUsers.findIndex(u => u.email === user.email);
+            if (userIndex !== -1) allUsers[userIndex] = user;
+          }
+        };
+      }
+      
+      transaction.oncomplete = function() {
+        showAlert(`تم إضافة ${pointsAmount} نقطة لـ ${updatedCount} مستخدم نشط`, 'success');
+        addNotification(`تم إضافة ${pointsAmount} نقطة لـ ${updatedCount} مستخدم`, 'success');
+        document.getElementById('add-points-selected-modal').classList.remove('active');
+        
+        selectedUsers = [];
+        document.querySelectorAll('.user-checkbox-item').forEach(cb => cb.checked = false);
+        document.getElementById('select-all-users').checked = false;
+        
+        loadAllUsers();
+        updateStats();
+        updateCharts();
+        updatePointsAnalysis();
+        updateTopUsers();
+      };
+      
+      transaction.onerror = function(event) {
+        showAlert('حدث خطأ أثناء تحديث النقاط', 'error');
+        console.error('Transaction error:', event.target.error);
+      };
+    }
+    
+    /* تأكيد إضافة نقاط لمستخدم واحد */
+    function addPointsToSingleUserConfirm() {
+      if (!userForPoints) return;
+      
+      const pointsAmount = parseInt(document.getElementById('points-single-amount').value);
+      const message = document.getElementById('points-single-message').value.trim();
+      
+      if (!pointsAmount || pointsAmount <= 0) {
+        showAlert('يرجى إدخال عدد صحيح من النقاط', 'error');
+        return;
+      }
+      if (!message) {
+        showAlert('يرجى إدخال رسالة الإشعار', 'error');
+        return;
+      }
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      const request = objectStore.get(userForPoints.email);
+      
+      request.onsuccess = function(event) {
+        const user = event.target.result;
+        if (user) {
+          user.points = (user.points || 0) + pointsAmount;
+          
+          addTransactionToUser(user, {
+            type: 'credit', amount: pointsAmount, reason: 'إضافة نقاط من المسؤول',
+            message: message, admin: currentAdmin.email
+          });
+          sendNotificationToUser(user, {
+            title: 'تم إضافة نقاط لحسابك! 🎉',
+            message: message, type: 'success'
+          });
+          
+          objectStore.put(user);
+          
+          showAlert(`تم إضافة ${pointsAmount} نقطة لـ ${user.firstName} بنجاح`, 'success');
+          addNotification(`تم إضافة ${pointsAmount} نقطة للمستخدم: ${user.firstName} ${user.lastName}`, 'success');
+          document.getElementById('add-points-single-modal').classList.remove('active');
+          
+          const userIndex = allUsers.findIndex(u => u.email === user.email);
+          if (userIndex !== -1) allUsers[userIndex] = user;
+          
+          loadAllUsers();
+          updateStats();
+          updateCharts();
+          updatePointsAnalysis();
+          updateTopUsers();
+        }
+      };
+      userForPoints = null;
+    }
+    
+    /* حفظ إعدادات النقاط الترحيبية */
+    function saveWelcomePoints() {
+      const points = parseInt(document.getElementById('welcome-points-amount').value);
+      const message = document.getElementById('welcome-message').value;
+      const notificationMessage = document.getElementById('notification-message').value;
+      const enabled = document.getElementById('welcome-points-toggle').checked;
+      
+      welcomePointsAmount = points;
+      welcomePointsEnabled = enabled;
+      
+      localStorage.setItem('banqok_welcome_points', points);
+      localStorage.setItem('banqok_welcome_message', message);
+      localStorage.setItem('banqok_notification_message', notificationMessage);
+      localStorage.setItem('banqok_welcome_enabled', enabled);
+      
+      const event = new CustomEvent('welcomePointsUpdated', {
+        detail: { points, message, notificationMessage, enabled }
+      });
+      window.dispatchEvent(event);
+      
+      showAlert('تم حفظ إعدادات النقاط الترحيبية بنجاح', 'success');
+      addNotification('تم تحديث إعدادات النقاط الترحيبية', 'success');
+      
+      updateLoginPageWithWelcomeSettings(points, enabled, message, notificationMessage);
+    }
+    
+    /* حفظ إعدادات المسؤول */
+    function saveAdminSettings() {
+      const firstName = document.getElementById('admin-first-name').value;
+      const lastName = document.getElementById('admin-last-name').value;
+      const email = document.getElementById('admin-email-input').value;
+      const phone = document.getElementById('admin-phone-input').value;
+      const nationalId = document.getElementById('admin-national-id').value;
+      const governorate = document.getElementById('admin-governorate').value;
+      const job = document.getElementById('admin-job').value;
+      const currentPassword = document.getElementById('admin-current-password').value;
+      const newPassword = document.getElementById('admin-new-password').value;
+      const confirmPassword = document.getElementById('admin-confirm-password').value;
+      
+      if (newPassword && newPassword !== confirmPassword) {
+        showAlert('كلمة المرور الجديدة غير متطابقة', 'error');
+        return;
+      }
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const objectStore = transaction.objectStore(STORE_NAME);
+      const request = objectStore.get('admin@banqok.com');
+      
+      request.onsuccess = function(event) {
+        const admin = event.target.result;
+        if (admin) {
+          admin.firstName = firstName;
+          admin.lastName = lastName;
+          admin.phone = phone;
+          admin.nationalId = nationalId;
+          admin.governorate = governorate;
+          admin.job = job;
+          
+          if (email !== admin.email) {
+            admin.email = email;
+            admin.originalEmail = email;
+            objectStore.delete('admin@banqok.com');
+            admin.email = email;
+            objectStore.add(admin);
+          } else {
+            objectStore.put(admin);
+          }
+          
+          if (newPassword && newPassword.length >= 6) {
+            admin.password = newPassword;
+            showAlert('تم تحديث كلمة المرور بنجاح', 'success');
+          }
+          
+          currentAdmin = admin;
+          updateUIWithAdminData();
+          
+          showAlert('تم حفظ إعدادات المسؤول بنجاح', 'success');
+          addNotification('تم تحديث إعدادات المسؤول', 'success');
+          updateLoginPageWithAdminChanges(admin);
+        }
+      };
+      
+      request.onerror = function(event) {
+        showAlert('حدث خطأ أثناء حفظ الإعدادات', 'error');
+        console.error('Error saving admin settings:', event.target.error);
+      };
+    }
+    
+    /* إضافة معاملة للمستخدم */
+    function addTransactionToUser(user, transactionData) {
+      const userTransactionsKey = `banqok_transactions_${user.email}`;
+      const userTransactions = JSON.parse(localStorage.getItem(userTransactionsKey) || '[]');
+      
+      const transaction = {
+        id: Date.now(),
+        type: transactionData.type,
+        description: transactionData.reason || 'معاملة من المسؤول',
+        points: transactionData.amount,
+        balance: user.points,
+        date: new Date().toISOString(),
+        status: 'completed',
+        admin: transactionData.admin,
+        message: transactionData.message,
+        isBulk: transactionData.isBulk || false
+      };
+      
+      userTransactions.unshift(transaction);
+      localStorage.setItem(userTransactionsKey, JSON.stringify(userTransactions));
+      
+      const event = new CustomEvent('pointsUpdated', {
+        detail: { user, transaction }
+      });
+      window.dispatchEvent(event);
+    }
+    
+    /* إرسال إشعار للمستخدم */
+    function sendNotificationToUser(user, notificationData) {
+      const userNotificationsKey = `banqok_notifications_${user.email}`;
+      const userNotifications = JSON.parse(localStorage.getItem(userNotificationsKey) || '[]');
+      
+      const notification = {
+        id: Date.now(),
+        title: notificationData.title,
+        message: notificationData.message,
+        type: notificationData.type,
+        read: false,
+        date: new Date().toISOString(),
+        icon: notificationData.icon || 'bi-coin'
+      };
+      
+      userNotifications.unshift(notification);
+      localStorage.setItem(userNotificationsKey, JSON.stringify(userNotifications));
+      
+      const event = new CustomEvent('userNotificationSent', {
+        detail: { userEmail: user.email, notification }
+      });
+      window.dispatchEvent(event);
+      
+      addNotification(`تم إرسال إشعار للمستخدم: ${user.firstName} ${user.lastName}`, 'info');
+    }
+    
+    /* إضافة إشعار للمسؤول */
+    function addNotification(message, type) {
+      const notification = {
+        id: Date.now(),
+        title: type === 'success' ? 'نجاح' : 
+               type === 'error' ? 'خطأ' : 
+               type === 'warning' ? 'تحذير' : 'معلومة',
+        message, type,
+        date: new Date().toISOString(),
+        icon: type === 'success' ? 'bi-check-circle' :
+              type === 'error' ? 'bi-exclamation-circle' :
+              type === 'warning' ? 'bi-exclamation-triangle' : 'bi-info-circle',
+        read: false
+      };
+      
+      notifications.unshift(notification);
+      localStorage.setItem('banqok_admin_notifications', JSON.stringify(notifications));
+      
+      // تحديث شارة الإشعارات في القائمة الجانبية
+      updateSidebarNotificationBadge();
+      
+      // إذا كنا في صفحة الإشعارات، قم بتحديث العرض
+      if (currentSection === 'notifications') {
+        loadNotificationsPage();
+      }
+    }
+    
+    /* تحميل الإشعارات */
+    function loadNotifications() {
+      notifications = JSON.parse(localStorage.getItem('banqok_admin_notifications') || '[]');
+      updateSidebarNotificationBadge();
+    }
+    
+    /* تحديث شارة الإشعارات في القائمة الجانبية */
+    function updateSidebarNotificationBadge() {
+      const badge = document.getElementById('notification-count-sidebar');
+      if (badge) {
+        const unreadCount = notifications.filter(n => !n.read).length;
+        badge.textContent = unreadCount;
+        badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+      }
+    }
+    
+    /* تحميل صفحة الإشعارات */
+    function loadNotificationsPage() {
+      const notificationsList = document.getElementById('notifications-list-admin');
+      const noNotificationsMsg = document.getElementById('no-notifications-message');
+      
+      if (!notificationsList) return;
+      
+      notificationsList.innerHTML = '';
+      
+      if (notifications.length === 0) {
+        noNotificationsMsg.style.display = 'block';
+        return;
+      }
+      
+      noNotificationsMsg.style.display = 'none';
+      
+      notifications.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(notification => {
+        const item = document.createElement('div');
+        item.className = `notification-item-admin ${notification.read ? '' : 'unread'}`;
+        item.dataset.id = notification.id;
+        
+        const iconClass = notification.icon;
+        let iconBgClass = 'info';
+        if (notification.type === 'success') iconBgClass = 'success';
+        else if (notification.type === 'error') iconBgClass = 'error';
+        else if (notification.type === 'warning') iconBgClass = 'warning';
+        
+        item.innerHTML = `
+          <div class="notification-icon-large ${iconBgClass}">
+            <i class="bi ${iconClass}"></i>
+          </div>
+          <div class="notification-content-admin">
+            <div class="notification-title-admin">${notification.title}</div>
+            <div class="notification-message-admin">${notification.message}</div>
+            <div class="notification-meta">
+              <span class="notification-time">${getTimeAgo(notification.date)}</span>
+              <button class="delete-notification" onclick="deleteNotification(${notification.id})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        `;
+        
+        notificationsList.appendChild(item);
+      });
+      
+      // تحديث حالة القراءة عند عرض الصفحة
+      notifications.forEach(n => n.read = true);
+      localStorage.setItem('banqok_admin_notifications', JSON.stringify(notifications));
+      updateSidebarNotificationBadge();
+    }
+    
+    /* حذف إشعار واحد */
+    function deleteNotification(id) {
+      notifications = notifications.filter(n => n.id !== id);
+      localStorage.setItem('banqok_admin_notifications', JSON.stringify(notifications));
+      loadNotificationsPage();
+      updateSidebarNotificationBadge();
+      showAlert('تم حذف الإشعار', 'success');
+    }
+    
+    /* حذف جميع الإشعارات */
+    function deleteAllNotifications() {
+      if (notifications.length === 0) {
+        showAlert('لا توجد إشعارات للحذف', 'info');
+        return;
+      }
+      notifications = [];
+      localStorage.setItem('banqok_admin_notifications', JSON.stringify(notifications));
+      loadNotificationsPage();
+      updateSidebarNotificationBadge();
+      showAlert('تم حذف جميع الإشعارات', 'success');
+    }
+    
+    /* دالة مساعدة لحساب الوقت المنقضي */
+    function getTimeAgo(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      
+      if (diffMins < 1) return 'الآن';
+      if (diffMins < 60) return `قبل ${diffMins} دقيقة`;
+      if (diffHours < 24) return `قبل ${diffHours} ساعة`;
+      if (diffDays < 7) return `قبل ${diffDays} يوم`;
+      return date.toLocaleDateString('ar-EG');
+    }
+    
+    /* إعداد النظام */
+    function setupSystem() {
+      // إظهار/إخفاء كلمات المرور
+      document.getElementById('toggle-current-password').addEventListener('click', function() {
+        const input = document.getElementById('admin-current-password');
+        const icon = this.querySelector('i');
+        if (input.type === 'password') { input.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+        else { input.type = 'password'; icon.className = 'bi bi-eye'; }
+      });
+      
+      document.getElementById('toggle-new-password').addEventListener('click', function() {
+        const input = document.getElementById('admin-new-password');
+        const icon = this.querySelector('i');
+        if (input.type === 'password') { input.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+        else { input.type = 'password'; icon.className = 'bi bi-eye'; }
+      });
+      
+      document.getElementById('toggle-confirm-password').addEventListener('click', function() {
+        const input = document.getElementById('admin-confirm-password');
+        const icon = this.querySelector('i');
+        if (input.type === 'password') { input.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+        else { input.type = 'password'; icon.className = 'bi bi-eye'; }
+      });
+      
+      document.getElementById('toggle-new-user-password').addEventListener('click', function() {
+        const input = document.getElementById('new-user-password');
+        const icon = this.querySelector('i');
+        if (input.type === 'password') { input.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+        else { input.type = 'password'; icon.className = 'bi bi-eye'; }
+      });
+      
+      const newPassword = document.getElementById('admin-new-password');
+      const confirmPassword = document.getElementById('admin-confirm-password');
+      function checkPasswordMatch() {
+        const msg = document.getElementById('password-match-message');
+        if (!newPassword.value || !confirmPassword.value) { msg.style.display = 'none'; return; }
+        if (newPassword.value === confirmPassword.value) {
+          msg.innerHTML = '<i class="bi bi-check-circle"></i> كلمة المرور متطابقة';
+          msg.className = 'alert alert-success'; msg.style.display = 'flex';
+        } else {
+          msg.innerHTML = '<i class="bi bi-x-circle"></i> كلمة المرور غير متطابقة';
+          msg.className = 'alert alert-error'; msg.style.display = 'flex';
+        }
+      }
+      newPassword.addEventListener('input', checkPasswordMatch);
+      confirmPassword.addEventListener('input', checkPasswordMatch);
+      
+      document.getElementById('admin-avatar-input').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageUrl = event.target.result;
+          document.getElementById('admin-avatar-large').src = imageUrl;
+          document.getElementById('admin-avatar').src = imageUrl;
+          if (currentAdmin) {
+            currentAdmin.profilePic = imageUrl;
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const objectStore = transaction.objectStore(STORE_NAME);
+            objectStore.put(currentAdmin);
+            addNotification('تم تحديث الصورة الشخصية', 'success');
+            updateLoginPageWithAdminChanges(currentAdmin);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+    
+    /* ربط التحديثات مع صفحة تسجيل الدخول */
+    function setupLoginPageConnection() {
+      window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'loginPageUpdate') {
+          console.log('📡 تم استقبال تحديث من صفحة تسجيل الدخول:', event.data);
+          if (event.data.action === 'userRegistered') {
+            loadAllUsers();
+            updateStats();
+            updateCharts();
+            updatePointsAnalysis();
+            updateTopUsers();
+          }
+        }
+      });
+      
+      setInterval(() => {
+        if (typeof window.parent !== 'undefined' && window.parent !== window) {
+          window.parent.postMessage({
+            type: 'adminPageUpdate',
+            action: 'statsUpdated',
+            data: {
+              totalUsers: document.getElementById('total-users').textContent,
+              welcomePoints: welcomePointsAmount,
+              welcomeEnabled: welcomePointsEnabled
+            }
+          }, '*');
+        }
+      }, 30000);
+    }
+    
+    function updateLoginPageWithWelcomeSettings(points, enabled, message, notificationMessage) {
+      localStorage.setItem('banqok_welcome_points', points);
+      localStorage.setItem('banqok_welcome_enabled', enabled);
+      localStorage.setItem('banqok_welcome_message', message);
+      localStorage.setItem('banqok_notification_message', notificationMessage);
+      
+      if (typeof window.opener !== 'undefined' && window.opener) {
+        window.opener.postMessage({
+          type: 'welcomePointsUpdated', points, enabled, message, notificationMessage
+        }, '*');
+      }
+      window.postMessage({
+        type: 'welcomePointsUpdated', points, enabled, message, notificationMessage
+      }, '*');
+    }
+    
+    function updateLoginPageWithAdminChanges(admin) {
+      const savedAccounts = JSON.parse(localStorage.getItem('banqok_saved_accounts') || '[]');
+      const adminIndex = savedAccounts.findIndex(acc => acc.email === 'admin@banqok.com');
+      if (adminIndex !== -1) {
+        savedAccounts[adminIndex] = {
+          firstName: admin.firstName, lastName: admin.lastName, email: admin.email,
+          nationalId: admin.nationalId, profilePic: admin.profilePic || './ASSETS/EQO/1.png', isAdmin: true
+        };
+        localStorage.setItem('banqok_saved_accounts', JSON.stringify(savedAccounts));
+      }
+      window.postMessage({ type: 'adminUpdated', admin }, '*');
+    }
+    
+    function updateLoginPageWithNewUser(user) {
+      const savedAccounts = JSON.parse(localStorage.getItem('banqok_saved_accounts') || '[]');
+      if (!savedAccounts.find(acc => acc.email === user.email)) {
+        savedAccounts.push({
+          firstName: user.firstName, lastName: user.lastName, email: user.email,
+          nationalId: user.nationalId, profilePic: user.profilePic || '', isAdmin: false
+        });
+        if (savedAccounts.length > 6) savedAccounts.shift();
+        localStorage.setItem('banqok_saved_accounts', JSON.stringify(savedAccounts));
+      }
+      window.postMessage({ type: 'newUserAdded', user }, '*');
+    }
+    
+    function updateLoginPageWithUserChanges(user) {
+      const savedAccounts = JSON.parse(localStorage.getItem('banqok_saved_accounts') || '[]');
+      const userIndex = savedAccounts.findIndex(acc => acc.email === user.email);
+      if (userIndex !== -1) {
+        savedAccounts[userIndex] = {
+          firstName: user.firstName, lastName: user.lastName, email: user.email,
+          nationalId: user.nationalId, profilePic: user.profilePic || '', isAdmin: false
+        };
+        localStorage.setItem('banqok_saved_accounts', JSON.stringify(savedAccounts));
+      }
+      window.postMessage({ type: 'userUpdated', user }, '*');
+    }
+    
+    /* دالة مساعدة لتوليد خيارات المحافظات */
+    function generateGovernorateOptions(selected) {
+      const governorates = [
+        'القاهرة','الجيزة','الإسكندرية','الدقهلية','البحر الأحمر','البحيرة','الفيوم','الغربية',
+        'الإسماعيلية','المنوفية','المنيا','القليوبية','الوادي الجديد','السويس','أسوان','أسيوط',
+        'بني سويف','بورسعيد','دمياط','الشرقية','سوهاج','جنوب سيناء','كفر الشيخ','مطروح','الأقصر','قنا','شمال سيناء','الواحات'
+      ];
+      return governorates.map(gov => `<option value="${gov}" ${selected === gov ? 'selected' : ''}>${gov}</option>`).join('');
+    }
+    
+    /* إظهار رسالة تنبيه */
+    function showAlert(message, type) {
+      const existingAlerts = document.querySelectorAll('.alert');
+      existingAlerts.forEach(alert => { if (!alert.id) alert.remove(); });
+      
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type}`;
+      alertDiv.innerHTML = `
+        <i class="bi bi-${type === 'success' ? 'check-circle' : 
+                         type === 'error' ? 'exclamation-circle' : 
+                         type === 'warning' ? 'exclamation-triangle' : 
+                         'info-circle'}"></i>
+        <span>${message}</span>
+      `;
+      
+      const contentWrapper = document.querySelector('.content-wrapper');
+      contentWrapper.insertBefore(alertDiv, contentWrapper.firstChild);
+      
+      setTimeout(() => { if (alertDiv.parentNode) alertDiv.remove(); }, 5000);
+    }
+  </script>
+</body>
+</html>
