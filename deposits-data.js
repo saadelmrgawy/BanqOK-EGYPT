@@ -1,9 +1,5 @@
-// deposit-data.js
-// بيانات شاملة لـ 29 بنكًا مصريًا مع كافة تفاصيل الودائع
-// تم تحديث البيانات بالكامل لتطابق المعلومات المقدمة من الملف النصي الأصلي
 
-const completeDepositBanksData = [
-
+const sourceBanksData = [
   // ================= 1. بنك القاهرة =================
   {
     "id": 1,
@@ -16,7 +12,21 @@ const completeDepositBanksData = [
     "onlineAvailable": true,
     "contactPhone": "19888",
     "depositTypes": {
-      "certificates": [],
+      "certificates": [
+        {
+          "name": "شهادة ادخار 3 سنوات (عائد شهري)",
+          "minAmount": 1000000,
+          "maxAmount": 0,
+          "interestRates": 17.25,
+          "durations": [36],
+          "returnType": ["monthly"],
+          "earlyWithdrawal": true,
+          "earlyWithdrawalFee": "حسب القواعد",
+          "taxRate": 10,
+          "accountFees": 0,
+          "_source": "اليوم السابع - 22 مايو 2026 - بنك القاهرة يطرح شهادة 3 سنوات بحد أدنى مليون جنيه وعائد شهري 17.25%"
+        }
+      ],
       "savingsAccounts": [],
       "fixedDeposits": [
         {
@@ -610,7 +620,21 @@ const completeDepositBanksData = [
     "onlineAvailable": true,
     "contactPhone": "19666",
     "depositTypes": {
-      "certificates": [],
+      "certificates": [
+        {
+          "name": "شهادة Prime الثلاثية (عائد شهري ثابت)",
+          "minAmount": 100000,
+          "maxAmount": 0,
+          "interestRates": 15,
+          "durations": [36],
+          "returnType": ["monthly"],
+          "earlyWithdrawal": true,
+          "earlyWithdrawalFee": "بعد 6 أشهر من الإصدار",
+          "taxRate": 10,
+          "accountFees": 0,
+          "_source": "اليوم السابع / المصرف نيوز - إبريل 2026 - شهادة Prime بحد أدنى 100 ألف جنيه وعائد شهري ثابت 15%"
+        }
+      ],
       "savingsAccounts": [],
       "fixedDeposits": [
         {
@@ -789,7 +813,34 @@ const completeDepositBanksData = [
           "accountFees": 0
         }
       ],
-      "savingsAccounts": [],
+      "savingsAccounts": [
+        {
+          "name": "حساب سوبر كاش توفير",
+          "minAmount": 100000,
+          "maxAmount": 0,
+          "interestRates": 17.5,
+          "durations": [1, 3, 6, 12, 24, 36, 48, 60, 72, 84],
+          "returnType": ["monthly"],
+          "earlyWithdrawal": true,
+          "earlyWithdrawalFee": "لا يوجد - حساب توفير متاح للسحب في أي وقت",
+          "taxRate": 10,
+          "accountFees": 0,
+          "_source": "أسواق للمعلومات / المواطن المصري - يوليو 2026 - حساب سوبر كاش بحد أدنى 100 ألف جنيه وعائد شهري يصل إلى 17.5% (أعلى شريحة رصيد)"
+        },
+        {
+          "name": "حساب توفير الشباب (16-30 سنة)",
+          "minAmount": 500,
+          "maxAmount": 20000,
+          "interestRates": 10.5,
+          "durations": [1, 3, 6, 12, 24, 36, 48, 60, 72, 84],
+          "returnType": ["monthly"],
+          "earlyWithdrawal": true,
+          "earlyWithdrawalFee": "لا يوجد - حساب توفير متاح للسحب في أي وقت",
+          "taxRate": 10,
+          "accountFees": 0,
+          "_source": "بنوك 24 - إبريل 2026 - شريحة 500-20,000 جنيه بعائد شهري 10.5%"
+        }
+      ],
       "fixedDeposits": [
         {
           "name": "وديعة لأجل (جنيه) - شرائح",
@@ -1415,49 +1466,6 @@ const completeDepositBanksData = [
     }
   },
 
-  // ================= 16. مصرف أبو ظبي الإسلامي =================
-  {
-    "id": 16,
-    "name": "مصرف أبو ظبي الإسلامي",
-    "nameEn": "ADIB Egypt",
-    "logo": "./ASSETS/banks/ADIB.png",
-    "type": "islamic",
-    "safetyIndex": 91,
-    "branches": 70,
-    "onlineAvailable": true,
-    "contactPhone": "19957",
-    "depositTypes": {
-      "certificates": [],
-      "savingsAccounts": [],
-      "fixedDeposits": [
-        {
-          "name": "وديعة استثمار مضاربة (جنيه)",
-          "minAmount": 3000,
-          "maxAmount": 0,
-          "interestRates": { "1month": 2.05, "3months": 5.6, "6months": 5.8, "1year": 6.55 },
-          "durations": [1, 3, 6, 12],
-          "returnType": ["maturity"],
-          "earlyWithdrawal": true,
-          "earlyWithdrawalFee": "حسب قواعد الاسترداد",
-          "taxRate": 0,
-          "accountFees": 0
-        },
-        {
-          "name": "وديعة استثمار مضاربة (دولار)",
-          "minAmount": 1000,
-          "maxAmount": 0,
-          "interestRates": { "1month": 2.05, "3months": 5.6, "6months": 5.8, "1year": 6.55 },
-          "durations": [1, 3, 6, 12],
-          "returnType": ["maturity"],
-          "earlyWithdrawal": true,
-          "earlyWithdrawalFee": "حسب قواعد الاسترداد",
-          "taxRate": 0,
-          "accountFees": 0
-        }
-      ]
-    }
-  },
-
   // ================= 17. بنك أبو ظبي التجاري =================
   {
     "id": 17,
@@ -1724,61 +1732,6 @@ const completeDepositBanksData = [
           "returnType": ["monthly"],
           "earlyWithdrawal": true,
           "earlyWithdrawalFee": "حسب جدول الغرامات",
-          "taxRate": 0,
-          "accountFees": 0
-        }
-      ]
-    }
-  },
-
-  // ================= 20. بنك البركة =================
-  {
-    "id": 20,
-    "name": "بنك البركة",
-    "nameEn": "Al Baraka Bank Egypt",
-    "logo": "./ASSETS/banks/ALBRAKA.png",
-    "type": "islamic",
-    "safetyIndex": 87,
-    "branches": 50,
-    "onlineAvailable": true,
-    "contactPhone": "19042",
-    "depositTypes": {
-      "certificates": [],
-      "savingsAccounts": [],
-      "fixedDeposits": [
-        {
-          "name": "وديعة لأجل (جنيه)",
-          "minAmount": 500,
-          "maxAmount": 0,
-          "interestRates": { "7days": 1.5, "14days": 2.0, "1month": 3.25, "2months": 5.0, "3months": 5.5, "6months": 5.75, "1year": 6.0, "2years": 6.5 },
-          "durations": [0.25, 0.5, 1, 2, 3, 6, 12, 24],
-          "returnType": ["maturity"],
-          "earlyWithdrawal": true,
-          "earlyWithdrawalFee": "خصم 100% قبل شهر، 80% بعد شهر",
-          "taxRate": 0,
-          "accountFees": 0
-        },
-        {
-          "name": "وديعة 6 شهور بعائد شهري (جنيه)",
-          "minAmount": 250000,
-          "maxAmount": 0,
-          "interestRates": { "250k-5m": 10.75, "5m-10m": 11.25, "10m+": 11.75 },
-          "durations": [6],
-          "returnType": ["monthly"],
-          "earlyWithdrawal": true,
-          "earlyWithdrawalFee": "خصم 100% قبل شهر، 90% بعد شهر",
-          "taxRate": 0,
-          "accountFees": 0
-        },
-        {
-          "name": "وديعة سنة بعائد شهري (جنيه)",
-          "minAmount": 250000,
-          "maxAmount": 0,
-          "interestRates": { "250k-5m": 11.75, "5m-10m": 12.25, "10m+": 12.75 },
-          "durations": [12],
-          "returnType": ["monthly"],
-          "earlyWithdrawal": true,
-          "earlyWithdrawalFee": "خصم 100% قبل شهر، 90% بعد شهر",
           "taxRate": 0,
           "accountFees": 0
         }
@@ -2151,37 +2104,6 @@ const completeDepositBanksData = [
     }
   },
 
-  // ================= 26. بنك بيت التمويل الكويتي =================
-  {
-    "id": 26,
-    "name": "بنك بيت التمويل الكويتي",
-    "nameEn": "Kuwait Finance House - Egypt",
-    "logo": "./ASSETS/banks/KFH.jpeg",
-    "type": "islamic",
-    "safetyIndex": 87,
-    "branches": 25,
-    "onlineAvailable": true,
-    "contactPhone": "19655",
-    "depositTypes": {
-      "certificates": [],
-      "savingsAccounts": [],
-      "fixedDeposits": [
-        {
-          "name": "وديعة استثمارية عائد مقدم (جنيه)",
-          "minAmount": 500000,
-          "maxAmount": 0,
-          "interestRates": { "1month": 11.0, "3months": 11.5, "6months": 12.0, "1year": 12.5 },
-          "durations": [1, 3, 6, 12],
-          "returnType": ["advance"],
-          "earlyWithdrawal": true,
-          "earlyWithdrawalFee": "حسب القواعد",
-          "taxRate": 0,
-          "accountFees": 0
-        }
-      ]
-    }
-  },
-
   // ================= 27. بنك قطر الوطني =================
   {
     "id": 27,
@@ -2318,7 +2240,223 @@ const completeDepositBanksData = [
   }
 ];
 
-// تصدير البيانات لجعلها متاحة للنطاق العام
+// -----------------------------------------------------------------
+// 2. محرك التحويل الذكي (من النصوص إلى الهيكل المنظم)
+// -----------------------------------------------------------------
+function convertToStructured(legacyData) {
+  const result = [];
+
+  // البنوك الإسلامية المطلوب استبعادها (حسب id)
+  const islamicBankIds = [16, 20, 26];
+
+  for (const bank of legacyData) {
+    // تخطي البنوك الإسلامية
+    if (islamicBankIds.includes(bank.id)) continue;
+
+    const structuredBank = {
+      id: bank.id,
+      name: bank.name,
+      nameEn: bank.nameEn,
+      logo: bank.logo,
+      type: bank.type,
+      safetyIndex: bank.safetyIndex || 85,
+      branches: bank.branches || 0,
+      onlineAvailable: bank.onlineAvailable || false,
+      contactPhone: bank.contactPhone || "",
+      depositTypes: {
+        certificates: [],
+        savingsAccounts: [],
+        fixedDeposits: []
+      }
+    };
+
+    const sections = ['certificates', 'savingsAccounts', 'fixedDeposits'];
+    for (const sectionKey of sections) {
+      const products = bank.depositTypes?.[sectionKey] || [];
+      for (let idx = 0; idx < products.length; idx++) {
+        const prod = products[idx];
+        const converted = convertProduct(prod, bank, sectionKey, idx);
+        if (converted) {
+          structuredBank.depositTypes[sectionKey].push(converted);
+        }
+      }
+    }
+
+    result.push(structuredBank);
+  }
+
+  return result;
+}
+
+function convertProduct(prod, bank, section, idx) {
+  // 1. استخراج العملات المسموحة من الاسم
+  let currencies = extractCurrencies(prod.name || "");
+
+  // 2. تحويل أنواع العوائد إلى مصفوفة payoutTypes
+  let payoutTypes = [];
+  if (Array.isArray(prod.returnType)) {
+    payoutTypes = prod.returnType.map(r => mapReturnType(r));
+  } else if (typeof prod.returnType === 'string') {
+    payoutTypes = [mapReturnType(prod.returnType)];
+  }
+  if (payoutTypes.length === 0) payoutTypes = ["maturity"];
+
+  // 3. تحويل بيانات السحب المبكر
+  let earlyRedemptionAllowed = prod.earlyWithdrawal === true;
+  let earlyRedemptionAfterMonths = 0;
+  let earlyRedemptionFeeType = "percentage";
+  let earlyRedemptionFeeValue = 0;
+
+  if (prod.earlyWithdrawalFee && typeof prod.earlyWithdrawalFee === 'string') {
+    const match = prod.earlyWithdrawalFee.match(/(\d+(?:\.\d+)?)/);
+    if (match) {
+      earlyRedemptionFeeValue = parseFloat(match[1]);
+      if (prod.earlyWithdrawalFee.includes('%')) {
+        earlyRedemptionFeeType = "percentage";
+      } else {
+        earlyRedemptionFeeType = "fixed";
+      }
+    }
+    const monthMatch = prod.earlyWithdrawalFee?.match(/بعد\s*(\d+)\s*شهر/);
+    if (monthMatch) {
+      earlyRedemptionAfterMonths = parseInt(monthMatch[1]);
+    }
+  }
+
+  // 4. بناء نموذج الفائدة (interestModel)
+  const interestModel = buildInterestModel(prod);
+
+  return {
+    id: `${section.substring(0, 3)}_${bank.id}_${idx}`,
+    name: prod.name || "منتج بدون اسم",
+    minAmount: prod.minAmount || 0,
+    maxAmount: prod.maxAmount || 0,
+    durations: Array.isArray(prod.durations) ? prod.durations : [],
+    returnPayoutTypes: payoutTypes,
+    earlyRedemptionAllowed: earlyRedemptionAllowed,
+    earlyRedemptionAfterMonths: earlyRedemptionAfterMonths,
+    earlyRedemptionFeeType: earlyRedemptionFeeType,
+    earlyRedemptionFeeValue: earlyRedemptionFeeValue,
+    taxRate: prod.taxRate || (currencies.includes("EGP") ? 10 : 0),
+    accountFees: prod.accountFees || 0,
+    allowedCurrencies: currencies.length > 0 ? currencies : ["EGP"],
+    minBalanceForInterest: prod.minBalanceForInterest || 0,
+    eligibility: {
+      minAge: 18,
+      maxAge: 70,
+      individualOnly: false,
+      salaryTransferRequired: false
+    },
+    loanToValueRatio: 0,
+    interestModel: interestModel
+  };
+}
+
+function extractCurrencies(name) {
+  const map = {
+    'دولار': 'USD',
+    'دولارية': 'USD',
+    'يورو': 'EUR',
+    'جنيه إسترليني': 'GBP',
+    'استرليني': 'GBP',
+    'ريال سعودي': 'SAR',
+    'درهم إماراتي': 'AED'
+  };
+  const currencies = new Set();
+  for (const [key, val] of Object.entries(map)) {
+    if (name.includes(key)) currencies.add(val);
+  }
+  if (currencies.size === 0) currencies.add("EGP");
+  return Array.from(currencies);
+}
+
+function mapReturnType(type) {
+  const map = {
+    'monthly': 'monthly',
+    'quarterly': 'quarterly',
+    'semiAnnual': 'semiAnnual',
+    'annual': 'annual',
+    'maturity': 'maturity',
+    'advance': 'advance',
+    'daily': 'daily'
+  };
+  return map[type] || type;
+}
+
+function buildInterestModel(prod) {
+  const rates = prod.interestRates;
+  if (!rates) return { type: 'fixed', fixedRate: 0, payout: 'maturity' };
+
+  // 1. ثابت
+  if (typeof rates === 'number') {
+    return { type: 'fixed', fixedRate: rates, payout: prod.returnType?.[0] || 'maturity' };
+  }
+
+  const keys = Object.keys(rates);
+  
+  // 2. شرائح رصيد (تحتوي على "-" ورقمين)
+  const isBalanceTier = keys.some(k => k.includes('-') && !k.includes('years') && !k.includes('months') && !k.includes('week') && !k.includes('month') && !k.includes('year'));
+  if (isBalanceTier) {
+    const tiers = keys.map(k => {
+      const [min, max] = k.split('-').map(n => parseFloat(n) || 0);
+      const rate = rates[k];
+      return {
+        minBalance: min,
+        maxBalance: max === 0 ? Infinity : max,
+        rate: typeof rate === 'number' ? rate : (rate[prod.returnType?.[0]] || 0)
+      };
+    });
+    return { type: 'tiered_by_balance', tiers: tiers, defaultPayout: prod.returnType?.[0] || 'maturity' };
+  }
+
+  // 3. شرائح عملاء (CIB style)
+  const segmentKeys = ['Prime', 'Plus', 'Wealth', 'ExclusiveWealth', 'Private', 'Premium', 'Classic'];
+  const isSegment = keys.some(k => segmentKeys.includes(k));
+  if (isSegment) {
+    const segments = {};
+    for (const seg of segmentKeys) {
+      if (rates[seg]) {
+        segments[seg] = { rates: rates[seg] };
+      }
+    }
+    return { type: 'tiered_by_client_segment', segments: segments, defaultSegment: 'Prime' };
+  }
+
+  // 4. متدرج حسب المدة
+  const durations = Array.isArray(prod.durations) ? prod.durations : [];
+  const tiers = [];
+  for (const dur of durations) {
+    const durKey = dur.toString();
+    let rateValue = null;
+    if (rates[durKey] !== undefined) rateValue = rates[durKey];
+    else {
+      const yearKey = `${dur/12}years`;
+      if (rates[yearKey]) rateValue = rates[yearKey];
+      const monthKey = `${dur}months`;
+      if (rates[monthKey]) rateValue = rates[monthKey];
+      const dayKey = `${dur}days`;
+      if (rates[dayKey]) rateValue = rates[dayKey];
+    }
+    if (rateValue !== null) {
+      if (typeof rateValue === 'object' && !Array.isArray(rateValue)) {
+        tiers.push({ durationMonths: dur, rates: rateValue });
+      } else if (typeof rateValue === 'number') {
+        const payout = prod.returnType?.[0] || 'maturity';
+        tiers.push({ durationMonths: dur, rates: { [payout]: rateValue } });
+      }
+    }
+  }
+  if (tiers.length > 0) {
+    return { type: 'tiered_by_duration', tiers: tiers, defaultPayout: prod.returnType?.[0] || 'maturity' };
+  }
+
+  return { type: 'fixed', fixedRate: 0, payout: 'maturity' };
+}
+
+
+const finalStructuredData = convertToStructured(sourceBanksData);
+
 if (typeof window !== 'undefined') {
-  window.completeDepositBanksData = completeDepositBanksData;
+  window.finalStructuredDepositData = finalStructuredData;
+  console.log(`✅ تم تحميل ${finalStructuredData.length} بنكاً (بعد استبعاد الإسلامي)`);
 }
